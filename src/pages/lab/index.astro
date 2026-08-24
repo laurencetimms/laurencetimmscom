@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const projects = [
+  { name: 'SHIPSHAP.EXE', desc: 'A sparse, text-based starship game built on a graph-based simulation.' },
+  { name: 'The Barrow', desc: 'Text-based exploration in a warped, ancient Britain.' },
+];
+---
+<Layout
+  title="Lab"
+  path="/lab/"
+  description="Devlogs and portfolio entries for smaller game and software projects."
+>
+  <p class="eyebrow">Lab</p>
+  <h1>Smaller projects</h1>
+  <div class="prose">
+    <p>Games and software built for their own sake — evidence of range and craft, kept separate from the professional-coaching content.</p>
+  </div>
+  <div class="card-grid">
+    {projects.map((p) => (
+      <div class="card">
+        <h3>{p.name}</h3>
+        <p>{p.desc}</p>
+      </div>
+    ))}
+  </div>
+</Layout>

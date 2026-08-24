@@ -1,0 +1,161 @@
+/* ===========================================================
+   laurencetimms.com — design tokens
+   Palette drawn from the brief: British pastoral, Stoic restraint,
+   an engineer's precision. Warm flax paper, bracken ink, moss and
+   heather accents — deliberately not the cream/terracotta default.
+   =========================================================== */
+
+:root {
+  --paper: #EAE7DC;
+  --paper-raised: #F3F1E7;
+  --ink: #24291F;
+  --ink-soft: #4A4F41;
+  --moss: #38632B;
+  --heather: #5E4E66;
+  --line: #C9C2AE;
+  --line-strong: #A8A18C;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Source Serif 4', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+  --measure: 34rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+a {
+  color: inherit;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 0.15em;
+}
+a:hover { text-decoration-color: var(--ink); }
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 3px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.site-shell {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.75rem 0 1.25rem;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.site-header .wordmark {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.site-nav a { text-decoration: none; }
+.site-nav a[aria-current="page"] { color: var(--moss); }
+
+main {
+  padding: clamp(2.5rem, 6vw, 5rem) 0;
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose p { margin: 0 0 1.15em; }
+
+.subbrand-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--heather);
+  border: 1px solid var(--line-strong);
+  padding: 0.2em 0.55em;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 2rem;
+}
+
+.card {
+  background: var(--paper-raised);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card h3 { font-size: 1.05rem; margin-bottom: 0.35em; }
+.card p { margin: 0; font-size: 0.92rem; color: var(--ink-soft); }
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.5rem 0 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}

@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const skills = [
+  { name: 'Team Dynamics Coach', desc: 'Grounded in CEBMa peer-reviewed evidence rather than Tuckman or Lencioni.' },
+  { name: 'Retrospective Formats', desc: 'A library of retrospective formats and guidance for choosing between them.' },
+];
+---
+<Layout
+  title="Skills"
+  path="/skills/"
+  description="Coaching capability packaged as open, usable Claude Skills, published in the open anthropic/skills format."
+>
+  <p class="eyebrow">Skills</p>
+  <h1>Coaching expertise, packaged for agents</h1>
+  <div class="prose">
+    <p>
+      These are published as Claude Skills — in the open, cross-platform
+      <code>anthropic/skills</code> format — so an AI agent doing
+      team-coaching work can load them directly, not just read about them.
+      Published skills are free by default; whether any individual skill
+      moves to paid access is decided case by case.
+    </p>
+  </div>
+  <div class="card-grid">
+    {skills.map((s) => (
+      <div class="card">
+        <h3>{s.name}</h3>
+        <p>{s.desc}</p>
+      </div>
+    ))}
+  </div>
+  <p class="prose" style="margin-top:2rem;">
+    Source and documentation: <a href="https://github.com/laurencetimms/claus">github.com/laurencetimms/claus</a>
+  </p>
+</Layout>

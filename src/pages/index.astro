@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sections = [
+  { href: '/writing/', title: 'Writing', desc: 'Frameworks, essays, and models drawn from live organisational work.' },
+  { href: '/coaching/', title: 'Coaching', desc: 'Executive and organisational coaching — approach, and how to work with me.' },
+  { href: '/skills/', title: 'Skills', desc: 'Coaching capability packaged as open, usable Claude Skills.' },
+  { href: '/claus/', title: 'CLAUS', desc: 'An AI coaching platform demonstrating Claude + Skills augmenting human coaches.' },
+  { href: '/projects/', title: 'Projects', desc: 'LoadedZone, Walk, and smaller software and game projects.' },
+];
+---
+
+<Layout
+  title="Home"
+  path="/"
+  description="Laurence Timms — coach working with leaders and teams through organisational change, software delivery improvement, and AI-augmented coaching practice."
+>
+  <p class="eyebrow">Coaching · Organisational change · Software delivery</p>
+  <h1>I coach leaders through change.</h1>
+  <div class="prose">
+    <p>
+      I work with people and teams navigating organisational change — mostly
+      inside technology and delivery organisations facing growth, regulation,
+      or both. My background is in software engineering; my current work sits
+      at the join between agile coaching, systems thinking, and executive
+      coaching practice.
+    </p>
+    <p>
+      I'm also building in the open: <a href="/claus/">CLAUS</a> is a working
+      demonstration of AI-augmented coaching, and the frameworks I use with
+      clients are published as <a href="/skills/">Claude Skills</a> — usable
+      by agents, not just readable by people.
+    </p>
+  </div>
+
+  <div class="card-grid">
+    {sections.map((s) => (
+      <a class="card" href={s.href}>
+        <h3>{s.title}</h3>
+        <p>{s.desc}</p>
+      </a>
+    ))}
+  </div>
+</Layout>
