@@ -65,11 +65,15 @@ const jsonLd = {
         <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
       </div>
 
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAEbe4DMS05estZy0" data-theme="light"></div>
+
       <button type="submit" class="contact-submit" id="contact-submit">Send message</button>
 
       <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
     </form>
   </section>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <script>
     const form = document.getElementById('contact-form') as HTMLFormElement;
@@ -88,6 +92,7 @@ const jsonLd = {
         email: data.get('email'),
         message: data.get('message'),
         website: data.get('website'),
+        token: data.get('cf-turnstile-response'),
       };
 
       submitButton.disabled = true;
@@ -115,6 +120,9 @@ const jsonLd = {
       } finally {
         submitButton.disabled = false;
         submitButton.textContent = 'Send message';
+        // Turnstile tokens are single-use — reset so a retry (or a second
+        // enquiry) gets a fresh one, whether this attempt succeeded or not.
+        window.turnstile?.reset();
       }
     });
   </script>

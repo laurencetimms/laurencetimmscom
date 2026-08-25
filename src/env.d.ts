@@ -12,3 +12,16 @@ declare module 'cloudflare:workers' {
   const env: Env;
   export { env };
 }
+
+// Cloudflare's Turnstile script (loaded via a plain <script src> tag, not
+// an npm package) attaches this global. Minimal surface — just what
+// coaching/index.astro's client script calls.
+interface TurnstileGlobal {
+  reset: (widgetId?: string) => void;
+}
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileGlobal;
+  }
+}

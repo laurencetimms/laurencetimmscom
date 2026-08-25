@@ -333,6 +333,12 @@ main {
   overflow: hidden;
 }
 
+/* Cloudflare renders its own widget chrome inside this container —
+   just give it breathing room, no other styling to hand it. */
+.cf-turnstile {
+  margin: 0.25rem 0;
+}
+
 .contact-submit {
   align-self: flex-start;
   font-family: var(--font-mono);

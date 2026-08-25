@@ -7,6 +7,7 @@ export const prerender = false;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_MESSAGE_LENGTH = 5000;
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
 // Strips characters that could inject extra headers or corrupt the ones
 // we build (subject, Reply-To). Never applied to the message body, which
@@ -22,6 +23,24 @@ function jsonResponse(body: unknown, status: number): Response {
   });
 }
 
+async function verifyTurnstile(token: string, remoteIp: string | null): Promise<boolean> {
+  const body = new URLSearchParams();
+  body.set('secret', env.TURNSTILE_SECRET_KEY);
+  body.set('response', token);
+  if (remoteIp) body.set('remoteip', remoteIp);
+
+  try {
+    const res = await fetch(TURNSTILE_VERIFY_URL, { method: 'POST', body });
+    const data = (await res.json()) as { success?: boolean };
+    return data.success === true;
+  } catch {
+    // Cloudflare's own siteverify endpoint being unreachable isn't the
+    // visitor's fault, but we still fail closed — this is bot defence,
+    // not a feature to degrade quietly.
+    return false;
+  }
+}
+
 export const POST: APIRoute = async ({ request }) => {
   let payload: Record<string, unknown>;
   try {
@@ -33,13 +52,18 @@ export const POST: APIRoute = async ({ request }) => {
   // Honeypot: a field real visitors never see or fill in. If it has any
   // value, this is a bot — return a success response without sending
   // anything. Silent discard beats an error a bot can learn from.
-  //
-  // TODO(turnstile): once the Turnstile Spin flow is wired up, verify a
-  // `token` field here (siteverify call to Cloudflare) before proceeding,
-  // and reject with 400 on failure.
   const honeypot = typeof payload.website === 'string' ? payload.website.trim() : '';
   if (honeypot) {
     return jsonResponse({ ok: true }, 200);
+  }
+
+  const turnstileToken = typeof payload.token === 'string' ? payload.token : '';
+  if (!turnstileToken) {
+    return jsonResponse({ ok: false, error: 'Please complete the verification checkbox.' }, 400);
+  }
+  const verified = await verifyTurnstile(turnstileToken, request.headers.get('CF-Connecting-IP'));
+  if (!verified) {
+    return jsonResponse({ ok: false, error: 'Verification failed. Please try again.' }, 400);
   }
 
   const name = typeof payload.name === 'string' ? payload.name.trim() : '';

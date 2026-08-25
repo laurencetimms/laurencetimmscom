@@ -18,6 +18,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# Workers local secrets (see .dev.vars.example) — never commit real values
+.dev.vars
+
 # macOS-specific files
 .DS_Store
 
