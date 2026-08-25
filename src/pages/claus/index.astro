@@ -1,11 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'CLAUS',
+  description: 'CLAUS is an AI coaching platform demonstrating how Claude + Skills augments human coaches.',
+  url: 'https://claus.laurencetimms.com',
+  applicationCategory: 'BusinessApplication',
+  author: {
+    '@type': 'Person',
+    name: 'Laurence Timms',
+    url: 'https://laurencetimms.com',
+  },
+};
 ---
 <Layout
   title="CLAUS"
   path="/claus/"
   description="CLAUS is an AI coaching platform demonstrating how Claude + Skills augments human coaches."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <span class="subbrand-badge">Project</span>
   <h1>CLAUS</h1>
   <div class="prose">
@@ -15,6 +31,11 @@ import Layout from '../../layouts/Layout.astro';
       built as an open-core platform: the coaching skills underneath it are
       published openly (see <a href="/skills/">Skills</a>), while the
       platform itself is a working MVP.
+    </p>
+    <p>
+      It's live at
+      <a href="https://claus.laurencetimms.com"><strong>claus.laurencetimms.com</strong></a>
+      — not just a page about the idea, but the running application.
     </p>
     <p>
       It includes "The Demo" — a scenario showing a fictional team, Team

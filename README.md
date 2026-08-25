@@ -23,6 +23,24 @@ Design tokens (colour, type) live in `src/styles/global.css`. Shared
 layout, nav, and the site-wide `Person` schema.org JSON-LD live in
 `src/layouts/Layout.astro`.
 
+`/writing/` is an Astro content collection (`src/content.config.ts`),
+sourced from markdown files in `src/content/writing/`.
+
+## Adding a writing piece
+
+Drop a markdown file in `src/content/writing/` with frontmatter matching
+the schema in `src/content.config.ts` (`title`, `description`, `maturity`,
+`published`, optionally `updated`, `draws_on`, `draft`). The filename
+becomes the slug — the route and sitemap entry are automatic, no other
+file needs touching.
+
+`maturity` is shown to readers rather than hidden: `alpha` (first cut,
+will change), `beta` (substantially settled), `current` (says what I want
+it to say). When revising a published piece, bump `updated` and move
+`maturity` along — that's what lets a crawler see the piece improving
+rather than sitting static (see the per-article `dateModified` in
+`src/pages/writing/[...slug].astro`).
+
 ## Local development
 
 ```bash

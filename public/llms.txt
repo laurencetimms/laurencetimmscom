@@ -10,6 +10,7 @@ technology and public-sector delivery organisations.
 
 ## Writing
 - [Writing index](https://laurencetimms.com/writing/): frameworks and essays on coaching, organisational change, and software delivery
+- [How popular management frameworks are made](https://laurencetimms.com/writing/how-popular-frameworks-are-made/): eight moves that turn a fragmented research literature into a book you can act on, and what gets lost on the way
 
 ## Coaching
 - [Coaching](https://laurencetimms.com/coaching/): approach, pathway, and how to work with me
@@ -20,6 +21,7 @@ technology and public-sector delivery organisations.
 
 ## Projects
 - [CLAUS](https://laurencetimms.com/claus/): AI coaching platform demonstrating Claude + Skills augmenting human coaches
+- [CLAUS (live application)](https://claus.laurencetimms.com): the running platform, not just a page about it
 - [Projects index](https://laurencetimms.com/projects/): all software and game projects
 - [LoadedZone](https://laurencetimms.com/loadedzone/): zone 2 rucking site with a Pandolf-equation load calculator
 - [Walk](https://laurencetimms.com/walk/): contemplative walking app, generative audio, anti-engagement design

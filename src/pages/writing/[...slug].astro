@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('writing', ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const maturityNote = {
+  alpha: 'First cut — the argument is right but the wording and structure are likely to change.',
+  beta: 'Substantially settled — expect only small revisions from here.',
+  current: 'Says what I want it to say.',
+};
+
+const path = `/writing/${entry.id}/`;
+const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: entry.data.title,
+  description: entry.data.description,
+  datePublished: isoDate(entry.data.published),
+  dateModified: isoDate(entry.data.updated ?? entry.data.published),
+  author: {
+    '@type': 'Person',
+    name: 'Laurence Timms',
+    url: 'https://laurencetimms.com',
+  },
+  mainEntityOfPage: `https://laurencetimms.com${path}`,
+};
+---
+<Layout title={entry.data.title} path={path} description={entry.data.description}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <article class="article">
+    <header class="article-head">
+      <span class={`maturity maturity--${entry.data.maturity}`}>{entry.data.maturity}</span>
+      <h1>{entry.data.title}</h1>
+      <p class="post-meta">
+        Published {dateFormat.format(entry.data.published)}
+        {entry.data.updated && <> · updated {dateFormat.format(entry.data.updated)}</>}
+      </p>
+      <p class="maturity-note"><em>{maturityNote[entry.data.maturity]}</em></p>
+    </header>
+
+    <div class="prose article-body">
+      <Content />
+    </div>
+
+    {entry.data.draws_on.length > 0 && (
+      <footer class="draws-on">
+        <p class="post-meta">Draws on</p>
+        <ul>
+          {entry.data.draws_on.map((source) => <li>{source}</li>)}
+        </ul>
+      </footer>
+    )}
+
+    <p><a href="/writing/">&larr; All writing</a></p>
+  </article>
+</Layout>

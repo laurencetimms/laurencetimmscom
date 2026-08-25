@@ -1,5 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf()
+);
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 <Layout
   title="Writing"
@@ -15,6 +22,27 @@ import Layout from '../../layouts/Layout.astro';
       book you need the rest of to understand. Each piece names its source
       material plainly rather than repackaging it as something new.
     </p>
-    <p>This section is being populated first. Planned pieces include a walkthrough of the Incomplete Leader model, a study of how popular frameworks translate research into practice, and a case study on tiering software-compliance rigour by risk.</p>
+    <p>
+      Pieces carry a maturity marker rather than being polished offline and
+      released once: <strong>alpha</strong> is a first cut that will change,
+      <strong>beta</strong> is substantially settled, <strong>current</strong>
+      says what I want it to say.
+    </p>
   </div>
+
+  <ul class="post-list">
+    {entries.map((entry) => (
+      <li class="post-item">
+        <a href={`/writing/${entry.id}/`}>
+          <span class={`maturity maturity--${entry.data.maturity}`}>{entry.data.maturity}</span>
+          <h2>{entry.data.title}</h2>
+          <p>{entry.data.description}</p>
+          <p class="post-meta">
+            Published {dateFormat.format(entry.data.published)}
+            {entry.data.updated && <> · updated {dateFormat.format(entry.data.updated)}</>}
+          </p>
+        </a>
+      </li>
+    ))}
+  </ul>
 </Layout>

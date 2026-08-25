@@ -159,3 +159,106 @@ main {
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
+/* ===========================================================
+   Writing: index list + article page
+   =========================================================== */
+
+.post-list {
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.post-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.post-item a {
+  display: block;
+  padding: 1.5rem 0;
+  text-decoration: none;
+}
+
+.post-item h2 {
+  font-size: 1.3rem;
+  margin: 0.5em 0 0.3em;
+}
+
+.post-item p { margin: 0 0 0.4em; }
+.post-item p:last-child { margin-bottom: 0; }
+
+.post-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Not colour/border alone: the badge carries its own text label
+   ("alpha"/"beta"/"current"), so the 1px border is decoration on top
+   of a marker that already reads without it. */
+.maturity {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  padding: 0.15em 0.5em;
+  border-radius: 2px;
+}
+
+.maturity--alpha { color: var(--heather); }
+.maturity--beta { color: var(--ink-soft); }
+.maturity--current { color: var(--moss); }
+
+.article {
+  max-width: 42rem;
+}
+
+.article-head {
+  margin-bottom: 2rem;
+}
+
+.article-head h1 {
+  margin: 0.6em 0 0.3em;
+}
+
+.maturity-note {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin: 0.6em 0 0;
+}
+
+.article-body {
+  max-width: 42rem;
+}
+
+.article-body h2 {
+  font-size: 1.4rem;
+  margin-top: 1.75em;
+}
+
+.article-body h3 {
+  font-size: 1.15rem;
+  margin-top: 1.5em;
+}
+
+.draws-on {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.draws-on ul {
+  margin: 0.5em 0 0;
+  padding-left: 1.2em;
+}
+
+.draws-on li {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin-bottom: 0.3em;
+}
