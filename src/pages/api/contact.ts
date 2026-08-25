@@ -30,26 +30,48 @@ function jsonResponse(body: unknown, status: number): Response {
   });
 }
 
+interface TurnstileResult {
+  success?: boolean;
+  action?: string;
+  hostname?: string;
+  'error-codes'?: string[];
+}
+
 async function verifyTurnstile(token: string, remoteIp: string | null): Promise<boolean> {
   const body = new URLSearchParams();
   body.set('secret', env.TURNSTILE_SECRET_KEY);
   body.set('response', token);
   if (remoteIp) body.set('remoteip', remoteIp);
 
+  let data: TurnstileResult;
   try {
     const res = await fetch(TURNSTILE_VERIFY_URL, { method: 'POST', body });
-    const data = (await res.json()) as { success?: boolean; action?: string; hostname?: string };
-    return (
-      data.success === true &&
-      data.action === TURNSTILE_ACTION &&
-      data.hostname === TURNSTILE_HOSTNAME
-    );
-  } catch {
+    data = (await res.json()) as TurnstileResult;
+  } catch (err) {
     // Cloudflare's own siteverify endpoint being unreachable isn't the
     // visitor's fault, but we still fail closed — this is bot defence,
     // not a feature to degrade quietly.
+    console.error('turnstile: siteverify request failed', err);
     return false;
   }
+
+  const verified =
+    data.success === true && data.action === TURNSTILE_ACTION && data.hostname === TURNSTILE_HOSTNAME;
+
+  if (!verified) {
+    // Diagnostic only — never sent to the client, just Workers logs.
+    // No secret or token in here, just siteverify's own response shape.
+    console.error('turnstile: verification failed', {
+      success: data.success,
+      action: data.action,
+      expectedAction: TURNSTILE_ACTION,
+      hostname: data.hostname,
+      expectedHostname: TURNSTILE_HOSTNAME,
+      errorCodes: data['error-codes'],
+    });
+  }
+
+  return verified;
 }
 
 export const POST: APIRoute = async ({ request }) => {
