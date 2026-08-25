@@ -214,6 +214,16 @@ verifies it against Cloudflare's `siteverify` endpoint before any other
 validation runs. A submission with no token, or a token that fails
 verification, never reaches the name/email/message checks or the mailer.
 
+Verification checks more than `success`: the widget carries
+`data-action="contact"`, and the server checks siteverify's returned
+`action` and `hostname` against that action and `laurencetimms.com`
+before accepting the token — not just whether it solved the challenge.
+This is what Cloudflare's own Turnstile Spin flow specifies for a wired
+integration, and it matters here specifically: without it, a token solved
+anywhere the same site key is ever embedded would be replayable against
+this form. There's only one protected surface today, but the check costs
+nothing and the site key isn't scoped to just this page.
+
 The secret never passes through an agent or a chat transcript — it's a
 Workers secret only. Set it once with `npx wrangler secret put
 TURNSTILE_SECRET_KEY` against the deployed Worker (typed interactively,

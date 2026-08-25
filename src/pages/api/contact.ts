@@ -7,7 +7,14 @@ export const prerender = false;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_MESSAGE_LENGTH = 5000;
+const MAX_TOKEN_LENGTH = 2048;
 const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+// The widget's data-action and this site's production hostname — checked
+// against siteverify's response, not just `success`, so a token solved
+// for a different surface or replayed against a cloned page is rejected
+// even if it's otherwise genuine. See DECISIONS.md.
+const TURNSTILE_ACTION = 'contact';
+const TURNSTILE_HOSTNAME = 'laurencetimms.com';
 
 // Strips characters that could inject extra headers or corrupt the ones
 // we build (subject, Reply-To). Never applied to the message body, which
@@ -31,8 +38,12 @@ async function verifyTurnstile(token: string, remoteIp: string | null): Promise<
 
   try {
     const res = await fetch(TURNSTILE_VERIFY_URL, { method: 'POST', body });
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
+    const data = (await res.json()) as { success?: boolean; action?: string; hostname?: string };
+    return (
+      data.success === true &&
+      data.action === TURNSTILE_ACTION &&
+      data.hostname === TURNSTILE_HOSTNAME
+    );
   } catch {
     // Cloudflare's own siteverify endpoint being unreachable isn't the
     // visitor's fault, but we still fail closed — this is bot defence,
@@ -58,7 +69,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const turnstileToken = typeof payload.token === 'string' ? payload.token : '';
-  if (!turnstileToken) {
+  if (!turnstileToken || turnstileToken.length > MAX_TOKEN_LENGTH) {
     return jsonResponse({ ok: false, error: 'Please complete the verification checkbox.' }, 400);
   }
   const verified = await verifyTurnstile(turnstileToken, request.headers.get('CF-Connecting-IP'));
