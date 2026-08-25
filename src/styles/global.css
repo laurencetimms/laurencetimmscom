@@ -50,7 +50,9 @@ a {
 }
 a:hover { text-decoration-color: var(--ink); }
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
   outline: 2px solid var(--moss);
   outline-offset: 3px;
 }
@@ -262,3 +264,104 @@ main {
   font-size: 0.95rem;
   margin-bottom: 0.3em;
 }
+
+/* ===========================================================
+   Contact form (/coaching/)
+   =========================================================== */
+
+.contact {
+  max-width: 30rem;
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.contact h2 {
+  font-size: 1.6rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Filled background + a heavier, stronger-toned border than the
+   decorative hairline used elsewhere — an input needs to read as
+   interactive on its own, not just via the border. */
+.field input,
+.field textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1.5px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 0.6em 0.75em;
+  line-height: 1.5;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+/* Honeypot: pushed off-screen rather than display:none or
+   visibility:hidden, which some bots specifically check for and skip.
+   aria-hidden + tabindex="-1" keep it out of the accessibility tree and
+   tab order, so it can't trap a screen-reader or keyboard user. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-submit {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--paper-raised);
+  background: var(--moss);
+  border: 1.5px solid var(--moss);
+  border-radius: 3px;
+  padding: 0.65em 1.5em;
+  cursor: pointer;
+}
+
+.contact-submit:hover:not(:disabled) { filter: brightness(1.1); }
+
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-status {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  min-height: 1.2em;
+  margin: 0;
+}
+
+/* Colour is a reinforcement here, not the only marker — the status text
+   itself always says whether the message sent. */
+.form-status--success { color: var(--moss); }
+.form-status--error { color: var(--heather); }
