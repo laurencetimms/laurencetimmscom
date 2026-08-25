@@ -1,6 +1,6 @@
 ---
 title: "How popular management frameworks are made"
-description: "Eight moves that turn a fragmented research literature into a book you can act on — and what gets lost on the way."
+description: "From science to bookshop: how to transform research literature into the next best-selling pop science paperback."
 maturity: alpha
 published: 2026-08-25
 draws_on:
@@ -11,42 +11,40 @@ draws_on:
 ---
 
 Popular books about how people work are often dismissed by practitioners who
-have read the underlying research: the book oversimplifies, the effect sizes
+have read the underlying research. They complain that the author oversimplifies, the effect sizes
 are smaller than implied, the boundary conditions are missing. All true. But
-the dismissal skips the interesting question, which is that these books
-*work* — people read them and change what they do, which is more than most
+their dismissal skates over one of the most interesting facts, which is that these books
+*work*. People read them and change what they do, which is more than most
 of the research achieves on its own.
 
-So it's worth asking what the translation actually involves. Having read four
-of them closely with that question in mind, the machinery is surprisingly
-consistent. Eight moves.
+So it's worth asking what the translation from research to bookshelf actually involves. Having read four
+of them closely with that question in mind, the process is surprisingly
+consistent. Meet the Eight Moves.
 
-## The eight moves
+## The Eight Moves
 
-### 1. Pick one load-bearing construct, and amputate everything else
+### 1. Pick one lightning insight, and amputate everything else
 
 The research literature on almost any human topic is fragmented: competing
 models, moderators, populations where the finding doesn't replicate. The
-popular book selects one construct and cuts the rest away. Not summarised,
-not caveated — removed.
+popular book selects one lightning insight and cuts the rest away. Not summarised, not appended. Gone.
 
 ### 2. Convert description into imperative
 
-Research describes what was observed. The book instructs: second person,
-active voice, do this. This is not a finding restated more clearly. It's a
-design decision layered on top of a finding, and the layer is invisible to
-the reader.
+Research describes what was observed, but the book instructs: second person,
+active voice, do this. This isn't about finding ways to restate the research finding in accessible prose. It's a
+design decision applied to a research finding, and that's barely noticed by the reader.
 
 ### 3. Coin names
 
 A construct without a handle can't be picked up, and can't be carried into a
 conversation with someone who hasn't read the book. Naming is what lets the
-idea travel without the author.
+idea by word of mouth.
 
 ### 4. Shrink the first required action below the resistance threshold
 
 Whatever the reader has to do first must be small enough that not doing it
-feels absurd. The bar isn't "achievable" — it's "harder to refuse than to
+feels absurd. The bar isn't "achievable". It's more like "harder to refuse than to
 comply".
 
 ### 5. Position against a famous idea
@@ -70,40 +68,38 @@ something usable.
 
 ### 8. Decide what you're selling: a tool, or a permission
 
-Clear and Erikson sell tools — do this, get that. Burkeman and Epstein sell
-permission — you're allowed to stop doing the thing you thought you had to.
-These are different products with different readers, and conflating them
-produces a book that does neither.
+Clear and Erikson sell tools: do this, get that. Burkeman and Epstein sell
+permission: you're allowed to stop doing the thing you thought you had to.
+These are different products with different readers, and the best authors are clear on which they're creating.
 
 ## The machinery is content-independent
 
-This is the part worth sitting with. Every one of these moves can be
+Incredibly, the author doesn't even need solid scientific research to build on. Every one of these eight moves can be
 performed on a construct with no scientific basis at all.
 
-*Surrounded by Idiots* executes all eight, competently, on DISC — a
+*Surrounded by Idiots* executes all eight, competently, on what Erikson calls "DISC", a
 personality typology with no meaningful validity evidence behind it. The
 translation machinery worked exactly as designed. It just had nothing
 underneath it.
 
-Which means the machinery supplies no integrity of its own. That has to come
+Which means the machinery provides no additional scientific integrity of its own. That has to come
 from the author, separately, as a deliberate act. A well-made framework and a
-well-made framework built on nothing look identical from the outside — the
-same eight moves, executed the same way.
+well-made framework built on nothing look identical from the outside.
 
 ## What is always lost
 
 Three things go, every time:
 
-- **Effect sizes.** How much the thing actually does.
+- **Effect sizes.** How much the thing actually does in study conditions.
 - **Boundary conditions and moderators.** Who it works for, when, and under
-  what circumstances it reverses.
+  what circumstances it doesn't.
 - **The fragmentation of the field itself.**
 
 That third loss is the one people underrate. When a literature is genuinely
 contested, the contest is information. A reader who learns that researchers
 disagree about something has learned a true and useful thing about how
 settled the question is. The popular book systematically removes exactly that
-signal — not by lying, but by presenting one model without mentioning that
+signal not by lying, but by presenting its favoured  model without mentioning that
 others exist.
 
 ## Why this matters if you use frameworks at work
