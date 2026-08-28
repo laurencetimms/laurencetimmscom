@@ -371,3 +371,34 @@ main {
    itself always says whether the message sent. */
 .form-status--success { color: var(--moss); }
 .form-status--error { color: var(--heather); }
+
+/* ===========================================================
+   Portrait + intro layout (homepage, /coaching/)
+   =========================================================== */
+
+.intro-with-portrait {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+/* Stack rather than squeeze on narrow viewports — photo above the
+   text, not a cramped text column beside it. */
+@media (max-width: 480px) {
+  .intro-with-portrait {
+    flex-direction: column;
+  }
+}
+
+.portrait {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.portrait--small {
+  width: 130px;
+  height: 130px;
+}

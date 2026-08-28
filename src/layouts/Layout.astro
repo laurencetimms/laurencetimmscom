@@ -5,9 +5,22 @@ interface Props {
   title: string;
   description: string;
   path?: string;
+  /** Absolute URL. Defaults to the site-wide OG/Twitter portrait. */
+  image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
-const { title, description, path = '/' } = Astro.props;
+const {
+  title,
+  description,
+  path = '/',
+  image = 'https://laurencetimms.com/images/laurence-timms-og.jpg',
+  imageAlt = 'Laurence Timms',
+  imageWidth = 1200,
+  imageHeight = 630,
+} = Astro.props;
 const siteName = 'Laurence Timms';
 const fullTitle = path === '/' ? `${siteName} — Coaching, systems change, and CLAUS` : `${title} — ${siteName}`;
 
@@ -39,6 +52,14 @@ const projectPaths = ['/projects/', '/loadedzone/', '/walk/', '/lab/'];
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`https://laurencetimms.com${path}`} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
+    <meta property="og:image:alt" content={imageAlt} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,6 +76,7 @@ const projectPaths = ['/projects/', '/loadedzone/', '/walk/', '/lab/'];
       '@type': 'Person',
       name: 'Laurence Timms',
       url: 'https://laurencetimms.com',
+      image: 'https://laurencetimms.com/images/laurence-timms.webp',
       description:
         'Coach working with leaders and teams through organisational change, software delivery improvement, and AI-augmented coaching practice. Building CLAUS, an open Claude Skills coaching platform.',
       knowsAbout: [

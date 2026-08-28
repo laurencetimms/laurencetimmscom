@@ -232,3 +232,26 @@ never as a command-line argument), and for local `wrangler dev` copy
 there. Until the production secret is set, every real contact-form
 submission will fail verification — that's `wrangler secret put` as a
 required step after this ships, not an optional one.
+
+---
+
+## The portrait
+
+Appears on `/coaching/` and the homepage only — deliberately not on
+`/writing/` article pages. A byline photo on an essay reads as content
+marketing; the writing is meant to stand on its own, named source material
+and all, without a headshot doing persuasion work next to it.
+
+Images are hand-exported at fixed sizes (`public/images/laurence-timms.webp`
+at 800×800, `laurence-timms-400.webp` at 400×400) rather than run through
+`astro:assets`, because the Cloudflare adapter is configured with
+`imageService: 'passthrough'` — there's no build-time resizing or
+optimisation available. Plain `<img>` tags with a manual `srcset` do the
+work `<Image>` normally would. A new image means exporting the sizes it
+needs *before* committing it; nothing downstream will do that for you.
+
+`og:image` is a JPG (`laurence-timms-og.jpg`), not WebP, even though the
+portrait itself is WebP — some link-preview scrapers (older crawlers,
+some chat apps) still handle WebP poorly or not at all for social cards.
+The portrait proper stays WebP since browsers rendering the actual page
+have no such problem.
