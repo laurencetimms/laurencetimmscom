@@ -255,3 +255,22 @@ portrait itself is WebP — some link-preview scrapers (older crawlers,
 some chat apps) still handle WebP poorly or not at all for social cards.
 The portrait proper stays WebP since browsers rendering the actual page
 have no such problem.
+
+---
+
+## Walk's privacy policy (`/walk/privacy/`)
+
+Hosted here rather than anywhere else because the Play Store listing
+requires a stable, working URL for it — the previous one pointed at
+`laurencetimms.blog`, which is retired and dead. **This URL must not be
+moved or renamed without updating it in Play Console first** (App content
+→ Privacy policy); Google re-checks it, and a broken link there can get
+the listing flagged.
+
+The page is deliberately plain: no portrait, no marketing copy, static
+HTML with no client-side script, because it exists to be read by a user
+or a Play reviewer who wants a straight answer, not a pitch.
+
+`/walk/`'s `SoftwareApplication` schema omits `aggregateRating` on
+purpose — the app has too few ratings for an aggregate figure to mean
+anything, and inventing one would misrepresent it.

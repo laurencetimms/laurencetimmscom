@@ -1,19 +1,114 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.walk.app';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Walk',
+  description:
+    'Walk is an Android app that supports creative thinking through sound, gentle movement, and minimal distraction.',
+  url: PLAY_STORE_URL,
+  applicationCategory: 'ProductivityApplication',
+  operatingSystem: 'Android',
+  author: {
+    '@type': 'Person',
+    name: 'Laurence Timms',
+    url: 'https://laurencetimms.com',
+  },
+};
+
+const research = [
+  {
+    name: 'Default Mode Network research (Marcus Raichle)',
+    note: 'the brain network active during rest and mind-wandering — the kind of unstructured thinking a focused task switches off.',
+  },
+  {
+    name: 'Focused and diffuse thinking (Barbara Oakley)',
+    note: 'insight often needs an unfocused mode to work in, not sustained concentration.',
+  },
+  {
+    name: 'Unconscious thought theory (Ap Dijksterhuis)',
+    note: 'complex problems can be worked on better without conscious attention on them.',
+  },
+  {
+    name: 'Stanford research on walking and creativity',
+    note: 'walking measurably increases creative output compared to sitting, during the walk and shortly after.',
+  },
+  {
+    name: 'Attention Restoration Theory (Kaplan & Kaplan)',
+    note: 'certain environments restore depleted directed attention rather than demanding more of it.',
+  },
+];
 ---
 <Layout
   title="Walk"
   path="/walk/"
-  description="Walk — a contemplative walking app for Android, built on generative audio and anti-engagement design."
+  description="Walk — an Android app that supports creative thinking through sound, gentle movement, and minimal distraction."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <span class="subbrand-badge">Sub-brand</span>
   <h1>Walk</h1>
   <div class="prose">
     <p>
-      Walk is an Android app for contemplative walking, built around
-      generative audio rather than tracked routes or streaks. It's designed
-      deliberately against the engagement-maximising patterns most apps use.
+      Walk is an Android app that supports creative thinking through sound,
+      gentle movement, and minimal distraction.
     </p>
-    <p>This page will carry the design rationale and a link to the app once it's out of closed testing.</p>
+
+    <h2>The design stance</h2>
+    <p>
+      Walk is deliberately not a fitness app, a meditation app, or a
+      productivity tracker. There are no goals, no metrics, no social
+      features, and no gamification — nothing here is trying to keep you
+      coming back.
+    </p>
+    <p>
+      The walking screen is plain black. It's designed to feel a little
+      "off" even while it's on, rather than inviting you to look at it. The
+      app's job is to disappear once a walk has started, not to hold your
+      attention.
+    </p>
+
+    <h2>What it's grounded in</h2>
+    <p>
+      The design isn't a style choice so much as a bet on a specific body of
+      research about how creative thinking actually happens:
+    </p>
+    <ul>
+      {research.map((r) => (
+        <li><strong>{r.name}</strong> — {r.note}</li>
+      ))}
+    </ul>
+
+    <h2>What it does</h2>
+    <ul>
+      <li>
+        Five generative audio modules, built on non-looping algorithms that
+        evolve slowly rather than repeat — nothing to notice looping,
+        nothing to get used to.
+      </li>
+      <li>
+        Single-tap voice memo capture, for catching a thought without
+        breaking stride or fighting an interface.
+      </li>
+      <li>
+        A ten-second pre-walk settling period with a sensory prompt, before
+        the walk itself starts — a deliberate transition in, not straight
+        into motion.
+      </li>
+      <li>The walking screen itself: plain, black, minimal.</li>
+    </ul>
+
+    <h2>Privacy</h2>
+    <p>
+      Walk collects no personal data, keeps everything on your device, and
+      shares nothing with third parties. Full detail: <a href="/walk/privacy/">privacy policy</a>.
+    </p>
+
+    <p>
+      Walk is live on Google Play: <a href={PLAY_STORE_URL}><strong>play.google.com/store/apps/details?id=com.walk.app</strong></a>
+    </p>
   </div>
 </Layout>
