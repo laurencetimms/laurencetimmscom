@@ -9,116 +9,73 @@ draws_on:
   - "Deci & Ryan (2000), self-determination theory"
 ---
 
-It's objective-setting time at work. You have a goal that genuinely matters
-to you: get better at leading through ambiguity.
+A couple of decades ago I was a very junior project manager in a multinational organisation. It was the first time in my professional life that I'd experienced 
+proper written down rules and processes. I was marvellously impressed. It seemed like they'd thought of everything. For example, twice a year we'd set professional
+goals for ourselves, working closely with our line managers. I did my prep reading, read my performance reviews, and booked in my goal-setting session with my boss.
+It did not go well. I went into the meeting with an ambitious list of goals and a sense of professional pride, thinking my boss was going to be terribly impressed. 
+He was not. He took one look at my handwritten goals and scribbled something across them in red biro (it was a long time ago, as I said). His note said "Not SMART".
+He explained that a goal wasn't a goal until it was Specific, Measurable, Achievable, Relevant, and Time-bound. None of my goals had these qualities.
+"Look," he said, tapping the paper. "'Get better at managing projects through periods of uncertainty'. How are we going to measure that? How long will it take you to achieve that goal?"
+With the wind well and truly taken out of my sails, I trudged away to knock my goals into shape and make them SMART.
 
-You open the intranet to log your objective and the form insists that all your goals are SMART. That's M for Measurable. How on earth are you going to measure this goal?
+But no matter how hard I tried, I could never hit every letter of the SMART acronym for my goals. For every one that I worked out how to measure, there was one that absolutely resisted measurement. 
+Some were nicely specific, and some were kind of hand-wavy. Some were definitely achieveable, others I just wasn't sure about. 
+So I fudged it. I dropped the goals that resisted SMARTening and re-wrote the others until they ticked all the SMART boxes. It was massively depressing, and made me feel completely indifferent about them.
 
-You spend forty minutes trying to re-shape a real goal that actually matters to you into something
-countable. You end up writing *attend two leadership development workshops by
-end of Q3* and it feels dispiriting. The SMART version of your goal is
-worse than the vague one you started with, but they said your goals have to be SMART and you've got seven more objectives to type up.
+Recently I sat in as an observer on a coaching session, and I saw the same thing happen all over again. The coach, new to the role and eager to follow best practice, swooped on the client within a few moments of the conversation starting, and demanded to know what their goal was. The client began to express themselves, talking about a long-held ambition of theirs. The coached jumped in. "Let's turn that into a SMART goal, shall we? You're more likely to achieve it that way."
+The client nodded, although I could see that the gleam in their eye had dulled as soon as the conversation turned from ambitions to specific and measurable. I sighed (privately, to myself), momentarily re-living my goal-setting grief of the past.
 
-You attend the workshops, but you honestly can't measure whether you are any better at
-leading through ambiguity than you were before.
+It's understandable, and I'm not trying to demonise that coach or indeed coaching in general. Goal-setting practice in coaching has been largely imported from the corporate management toolkit, and SMART is one of those tools. I've come to realise that it's often not the right tool for the goal-setting job. SMART's five criteria don't embrace the sheer variety and rich complexity
+of human goals. When we talk about what we want to achieve, we just don't express them in those nice, neat corporate terms. We *feel* our goals in ways that are sometimes hard to put into words. Trying to sharpen a deeply-felt goal with a corporate tool like SMART is like trying to chop down a tree with a scalpel.
 
-## Then you get a coach, and they do the same thing
+So how can we get to grips with our goals more effectively? I thought back to my "Get better at managing projects through periods of uncertainty" goal from all those years ago, and realised that it wasn't as sloppy or vague as my manager was implying. It was a **learning goal being forced into the shape of
+a performance goal**. I was trying to get better at something. The SMART form
+of a goal wants evidence that I **performed** something. That's not the same as **learning** something.
 
-If you're senior enough, or your organisation is enlightened enough, you
-eventually get a coach to help with goal-setting. They ask you what your goal
-is in the very first coaching session. You say something honest, despite a
-sense that it's somehow vague and hand-wavy. The coach, with best intentions, helps you
-make it SMART: specific, measurable, and time-bound.
-
-Boom. The same thing happens all over again, and this time someone has paid a
-coach to expedite the process.
-
-(By the way, I'm not demonising coaches here. I've fallen into exactly the same trap
-myself, both when setting goals for myself and when coaching clients.)
-
-Goal-setting practice in coaching has been largely imported from management
-practices designed to optimise goal-setting in your average corporation.
-That's not unreasonable. It's just
-that those management practices aren't doing the  same job as helping you surface goals that genuinely express who you're
-trying to become.
-
-## SMART is just one way of looking at things
-
-SMART is the handy tool most commonly associated with goal-setting, and it
-seems to offer everything you ever need to turn your fuzzy ideas into rock
-solid goals. If your goal is S for Specific, M for Measurable, A
-for Achievable, R for Relevant and T for Time-bound then you're good to go.
-
-But SMART's five criteria don't embrace the sheer variety and rich complexity
-of human goals. It's really just a tool sharpen a reasonably clear goal so
-that both you and your boss can agree when it's done.
-
-Goal sharpness is genuinely useful. When a goal is straightforward, when you know
-how to do it and you just need to get on with it, the kind of sharpening that
-SMART offers works a treat. It's not just management voodoo either, because there are decades of research that show that sharp, specific, challenging goals beat "do your
-best" every time.
-
-But like our vague "get better at leading through ambiguity" goal, some goals are resistant to sharpening. Our reflex is to keep trying the SMARTen our goal until it's unrecognisable. SMART doesn't help with vague goals. So what do you do?
-
-The "leading through ambiguity" goal isn't vague
-because you were sloppy. It's a **learning goal being forced into the shape of
-a performance goal**. You're trying to get better at something. The SMART form
-of the goal wants evidence that you performed. Those are different things, and
-no amount of sharpening converts one into the other. 
-
-## The other dials
-
-There are more ways to look at goals than SMART suggests. Ruth Price's chapter
+Ruth Price's chapter
 on goal-setting in *The Coaches' Handbook* lays out a total of sixteen
 dimensions along which goals actually vary: approach/avoidance,
-proximal/distal, concrete/abstract, conscious/unconscious, and a dozen more.
-It's the most useful thing I've read on the subject of goal-setting and I
-recommend it to any coach.
-
-Sixteen is too many to hold in your head at once, so here I'm offering the five that seem to
-help the most when your goals aren't coalescing.
-
-## Five questions
+proximal/distal, concrete/abstract, conscious/unconscious, and a dozen more. When I read it for the first time, I began to understand the beautiful and rich complexity of human goals. 
+I was going to surface them all in this article, but in all honesty sixteen is too many to hold in your head at once. So I've picked out the five I think will
+help the most when you - or your client, if you're coaching - need to get to grips with your goals.
 
 ### 1. Is this goal actually mine?
 
-Make a distinction between goals chosen freely by you in pursuit of something you
-actually want, versus goals you've adopted because someone else wants you to do them. We're always more motivated by goals that have come from within.
+Make a distinction between goals chosen freely by you in pursuit of an ambition that's actually yours, versus goals you've adopted because someone else wants you to do them. We're always more motivated by goals that have come from within.
 
 Watch out for adopted goals that get under your skin and begin to feel like
-they were chosen by you all along. If a goal was handed to you in a 360 review,
-and you talk about it twice-weekly with the boss, it'll start to sound like it was yours all along.
+they were chosen by you all along. If a goal was handed to you in a 360 review or a 1:1,
+and you check in on it once a week with the boss, it'll quickly begin to feel like it was yours all along.
 
 This is the question I'd ask first, because if the answer is no, the other
-four don't matter much.
+four don't matter much. There 
 
 ### 2. Am I moving toward something, or away from something?
 
 Approach goals name a state you want to reach. Avoidance goals name a state
 you want to escape.
 
-*Stop being so disorganised* and *run my week in a way I can be proud of* can
-describe identical behaviour, but they don't feel the same from the inside.
+*Stop being so disorganised* and *run my week in a way I can be proud of* really
+describe identical behaviour, but they don't feel the same when you're trying to achieve them.
 Goals phrased in the language of avoidance tend to keep your attention on the
 thing you're trying to get away from.
 
-If you find yourself expressing goals in terms of escape, try to invert it and
-express it instead in terms of what you want to move towards.
+If you find yourself expressing goals in terms of escape or avoidance, try to invert them and
+express them instead in terms of what you want to move towards.
 
 ### 3. Am I trying to perform, or trying to learn?
 
 Performance goals are about executing well. Learning goals are about getting
-better at something you don't know how to do.
+better at something you don't know how to do yet.
 
-This is the distinction that sets the scene at the top of this article. "Get
-better at leading through ambiguity" was always a learning goal, not a
+This is the distinction that finally dawned on me some decades after my junior project manager years. "Get better at managing projects through periods of uncertainty" was always a learning goal, not a
 performance goal. When the real goal is learning, demanding SMART-like
-performance measures won't make it a better goal.
+performance measures won't make it a better goal. Instead, elaborate the goal in terms of the learning activities that will need to happen.
 
 Learning goals also tend to hold up better when the task is genuinely hard,
 because a difficult thing will pique your interest when you're trying to learn
-it, whereas trying to perform something that you don't know how to do feels
-threatening.
+it, whereas trying to perform something that you simply don't know how to do feels
+like you've failed before you've even started.
 
 Ask yourself a simple question: am I trying to get good at this, or just show
 that I've accomplished it? If it's the first, it's learning. If it's the
@@ -138,34 +95,32 @@ will feel like failure even when you've kept your end of the bargain.
 
 ### 5. Does the small thing serve the big thing?
 
-Goals stack. There's usually an abstract goal somewhere at the top, which is
-the big reason it matters to you, and then a pyramid of smaller ones below
-that are supposed to serve it.
+Goals stack. There's usually an ambition or an abstract goal somewhere at the top, which is
+the big hand-wavy reason that it matters to you, and then a pyramid of smaller ones below
+that are supposed to help you get there.
 
 Two things go wrong. Sometimes the concrete goals don't stack nicely: you're
-busy, you're getting things done, but none of it adds up to the big thing you
-really care about. And sometimes the concrete goals get so absorbing that the
-big abstract vanishes in the clouds and you kind of forget about it.
+busily getting small goals ticked off, but they don't add up to the big thing you
+really care about. And sometimes the small concrete goals get so absorbing that the
+big ambition vanishes in the clouds and you kind of forget about it.
 
 The check: ask yourself what this goal is in service of, and would achieving
 it actually deliver that?
 
 ## What to do with the answers
 
-Note what these five have in common: not one of them asks you to make the goal
-sharper in the way SMART does.
+Note what these five have in common: not one of them asks you to scalpel-sharpen your goal in the way SMART does.
 
 They ask whether it's yours, which direction it points, what kind of goal it
 is, whether it's within your sphere of influence, and what it adds up to. If a
 goal isn't coalescing, the answer will more often be in one of those than in the
 absence of a SMART metric.
 
-And when the sharpness dial *is* the right one, because the goal genuinely is
+And when SMART *is* the right tool, because the goal genuinely is
 yours, pointed the right way, the right type, in your control, serving
-something real, but you're simply not getting on with it, then by all means
-make it specific and put a date on it. That's what SMART is for.
+something real, then by all means
+make it specific and measurable and everything. That's what SMART is for.
 
-Just stop reaching for it first.
 
 ---
 
