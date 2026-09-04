@@ -2,8 +2,8 @@
 
 > Coach working with leaders and teams through organisational change,
 > software delivery improvement, and AI-augmented coaching practice.
-> Background in software engineering. Building CLAUS, an open Claude
-> Skills coaching platform.
+> Background in software engineering. Building CLAUS, an AI-augmented
+> team dynamics tool for team leaders and team coaches.
 
 Coaching practice: organisational-psychology-informed change coaching for
 technology and public-sector delivery organisations.
@@ -15,13 +15,10 @@ technology and public-sector delivery organisations.
 ## Coaching
 - [Coaching](https://laurencetimms.com/coaching/): approach, pathway, and how to work with me
 
-## Skills
-- [Skills](https://laurencetimms.com/skills/): coaching capability published as open Claude Skills (anthropic/skills format)
-- [CLAUS skills source](https://github.com/laurencetimms/claus): Team Dynamics Coach, Retrospective Formats
-
 ## Projects
-- [CLAUS](https://laurencetimms.com/claus/): AI coaching platform demonstrating Claude + Skills augmenting human coaches
+- [CLAUS](https://laurencetimms.com/claus/): AI-augmented team dynamics tool for team leaders and team coaches
 - [CLAUS (live application)](https://claus.laurencetimms.com): the running platform, not just a page about it
+- [CLAUS source](https://github.com/laurencetimms/claus): Team Dynamics Coach, Retrospective Formats
 - [Projects index](https://laurencetimms.com/projects/): all software and game projects
 - [LoadedZone](https://laurencetimms.com/loadedzone/): zone 2 rucking site with a Pandolf-equation load calculator
 - [Walk](https://laurencetimms.com/walk/): published Android app for creative thinking through sound, gentle movement, and minimal distraction — generative audio, anti-engagement design

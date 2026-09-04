@@ -42,9 +42,9 @@ its own. Consolidating concentrates whatever authority any one section earns
 onto the whole.
 
 `.com` over `.blog` (which I already owned): `.blog` announces "this is a
-blog", which undersells a site carrying a coaching practice, a software
-project, and published agent skills. The old `.blog` should be 301-redirected
-here rather than left live, so authority isn't split across two domains.
+blog", which undersells a site carrying a coaching practice and a software
+project. The old `.blog` should be 301-redirected here rather than left
+live, so authority isn't split across two domains.
 
 ---
 
@@ -77,25 +77,20 @@ app. Both need their own compute regardless of how the domain is structured.
 
 ---
 
-## Skills: the function layer
+## Why `/skills/` was removed, and CLAUS reframed
 
-Coaching frameworks are published as **Claude Skills in the open
-`anthropic/skills` format**. The format became a cross-platform open standard
-in December 2025, so a published skill isn't a Claude-only artefact — it's a
-portable capability package other agent platforms can load.
+The original pitch here was two-sided: coaching frameworks published as
+open Claude Skills (`/skills/`, pointing at the `anthropic/skills` format
+in the CLAUS repo) *and* CLAUS itself as a platform demonstrating "Claude +
+Skills augments a human coach." Two audiences, two pitches, diluting both.
 
-This is the closest thing currently available to "my expertise is directly
-usable by an AI agent" rather than merely readable.
-
-**Policy: published skills default to free loss-leaders / marketing.**
-Whether any individual skill moves to paid access is decided case by case,
-not as a blanket rule. CLAUS in particular demonstrates the "Claude + Skills
-augments a human coach" argument better as an open demo than behind a
-paywall.
-
-GitHub is the canonical home for skills, not this site. `/skills` is an index
-pointing there. Public skill directories will come and go; the repo is the
-durable source of truth.
+That's dropped in favour of one story: **CLAUS is a team dynamics tool
+built for team leaders and team coaches**, not a demo bolted onto a skills
+library. `/skills/` and every link to it are gone from this site
+accordingly. The underlying skills (Team Dynamics Coach, Retrospective
+Formats) still live in the CLAUS repo on GitHub for anyone who goes
+looking — that hasn't changed — but this site no longer promotes them as
+a standalone offering. CLAUS is the product, full stop.
 
 ---
 

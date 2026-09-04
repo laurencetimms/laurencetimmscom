@@ -10,7 +10,6 @@ designed the way it is — read that before making structural changes.
 - `/` — homepage
 - `/writing/` — frameworks & essays
 - `/coaching/` — coaching practice
-- `/skills/` — published Claude Skills index
 - `/claus/` — CLAUS project page
 - `/loadedzone/` — LoadedZone sub-brand
 - `/projects/` — projects hub (linked from nav)

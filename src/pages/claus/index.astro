@@ -5,7 +5,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'CLAUS',
-  description: 'CLAUS is an AI coaching platform demonstrating how Claude + Skills augments human coaches.',
+  description: 'CLAUS is an AI-augmented team dynamics tool for team leaders and team coaches.',
   url: 'https://claus.laurencetimms.com',
   applicationCategory: 'BusinessApplication',
   author: {
@@ -18,7 +18,7 @@ const jsonLd = {
 <Layout
   title="CLAUS"
   path="/claus/"
-  description="CLAUS is an AI coaching platform demonstrating how Claude + Skills augments human coaches."
+  description="CLAUS is an AI-augmented team dynamics tool for team leaders and team coaches."
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -26,20 +26,17 @@ const jsonLd = {
   <h1>CLAUS</h1>
   <div class="prose">
     <p>
-      CLAUS is a working demonstration of how Claude, combined with
-      structured Skills, can augment — not replace — a human coach. It's
-      built as an open-core platform: the coaching skills underneath it are
-      published openly (see <a href="/skills/">Skills</a>), while the
-      platform itself is a working MVP.
+      CLAUS is a team dynamics tool for team leaders and team coaches, built
+      on Claude — augmenting the judgement a leader or coach brings to a
+      team, not replacing it.
     </p>
     <p>
-      It's live at <a href="https://claus.laurencetimms.com"><strong>claus.laurencetimms.com</strong></a>
-      — not just a page about the idea, but the running application.
+      It's live at <a href="https://claus.laurencetimms.com"><strong>claus.laurencetimms.com</strong></a> — not just a page about the idea, but the running application.
     </p>
     <p>
       It includes "The Demo" — a scenario showing a fictional team, Team
-      Jupiter, navigating real dysfunction, as a way of trying the coaching
-      skills in action rather than just reading about them.
+      Jupiter, navigating real dysfunction, as a way of trying CLAUS in
+      action rather than just reading about it.
     </p>
     <p>Source: <a href="https://github.com/laurencetimms/claus">github.com/laurencetimms/claus</a></p>
   </div>
