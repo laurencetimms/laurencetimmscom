@@ -12,6 +12,7 @@ draws_on:
 A couple of decades ago I was a very junior project manager in a multinational organisation. It was the first time in my professional life that I'd experienced 
 proper written down rules and processes. I was marvellously impressed. It seemed like they'd thought of everything. For example, twice a year we'd set professional
 goals for ourselves, working closely with our line managers. I did my prep reading, read my performance reviews, and booked in my goal-setting session with my boss.
+
 It did not go well. I went into the meeting with an ambitious list of goals and a sense of professional pride, thinking my boss was going to be terribly impressed. 
 He was not. He took one look at my handwritten goals and scribbled something across them in red biro (it was a long time ago, as I said). His note said "Not SMART".
 He explained that a goal wasn't a goal until it was Specific, Measurable, Achievable, Relevant, and Time-bound. None of my goals had these qualities.
