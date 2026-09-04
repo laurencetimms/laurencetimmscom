@@ -1,7 +1,7 @@
 ---
 title: "Five questions for better goals"
 description: "Why forcing a goal to be measurable can make it worse, and five better questions to ask when your goals aren't goaling."
-maturity: beta
+maturity: current
 published: 2026-08-26
 draws_on:
   - "Ruth E. Price, 'Goal-setting in coaching', in The Coaches' Handbook (ed. Passmore)"
