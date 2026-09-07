@@ -15,6 +15,7 @@ designed the way it is — read that before making structural changes.
 - `/projects/` — projects hub (linked from nav)
 - `/walk/` — Walk sub-brand
 - `/lab/` — smaller game/software projects
+- `/ai/` — how AI is used in building and writing this site, linked from the footer
 - `public/llms.txt` — machine-readable site summary
 - `public/robots.txt`
 

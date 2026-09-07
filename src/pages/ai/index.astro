@@ -1,0 +1,70 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const description = 'Where AI was involved in the writing, building, and maintenance of this site and its tools, and where it wasn\'t.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How AI is used on this site',
+  description,
+  datePublished: '2026-09-07',
+  dateModified: '2026-09-07',
+  author: {
+    '@type': 'Person',
+    name: 'Laurence Timms',
+    url: 'https://laurencetimms.com',
+  },
+  mainEntityOfPage: 'https://laurencetimms.com/ai/',
+};
+---
+<Layout title="How AI is used on this site" path="/ai/" description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <h1>How AI is used on this site</h1>
+  <div class="prose">
+    <p>
+      I use AI frequently in my professional life. This page expresses clearly
+      where AI was involved in the creation and maintenance of this site, and
+      where it wasn't.
+    </p>
+
+    <h2>The writing</h2>
+    <p>
+      The words are mine. I research with AI and I draft with AI, and then I
+      write the piece. Everything currently published has been written or
+      rewritten by me.
+    </p>
+    <p>
+      That is not the same as claiming no AI touched it. It means the
+      thinking, the judgement, the argument and the final sentences are mine,
+      and that if something here is wrong, the mistake is mine.
+    </p>
+    <p>
+      The structure, layout and code are AI-generated. I specify what I want,
+      AI builds it, I review and correct it. That covers the page templates,
+      the styling, the content pipeline and most of the plumbing.
+    </p>
+    <p>
+      The repository is public. You're welcome to examine the <a href="https://github.com/laurencetimms/laurencetimmscom">commit history</a>.
+    </p>
+
+    <h2>The tools</h2>
+    <p>
+      <a href="/claus/">CLAUS</a>, <a href="/loadedzone/">LoadedZone</a> and <a href="/walk/">Walk</a> are built the same way: my ideas, my design
+      decisions, my calls about what the tool should be and who it's for,
+      with AI doing the heavy lifting of construction. Although CLAUS is
+      experimental, it adheres to the EU AI Act's Article 50 transparency
+      obligations: it tells you you're talking to an AI, because you are.
+    </p>
+
+    <h2>Why this matters</h2>
+    <p>
+      I can't claim the "no AI" badge. I use AI where I genuinely believe it
+      adds value, and that is a constantly evolving picture. I don't want to
+      hide the fact that this is how I work.
+    </p>
+
+    <p class="post-meta">Last updated: 7 September 2026.</p>
+  </div>
+</Layout>
