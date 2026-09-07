@@ -1,19 +1,115 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import LoadedZoneLayout from '../../layouts/LoadedZoneLayout.astro';
 ---
-<Layout
-  title="LoadedZone"
-  path="/loadedzone/"
-  description="LoadedZone — a zone 2 rucking site with a Pandolf-equation load calculator."
+
+<LoadedZoneLayout
+  title="Zone 2 Training Through Loaded Walking"
+  description="What does the zone 2 research actually mean for your body? Find out — then walk out the door and do it."
 >
-  <span class="subbrand-badge">Sub-brand</span>
-  <h1>LoadedZone</h1>
-  <div class="prose">
-    <p>
-      A site for zone 2 rucking, built around a calculator using the Pandolf
-      equation to estimate metabolic load from pack weight, pace, and
-      terrain.
-    </p>
-    <p>The calculator will be ported in as a client-side tool at this path — no server calls required to use it.</p>
-  </div>
-</Layout>
+<section class="relative max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 overflow-hidden">
+    <div class="absolute inset-0 z-0 bg-topo-pattern opacity-60 [mask-image:linear-gradient(to_bottom,white_20%,transparent_100%)] -mx-50vw"></div>
+
+    <div class="relative z-10 max-w-3xl">
+      <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-stone-900 tracking-tight leading-tight">
+        How much should you <span class="text-zone">carry?</span>
+      </h1>
+      <p class="mt-6 text-xl sm:text-2xl text-stone-500 leading-relaxed bg-white/40 inline-block rounded-lg backdrop-blur-sm pr-4">
+        Get your personal zone 2 walking plan — the exact load, pace, and duration for your body. Built on clinical research, tailored to your goals.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        <a
+          href="/loadedzone/load-up/?goal=health"
+          class="inline-flex items-center justify-center px-8 py-3.5 bg-zone text-white font-semibold rounded-lg hover:bg-zone-dark transition-colors text-lg shadow-sm hover:shadow-md group"
+        >
+          <span class="mr-2 text-xl group-hover:scale-110 transition-transform">🚶‍♀️</span>
+          Start for health
+        </a>
+
+        <a
+          href="/loadedzone/load-up/?goal=performance"
+          class="inline-flex items-center justify-center px-8 py-3.5 bg-white/80 backdrop-blur text-stone-700 font-semibold rounded-lg border border-stone-300 hover:border-zone hover:text-zone transition-colors text-lg group"
+        >
+          <span class="mr-2 text-xl grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all">⏱️</span>
+          Dial in performance
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-stone-100 border-y border-stone-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <h2 class="font-display text-2xl sm:text-3xl font-bold text-stone-900 mb-10">Three tools. No account needed.</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <a href="/loadedzone/find-your-zone/" class="group bg-white rounded-xl p-6 border border-stone-200 hover:border-zone/40 hover:shadow-md transition-all">
+          <div class="text-3xl mb-3">♡</div>
+          <h3 class="font-display text-lg font-bold text-stone-900 group-hover:text-zone transition-colors">Find Your Zone 2</h3>
+          <p class="mt-2 text-sm text-stone-500 leading-relaxed">
+            Calculate your personal zone 2 heart rate range using three research-backed methods. Takes 30 seconds.
+          </p>
+        </a>
+
+        <a href="/loadedzone/load-up/" class="group bg-white rounded-xl p-6 border border-zone/30 shadow-sm hover:shadow-md transition-all ring-1 ring-zone/10">
+          <div class="text-3xl mb-3">⚖</div>
+          <h3 class="font-display text-lg font-bold text-zone-dark group-hover:text-zone transition-colors">Load Up</h3>
+          <p class="mt-2 text-sm text-stone-500 leading-relaxed">
+            The reverse calculator. Tell us about you and we'll tell you what to carry and how fast to walk to <em>be</em> in zone 2.
+          </p>
+          <span class="inline-block mt-3 text-xs font-semibold text-zone bg-zone/10 px-2 py-0.5 rounded">Flagship tool</span>
+        </a>
+
+        <a href="/loadedzone/session-card/" class="group bg-white rounded-xl p-6 border border-stone-200 hover:border-zone/40 hover:shadow-md transition-all">
+          <div class="text-3xl mb-3">📋</div>
+          <h3 class="font-display text-lg font-bold text-stone-900 group-hover:text-zone transition-colors">Session Card</h3>
+          <p class="mt-2 text-sm text-stone-500 leading-relaxed">
+            Generate a printable walk plan. Take it with you. Leave your phone at home.
+          </p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <div class="max-w-2xl">
+      <h2 class="font-display text-2xl sm:text-3xl font-bold text-stone-900 mb-6">Walk smarter, not harder</h2>
+      <div class="space-y-4 text-stone-600 leading-relaxed">
+        <p>
+          Zone 2 training — steady, moderate-intensity cardio — is the foundation of cardiovascular health,
+          fat metabolism, and longevity. It's what Peter Attia, Andrew Huberman, and exercise physiologist
+          Iñigo San Millán have been talking about for years.
+        </p>
+        <p>
+          But most people struggle to stay in zone 2. Jogging pushes you too high. Walking alone isn't enough.
+          The sweet spot? <strong>Add weight.</strong> A loaded pack or weighted vest raises your heart rate
+          into zone 2 at a comfortable walking pace — no running, no gym, no equipment beyond a rucksack.
+        </p>
+        <p>
+          LoadedZone translates the research into personal numbers. We tell you exactly how much to carry
+          and how fast to walk based on your age, weight, fitness level, and terrain. Then we give you a
+          printable card so you can leave your phone behind and just walk.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-stone-100 border-y border-stone-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <div class="max-w-2xl">
+        <h2 class="font-display text-2xl sm:text-3xl font-bold text-stone-900 mb-6">Start with what you've got</h2>
+        <div class="space-y-4 text-stone-600 leading-relaxed">
+          <p>
+            You don't need specialist gear. A rucksack you already own, loaded with books or a bag of
+            garden soil, and whatever shoes you walk in today. That's enough to start.
+          </p>
+          <p>
+            No app required. No account. No sign-up. The calculators are free and the session cards are
+            free. We're not trying to keep you on a screen — we're trying to get you out the door.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</LoadedZoneLayout>

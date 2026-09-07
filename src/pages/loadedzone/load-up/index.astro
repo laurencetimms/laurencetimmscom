@@ -1,0 +1,22 @@
+---
+import LoadedZoneLayout from '../../../layouts/LoadedZoneLayout.astro';
+import LoadUpCalculator from '../../../components/loadedzone/LoadUpCalculator';
+---
+
+<LoadedZoneLayout
+  title="Load Up — Plan Your Walk"
+  description="What should you carry and how fast should you walk to be in zone 2? The reverse zone 2 calculator, powered by the Pandolf equation."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="mb-10">
+      <h1 class="font-display text-4xl sm:text-5xl font-bold text-stone-900 tracking-tight">
+        Load Up
+      </h1>
+      <p class="mt-4 text-xl text-stone-500 max-w-2xl">
+        Your personal zone 2 load and pace, calculated.
+      </p>
+    </div>
+
+    <LoadUpCalculator client:load />
+  </div>
+</LoadedZoneLayout>

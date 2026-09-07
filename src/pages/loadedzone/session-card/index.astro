@@ -1,0 +1,23 @@
+---
+import LoadedZoneLayout from '../../../layouts/LoadedZoneLayout.astro';
+import SessionCardGenerator from '../../../components/loadedzone/SessionCardGenerator';
+---
+
+<LoadedZoneLayout
+  title="Session Card — Printable Walk Plan"
+  description="Generate a printable zone 2 walk plan. Take it with you. Leave your phone at home."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="mb-10">
+      <h1 class="font-display text-4xl sm:text-5xl font-bold text-stone-900 tracking-tight">
+        Session Card
+      </h1>
+      <p class="mt-4 text-xl text-stone-500 max-w-2xl">
+        A printable walk plan. Page one is your session. Page two is your quick reference.
+        Take it with you. Leave your phone at home.
+      </p>
+    </div>
+
+    <SessionCardGenerator client:load />
+  </div>
+</LoadedZoneLayout>

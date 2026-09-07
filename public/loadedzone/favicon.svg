@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Literata:wght@700&amp;display=swap');
+      .bg { fill: #ffffff; }
+      .letter-l { fill: #1c1917; } /* --color-stone-900 */
+      .letter-z { fill: #0d9488; } /* --color-zone */
+      .brand-text {
+        font-family: 'Literata', Georgia, serif;
+        font-weight: 700;
+        font-size: 340px;
+        letter-spacing: -15px;
+      }
+    </style>
+  </defs>
+  
+  <rect width="512" height="512" rx="112" class="bg" />
+  
+  <text x="48%" y="53%" text-anchor="middle" dominant-baseline="middle" class="brand-text">
+    <tspan class="letter-l">L</tspan><tspan class="letter-z">Z</tspan>
+  </text>
+</svg>

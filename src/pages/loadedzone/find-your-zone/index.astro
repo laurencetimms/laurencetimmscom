@@ -1,0 +1,22 @@
+---
+import LoadedZoneLayout from '../../../layouts/LoadedZoneLayout.astro';
+import FindYourZoneCalculator from '../../../components/loadedzone/FindYourZoneCalculator';
+---
+
+<LoadedZoneLayout
+  title="Find Your Zone 2 — Personal Heart Rate Calculator"
+  description="Calculate your personal zone 2 heart rate range using three research-backed methods: Karvonen, percentage of max HR, and Maffetone."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="mb-10">
+      <h1 class="font-display text-4xl sm:text-5xl font-bold text-stone-900 tracking-tight">
+        Find Your Zone&nbsp;2
+      </h1>
+      <p class="mt-4 text-xl text-stone-500 max-w-2xl">
+        Your personal zone 2 heart rate range, calculated three ways and ranked by accuracy.
+      </p>
+    </div>
+
+    <FindYourZoneCalculator client:load />
+  </div>
+</LoadedZoneLayout>

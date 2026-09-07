@@ -25,6 +25,23 @@ layout, nav, and the site-wide `Person` schema.org JSON-LD live in
 `/writing/` is an Astro content collection (`src/content.config.ts`),
 sourced from markdown files in `src/content/writing/`.
 
+### LoadedZone (`/loadedzone/`)
+
+Not a page — a second, self-contained Astro+React+Tailwind app merged
+into this repo, kept visually distinct as its own sub-brand rather than
+restyled to match. It doesn't use the site-wide `<Layout>`; it has its
+own shell (`src/layouts/LoadedZoneLayout.astro`), own stylesheet
+(`src/styles/loadedzone.css`, Tailwind v4 + a `@theme` palette), own
+React island components (`src/components/loadedzone/`), and its
+calculation logic in `src/lib/loadedzone/calculators.ts` (pure functions,
+no dependencies — the Pandolf equation and heart-rate-zone maths). Runs
+entirely client-side; no server calls. See DECISIONS.md for why it's kept
+architecturally separate rather than folded into the main design system.
+
+Currently ported: the three calculators (Find Your Zone 2, Load Up,
+Session Card) and the About page. The source repo's Learn/Guides article
+content isn't ported yet — a deliberate scope cut, not an oversight.
+
 ## Adding a writing piece
 
 Drop a markdown file in `src/content/writing/` with frontmatter matching

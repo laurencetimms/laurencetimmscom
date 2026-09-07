@@ -269,3 +269,66 @@ or a Play reviewer who wants a straight answer, not a pitch.
 `/walk/`'s `SoftwareApplication` schema omits `aggregateRating` on
 purpose — the app has too few ratings for an aggregate figure to mean
 anything, and inventing one would misrepresent it.
+
+---
+
+## LoadedZone (`/loadedzone/`): merged in, kept architecturally separate
+
+LoadedZone started as its own Astro project (`github.com/laurencetimms/loadedzone`)
+— three React-island calculators (Find Your Zone 2, Load Up, Session
+Card) built on a clean, dependency-free Pandolf-equation and heart-rate
+library, styled with Tailwind v4, previously deployed to GitHub Pages.
+The question was how to make it live at `/loadedzone/` on this domain.
+
+**Three options were on the table:** merge it in as real pages, reverse-proxy
+it through a Worker to a separately-deployed instance, or iframe it. The
+proxy and iframe routes were rejected for the same reason this site
+exists in the first place — `DECISIONS.md`'s whole premise is that content
+needs to be genuinely crawlable by AI systems, not opaquely proxied or
+walled off inside an iframe's separate document. Only merging it in as
+real, static, server-rendered-at-build HTML satisfies that. It also keeps
+the "everything static and free" principle intact — the calculators
+hydrate as React islands and run entirely in the browser, no server calls,
+same as the rest of the site.
+
+**Kept as its own visual identity, not restyled to match.** LoadedZone
+gets its own page shell (`src/layouts/LoadedZoneLayout.astro`) — own nav,
+own footer, own fonts (Literata/Source Sans 3, not Fraunces/Source Serif 4),
+own Tailwind-v4-driven look — rather than being squeezed into the main
+site's flax-paper design system. It does **not** import the shared
+`<Layout>` at all. Two consequences of that:
+
+- Tailwind's preflight reset (which zeroes out margins, list styles, etc.
+  sitewide via plain element selectors) never touches the main site's
+  pages, because Tailwind's compiled CSS is only ever linked on pages
+  that import `src/styles/loadedzone.css` — none of which are the main
+  site's pages. No scoping hacks needed; Vite's per-page code-splitting
+  handles it for free.
+- `react()` and the Tailwind Vite plugin are both registered globally in
+  `astro.config.mjs`, but that's harmless: `@astrojs/react` only
+  hydrates components that actually import it, and `@tailwindcss/vite`
+  only processes stylesheets that `@import "tailwindcss"`. Neither has
+  any effect on a page that doesn't opt in.
+
+**What's ported, what isn't.** The three calculators and the About page
+are live. The source repo's Learn/ and Guides/ sections (eight
+research-article and quick-guide pages) are not — porting everything at
+once would have doubled an already-large change. The homepage and nav
+only link to what exists; nothing here dead-ends into a 404.
+
+**The "email this card to yourself" feature was cut, not ported.** In the
+source repo it was a UI stub — `// For MVP/demo, we simulate the send`,
+a fake 1.5s delay then a hardcoded success message. Shipping that to real
+visitors would mean a confirmed "sent!" for an email that never arrives,
+which is a trust problem, not a missing feature. The print/download path
+(which is real — `window.print()`, genuinely works) stayed. If this comes
+back, it needs the same shape as the `/api/contact` Cloudflare Email
+integration, but a harder version of it: the destination address is
+visitor-supplied rather than fixed, which is a materially different abuse
+surface than a single-destination contact form and would want its own
+Turnstile/rate-limit treatment, not a copy-paste of the existing one.
+
+All internal links were rewritten from the source repo's GitHub-Pages-era
+`${base}/...` templating (via `astro.config`'s `base: '/loadedzone'`) to
+plain `/loadedzone/...` paths, since here `/loadedzone/` is a normal
+nested route on this domain, not the whole site's root.

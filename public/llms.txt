@@ -20,7 +20,7 @@ technology and public-sector delivery organisations.
 - [CLAUS (live application)](https://claus.laurencetimms.com): the running platform, not just a page about it
 - [CLAUS source](https://github.com/laurencetimms/claus): Team Dynamics Coach, Retrospective Formats
 - [Projects index](https://laurencetimms.com/projects/): all software and game projects
-- [LoadedZone](https://laurencetimms.com/loadedzone/): zone 2 rucking site with a Pandolf-equation load calculator
+- [LoadedZone](https://laurencetimms.com/loadedzone/): zone 2 training through loaded walking — three research-backed calculators (Find Your Zone 2, Load Up, Session Card) built on the Pandolf equation
 - [Walk](https://laurencetimms.com/walk/): published Android app for creative thinking through sound, gentle movement, and minimal distraction — generative audio, anti-engagement design
 - [Walk privacy policy](https://laurencetimms.com/walk/privacy/): what Walk collects (nothing), and the permissions it requests
 - [Lab](https://laurencetimms.com/lab/): smaller game and software projects

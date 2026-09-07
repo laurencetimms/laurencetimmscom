@@ -1,0 +1,117 @@
+---
+// LoadedZone's own page shell — deliberately not the site-wide <Layout>.
+// LoadedZone has its own nav, footer, fonts and Tailwind-based visual
+// language; reusing the main chrome here would mean either bleeding
+// Tailwind's reset into the shared header/footer, or fighting the cascade
+// to stop it. Two fully separate documents avoids both. See DECISIONS.md.
+import '../styles/loadedzone.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Zone 2 training through loaded walking. Research translated to personal action." } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} | LoadedZone</title>
+  <link rel="icon" type="image/svg+xml" href="/loadedzone/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="min-h-screen flex flex-col">
+  <nav class="no-print border-b border-stone-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <a href="/loadedzone/" class="flex items-center gap-2 text-stone-900 hover:text-zone transition-colors">
+        <span class="font-display font-bold text-xl tracking-tight">Loaded<span class="text-zone">Zone</span></span>
+      </a>
+      <div class="hidden sm:flex items-center gap-6 text-sm font-medium text-stone-600">
+        <a href="/loadedzone/find-your-zone/" class="hover:text-zone transition-colors">Find Your Zone</a>
+        <a href="/loadedzone/load-up/" class="hover:text-zone transition-colors">Load Up</a>
+        <a href="/loadedzone/session-card/" class="hover:text-zone transition-colors">Session Card</a>
+      </div>
+      <button id="mobile-menu-btn" class="sm:hidden p-2 text-stone-600" aria-label="Open menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="sm:hidden hidden border-t border-stone-200 bg-white px-4 py-3 space-y-2">
+      <a href="/loadedzone/find-your-zone/" class="block py-2 text-stone-700 hover:text-zone">Find Your Zone</a>
+      <a href="/loadedzone/load-up/" class="block py-2 text-stone-700 hover:text-zone">Load Up</a>
+      <a href="/loadedzone/session-card/" class="block py-2 text-stone-700 hover:text-zone">Session Card</a>
+    </div>
+  </nav>
+
+  <main class="flex-1">
+    <slot />
+  </main>
+
+  <footer class="no-print border-t border-stone-200 bg-stone-100 mt-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 text-sm text-stone-500">
+      <p>LoadedZone is not medical advice. Consult your GP before starting any new exercise programme, especially if you have existing health conditions.</p>
+      <p class="mt-2">
+        &copy; {new Date().getFullYear()} LoadedZone. Research translated to personal action.
+        <button id="about-open-btn" class="underline underline-offset-2 hover:text-stone-800 ml-1 transition-colors">About me.</button>
+        · <a href="/" class="underline underline-offset-2 hover:text-stone-800">laurencetimms.com</a>
+      </p>
+    </div>
+  </footer>
+
+  <div id="about-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div id="about-backdrop" class="absolute inset-0 bg-stone-900/40 backdrop-blur-sm transition-opacity cursor-pointer"></div>
+
+    <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 sm:p-8 border border-stone-200 animate-in fade-in zoom-in-95 duration-200">
+      <h3 class="font-display font-bold text-xl text-stone-900 mb-3">About the creator</h3>
+      <div class="text-stone-600 text-sm leading-relaxed space-y-3 mb-6">
+        <p>
+          A knee injury stopped me running in 2022. I discovered loaded walking while hunting a way to maintain fitness during recovery, and I've been doing it ever since. I created LoadedZone to bring loaded walking to everyone! - Laurence
+        </p>
+      </div>
+      <button id="about-close-btn" class="w-full px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-medium rounded-lg transition-colors">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Mobile menu logic
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('mobile-menu')?.classList.toggle('hidden');
+    });
+
+    // About Me Modal Logic
+    const aboutBtn = document.getElementById('about-open-btn');
+    const aboutModal = document.getElementById('about-modal');
+    const aboutCloseBtn = document.getElementById('about-close-btn');
+    const aboutBackdrop = document.getElementById('about-backdrop');
+
+    function openModal() {
+      aboutModal?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeModal() {
+      aboutModal?.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
+
+    aboutBtn?.addEventListener('click', openModal);
+    aboutCloseBtn?.addEventListener('click', closeModal);
+    aboutBackdrop?.addEventListener('click', closeModal);
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !aboutModal?.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
