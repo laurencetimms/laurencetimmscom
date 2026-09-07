@@ -5,7 +5,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'CLAUS',
-  description: 'CLAUS is an AI-augmented team dynamics tool for team leaders and team coaches.',
+  description: 'CLAUS is an experimental team dynamics tool for team leaders and team coaches, built on Claude.',
   url: 'https://claus.laurencetimms.com',
   applicationCategory: 'BusinessApplication',
   author: {
@@ -18,7 +18,7 @@ const jsonLd = {
 <Layout
   title="CLAUS"
   path="/claus/"
-  description="CLAUS is an AI-augmented team dynamics tool for team leaders and team coaches."
+  description="CLAUS is an experimental team dynamics tool for team leaders and team coaches, built on Claude."
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -26,17 +26,15 @@ const jsonLd = {
   <h1>CLAUS</h1>
   <div class="prose">
     <p>
-      CLAUS is a team dynamics tool for team leaders and team coaches, built
-      on Claude — augmenting the judgement a leader or coach brings to a
-      team, not replacing it.
+      CLAUS is an experimental team dynamics tool for team leaders and team
+      coaches, built on Claude. It augments the professional judgement that a
+      leader or coach brings to a team, rather than attempting to replace it.
     </p>
     <p>
-      It's live at <a href="https://claus.laurencetimms.com"><strong>claus.laurencetimms.com</strong></a> — not just a page about the idea, but the running application.
+      It's live at <a href="https://claus.laurencetimms.com"><strong>claus.laurencetimms.com</strong></a>, including a demo scenario showing a fictional team navigating real dysfunction.
     </p>
     <p>
-      It includes "The Demo" — a scenario showing a fictional team, Team
-      Jupiter, navigating real dysfunction, as a way of trying CLAUS in
-      action rather than just reading about it.
+      If you'd like to hear more about CLAUS or arrange a demo, please <a href="/coaching/#contact">contact me</a>.
     </p>
     <p>Source: <a href="https://github.com/laurencetimms/claus">github.com/laurencetimms/claus</a></p>
   </div>
