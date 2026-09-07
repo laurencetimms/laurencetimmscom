@@ -4,6 +4,7 @@ description: "From science to bookshop: how to transform research literature int
 maturity: beta
 published: 2026-08-25
 updated: 2026-08-25
+draft: true
 draws_on:
   - "James Clear, Atomic Habits"
   - "Oliver Burkeman, Four Thousand Weeks"
