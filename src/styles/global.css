@@ -402,3 +402,14 @@ main {
   width: 130px;
   height: 130px;
 }
+
+/* App screenshot (/walk/) — natural aspect ratio, not cropped like the
+   portrait, so height is left to flow from width. */
+.screenshot {
+  display: block;
+  width: 270px;
+  height: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
