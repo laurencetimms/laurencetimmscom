@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tile harness</title>
+<meta name="description" content="The Pavement tile harness, running in the browser: designs from old plates, materials, a texture pack, and the game built from them.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#1d1a17;--panel:#27231f;--line:#4a4239;--ink:#e6dcc8;--head:#e9dcc0;--muted:#a39580;--gold:#c9a03f;--ok:#a9c08a;--warn:#d9b86a;--bad:#e0876a}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 Georgia,serif;margin:0}
+a{color:var(--head)}
+header{padding:18px 16px 8px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline}
+h1{font-weight:400;color:var(--head);letter-spacing:.03em;margin:0;font-size:26px}
+h2{font-weight:400;color:var(--head);font-size:17px;margin:0 0 8px;letter-spacing:.03em}
+header nav{font-size:14px;color:var(--muted)} header nav a{margin-right:12px}
+#status{font-size:14px;color:var(--muted)} #status.ready{color:var(--ok)} #status.fail{color:var(--bad)}
+main{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:14px;padding:8px 16px 24px}
+@media (max-width:820px){main{grid-template-columns:minmax(0,1fr)}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px;margin-bottom:12px}
+.side p{margin:0 0 8px;font-size:14px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+label{font-size:14px;color:var(--muted)}
+button,select,input{font:inherit;font-size:14px}
+button{background:var(--head);color:#2e2217;border:0;border-radius:3px;padding:5px 12px;cursor:pointer}
+button.quiet{background:transparent;color:var(--head);border:1px solid var(--line)}
+button:disabled{opacity:.45;cursor:default}
+select,input[type=text],input[type=password],input[type=number]{background:#15110e;color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:4px 6px}
+input[type=number]{width:4.5em} input[type=file]{display:none}
+.play{display:inline-block;background:var(--gold);color:#1d1a17;text-decoration:none;border-radius:3px;padding:5px 12px;font-size:14px}
+.tabs{display:flex;gap:4px;margin-bottom:8px}
+.tabs button{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.tabs button[aria-selected=true]{background:var(--head);color:#2e2217;border-color:var(--head)}
+.cmd{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.cmd input{flex:1;min-width:0;font-family:inherit;font-size:13px}
+#log{background:#15110e;border:1px solid var(--line);border-radius:3px;padding:8px;height:65vh;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word;margin:0}
+#log .err{color:var(--bad)} #log .info{color:var(--muted)} #log .cmdline{color:var(--gold)}
+#gallery{width:100%;height:75vh;border:1px solid var(--line);border-radius:3px;background:var(--bg)}
+#files table{width:100%;border-collapse:collapse;font-size:13.5px}
+#files td{padding:3px 6px;border-bottom:1px solid #332d27;vertical-align:top}
+#files td:last-child{text-align:right;color:var(--muted);white-space:nowrap}
+#files a{cursor:pointer}
+#preview{margin-top:10px} #preview img{max-width:100%;border:1px solid var(--line);background:#fff1}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>Tile harness</h1>
+  <nav><a href="/lab/">Lab</a><a href="/lab/pavement/">Pavement</a><a href="/lab/pavement/workshop.html">Workshop (prebuilt)</a><a href="py/README.md">README</a></nav>
+  <span id="status">Starting…</span>
+</header>
+<main>
+  <div class="side">
+    <section>
+      <h2>Everything at once</h2>
+      <p>Stand-in materials, every plate in <code>sources/</code>, the pack, the gallery, and the game built from them.</p>
+      <div class="row"><button data-act="all">Run everything</button></div>
+    </section>
+
+    <section>
+      <h2>1. Designs</h2>
+      <p>Add scans or photos of plates, roughly cropped to one design.</p>
+      <div class="row"><button class="quiet" data-pick="plates">Add plates…</button><input type="file" id="plates" accept="image/*" multiple></div>
+      <div class="row">
+        <label>Symmetry <select id="group"><option>d4</option><option>c4</option><option>d2</option><option>mirror</option><option>none</option></select></label>
+        <label>Colours <select id="colours"><option>2</option><option>3</option></select></label>
+        <label>Tiles <input type="number" id="tiles" value="2" min="1" max="6"></label>
+      </div>
+      <div class="row"><label><input type="checkbox" id="square"> already square, edge to edge</label></div>
+      <div id="sources"></div>
+    </section>
+
+    <section>
+      <h2>2. Materials</h2>
+      <div class="row"><button data-act="standins">Make stand-ins</button></div>
+      <div class="row"><label>Your own images as <select id="kind"><option>clay</option><option>slip</option><option>craze</option><option>wear</option><option>stain</option></select></label>
+        <button class="quiet" data-pick="mats">Add…</button><input type="file" id="mats" accept="image/*" multiple></div>
+      <div class="row"><button data-act="materials">Process materials</button></div>
+    </section>
+
+    <section>
+      <h2>3. Gemini (optional)</h2>
+      <p>Your key stays in this browser and goes only to Google. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">AI Studio</a>.</p>
+      <div class="row"><input type="password" id="gkey" placeholder="GEMINI_API_KEY" autocomplete="off" style="flex:1;min-width:0"></div>
+      <div class="row"><label><input type="checkbox" id="gremember"> remember on this device</label></div>
+      <div class="row">
+        <select id="gkind"><option>clay</option><option>slip</option><option>craze</option><option>wear</option><option>stain</option></select>
+        <label>× <input type="number" id="gn" value="4" min="1" max="12"></label>
+        <label><input type="checkbox" id="gbreed"> breed from picks</label>
+        <button data-act="generate">Generate</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Choose</h2>
+      <p>Click designs and materials you like, then <b>Save picks</b>: it writes <code>picks.json</code> here.</p>
+      <div class="row"><button data-act="gallery">Open gallery</button></div>
+    </section>
+
+    <section>
+      <h2>5. Pack and play</h2>
+      <div class="row"><button data-act="pack">Pack and build the game</button></div>
+      <div class="row"><a id="play" class="play hidden" target="_blank" rel="noopener">Play the workshop ↗</a></div>
+    </section>
+
+    <section>
+      <h2>Workspace</h2>
+      <p>Everything lives in this tab until you reload. Download it to keep it, or to run the same folder with Python on your own machine.</p>
+      <div class="row"><button class="quiet" data-act="download">Download as zip</button><button class="quiet" data-pick="zipin">Load a zip…</button><input type="file" id="zipin" accept=".zip"><button class="quiet" data-act="clear">Clear outputs</button></div>
+    </section>
+  </div>
+
+  <div>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="log" aria-selected="true">Log</button>
+      <button role="tab" data-tab="gallerytab" aria-selected="false">Gallery</button>
+      <button role="tab" data-tab="files" aria-selected="false">Files</button>
+    </div>
+    <div id="logtab" data-pane="log">
+      <form class="cmd" id="cmdform"><span>python run.py</span><input id="cmd" placeholder="design sources/plate_rose.jpg --group d4" autocomplete="off" spellcheck="false"><button>Run</button></form>
+      <pre id="log"></pre>
+    </div>
+    <div data-pane="gallerytab" class="hidden"><iframe id="gallery" title="Gallery"></iframe></div>
+    <div data-pane="files" class="hidden" id="files"><table><tbody></tbody></table><div id="preview"></div></div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const logEl = $("log");
+function log(text, cls = "") {
+  const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = text + "\n";
+  logEl.append(s); logEl.scrollTop = logEl.scrollHeight;
+}
+
+// ---- the worker
+const worker = new Worker("worker.js");
+let nextId = 0; const waiting = {};
+function call(op, args = {}, transfer = []) {
+  return new Promise((ok, no) => { const id = ++nextId; waiting[id] = { ok, no }; worker.postMessage({ id, op, ...args }, transfer); });
+}
+worker.onmessage = ({ data: m }) => {
+  if (m.type === "log") log(m.text, m.stream === "err" ? "err" : m.stream === "info" ? "info" : "");
+  else if (m.type === "ready") { ready = true; $("status").textContent = "Ready"; $("status").className = "ready"; setBusy(false); refresh(); }
+  else if (m.type === "fail") { $("status").textContent = "Couldn't start: " + m.error; $("status").className = "fail"; log(m.error, "err"); }
+  else if (m.type === "done") { const w = waiting[m.id]; delete waiting[m.id]; m.error ? w.no(new Error(m.error)) : w.ok(m.result); }
+};
+
+let busy = true, ready = false;
+function setBusy(b) {
+  busy = b; document.querySelectorAll("button").forEach(x => { if (!x.closest(".tabs")) x.disabled = b; });
+  if (!b && $("status").className === "ready") $("status").textContent = "Ready";
+}
+async function job(label, fn) {
+  if (busy) return; setBusy(true); $("status").textContent = label + "…";
+  show("log");
+  try { return await fn(); } catch (e) { log(String(e.message || e), "err"); } finally { setBusy(false); refresh(); }
+}
+async function run(args) {
+  log("$ python run.py " + args.join(" "), "cmdline");
+  const ok = await call("run", { args }); if (!ok) throw new Error("that didn't finish; see above");
+}
+async function build() {
+  log("$ python game/build.py", "cmdline");
+  if (!await call("build")) throw new Error("the build stopped; see above");
+  const bytes = await call("read", { path: "out/pavement-workshop.html" });
+  const a = $("play"); if (a.href) URL.revokeObjectURL(a.href);
+  a.href = URL.createObjectURL(new Blob([bytes], { type: "text/html" })); a.classList.remove("hidden");
+  log("Built. Press “Play the workshop”.", "info");
+}
+
+// ---- files
+let files = [];
+async function refresh() {
+  if (!ready) return;
+  files = await call("ls");
+  const srcs = files.filter(f => /^sources\/[^/]+\.(jpe?g|png|webp)$/i.test(f.path));
+  $("sources").innerHTML = "";
+  for (const f of srcs) {
+    const r = document.createElement("div"); r.className = "row";
+    const b = document.createElement("button"); b.className = "quiet"; b.textContent = "Run design"; b.disabled = busy;
+    b.onclick = () => job("Design", () => run(designArgs(f.path)));
+    r.append(b, " ", f.path.slice(8)); $("sources").append(r);
+  }
+  if (srcs.length > 1) {
+    const b = document.createElement("button"); b.textContent = "Run design on all"; b.disabled = busy;
+    b.onclick = () => job("Designs", async () => { for (const f of srcs) await run(designArgs(f.path)); });
+    $("sources").append(b);
+  }
+  const tb = $("files").querySelector("tbody"); tb.innerHTML = "";
+  for (const f of files) {
+    const tr = document.createElement("tr"), a = document.createElement("a");
+    a.textContent = f.path; a.onclick = () => preview(f.path);
+    tr.innerHTML = "<td></td><td>" + (f.size < 2048 ? f.size + " B" : Math.round(f.size / 1024) + " KB") + "</td>";
+    tr.firstChild.append(a); tb.append(tr);
+  }
+}
+function designArgs(path) {
+  const a = ["design", path, "--group", $("group").value, "--colours", $("colours").value, "--tiles", String(+$("tiles").value || 2)];
+  if ($("square").checked) a.push("--already-square");
+  return a;
+}
+const MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", svg: "image/svg+xml", json: "application/json", html: "text/html", js: "text/javascript" };
+const mimeOf = p => MIME[p.split(".").pop().toLowerCase()] || "application/octet-stream";
+async function preview(path) {
+  const bytes = await call("read", { path }), url = URL.createObjectURL(new Blob([bytes], { type: mimeOf(path) }));
+  const box = $("preview"); box.innerHTML = "";
+  const dl = document.createElement("a"); dl.href = url; dl.download = path.split("/").pop(); dl.textContent = "Download " + path;
+  box.append(dl);
+  if (/^image\//.test(mimeOf(path))) { const im = new Image(); im.src = url; box.append(document.createElement("br"), im); }
+  else if (/\.(json|py|md|txt)$/.test(path) && bytes.length < 200000) { const pre = document.createElement("pre"); pre.style.whiteSpace = "pre-wrap"; pre.style.fontSize = "12.5px"; pre.textContent = new TextDecoder().decode(bytes); box.append(pre); }
+}
+
+// ---- gallery: the harness's own page, with its pictures read from the workspace and its "Save picks" writing picks.json here
+async function openGallery() {
+  await run(["gallery"]);
+  let html = new TextDecoder().decode(await call("read", { path: "out/gallery.html" }));
+  const srcs = [...new Set([...html.matchAll(/src="\.\.\/([^"]+)"/g)].map(m => m[1]))];
+  for (const p of srcs) {
+    const url = URL.createObjectURL(new Blob([await call("read", { path: p })], { type: mimeOf(p) }));
+    html = html.split(`src="../${p}"`).join(`src="${url}"`);
+  }
+  const fr = $("gallery");
+  fr.onload = () => {
+    const d = fr.contentDocument, save = d && d.getElementById("save"); if (!save) return;
+    save.onclick = async () => {
+      const p = { designs: [], materials: [] };
+      d.querySelectorAll(".card.on").forEach(c => p[c.dataset.g].push(c.dataset.k));
+      await call("write", { path: "picks.json", data: new TextEncoder().encode(JSON.stringify(p, null, 1)) });
+      d.getElementById("n").textContent = `saved picks.json: ${p.designs.length} designs, ${p.materials.length} materials`;
+      log(`Saved picks.json (${p.designs.length} designs, ${p.materials.length} materials).`, "info"); refresh();
+    };
+  };
+  fr.srcdoc = html; show("gallerytab");
+}
+
+// ---- buttons
+const acts = {
+  all: () => job("Running everything", async () => { await run(["all"]); await build(); }),
+  standins: () => job("Stand-ins", () => run(["standins"])),
+  materials: () => job("Materials", () => run(["materials"])),
+  generate: () => job("Asking Gemini", async () => {
+    const key = $("gkey").value.trim(); if (!key) throw new Error("Add a Gemini API key first.");
+    try { $("gremember").checked ? localStorage.setItem("tileharness.gkey", key) : localStorage.removeItem("tileharness.gkey"); } catch (e) {}
+    await call("env", { key: "GEMINI_API_KEY", value: key });
+    const a = ["generate", $("gkind").value, "-n", String(+$("gn").value || 4)]; if ($("gbreed").checked) a.push("--breed");
+    await run(a);
+  }),
+  gallery: () => job("Gallery", openGallery),
+  pack: () => job("Packing", async () => { await run(["pack"]); await build(); }),
+  download: () => job("Zipping", async () => {
+    const bytes = await call("zip"), a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([bytes], { type: "application/zip" })); a.download = "tileharness.zip"; a.click();
+  }),
+  clear: () => { if (confirm("Remove out/, textures/ and picks.json from this workspace?")) job("Clearing", () => call("clear")); },
+};
+document.querySelectorAll("[data-act]").forEach(b => b.onclick = () => acts[b.dataset.act]());
+document.querySelectorAll("[data-pick]").forEach(b => b.onclick = () => $(b.dataset.pick).click());
+
+async function readFiles(input, dest) {
+  const fs = [...input.files]; input.value = "";
+  for (const f of fs) await call("write", { path: dest(f.name), data: new Uint8Array(await f.arrayBuffer()) });
+  return fs;
+}
+const safe = n => n.replace(/[^\w.\-]+/g, "_");
+$("plates").onchange = e => job("Adding plates", async () => { for (const f of await readFiles(e.target, n => "sources/" + safe(n))) log("added sources/" + safe(f.name), "info"); });
+$("mats").onchange = e => job("Adding materials", async () => {
+  const k = $("kind").value, name = n => `textures/raw/${k}__${safe(n).replace(new RegExp("^" + k + "__"), "")}`;
+  for (const f of await readFiles(e.target, name)) log("added " + name(f.name), "info");
+});
+$("zipin").onchange = e => job("Loading zip", async () => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  const n = await call("unzip", { data: new Uint8Array(await f.arrayBuffer()) }); log(`loaded ${n} files from ${f.name}`, "info");
+});
+$("cmdform").onsubmit = e => {
+  e.preventDefault(); const t = $("cmd").value.trim(); if (!t) return;
+  const args = (t.match(/"[^"]*"|\S+/g) || []).map(s => s.replace(/^"|"$/g, "")).filter((s, i) => !(i === 0 && /^(python3?|run\.py)$/.test(s)));
+  if (args[0] === "run.py") args.shift();
+  job("Running", () => args[0] === "build" ? build() : run(args));
+};
+
+// ---- tabs
+function show(tab) {
+  document.querySelectorAll("[data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  document.querySelectorAll("[data-pane]").forEach(p => p.classList.toggle("hidden", p.dataset.pane !== tab));
+  if (tab === "files" && !busy) refresh();
+}
+document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => show(b.dataset.tab));
+
+try { const k = localStorage.getItem("tileharness.gkey"); if (k) { $("gkey").value = k; $("gremember").checked = true; } } catch (e) {}
+setBusy(true);
+log("Commands typed above run as `python run.py …`; type `build` to run game/build.py.", "info");
+</script>
+</body>
+</html>

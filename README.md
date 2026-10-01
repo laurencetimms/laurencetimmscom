@@ -15,6 +15,10 @@ designed the way it is — read that before making structural changes.
 - `/projects/` — projects hub (linked from nav)
 - `/walk/` — Walk sub-brand
 - `/lab/` — smaller game/software projects
+  - `/lab/pavement/` — Pavement, a standalone HTML game (`public/lab/pavement/index.html`);
+    `workshop.html` is the same game built with the tile harness's texture pack
+  - `/lab/tile-harness/` — the Python tile harness running in the browser via Pyodide
+    (see below)
 - `/ai/` — how AI is used in building and writing this site, linked from the footer
 - `public/llms.txt` — machine-readable site summary
 - `public/robots.txt`
@@ -42,6 +46,27 @@ architecturally separate rather than folded into the main design system.
 Currently ported: the three calculators (Find Your Zone 2, Load Up,
 Session Card) and the About page. The source repo's Learn/Guides article
 content isn't ported yet — a deliberate scope cut, not an oversight.
+
+## Tile harness (`/lab/tile-harness/`)
+
+Plain static files in `public/lab/tile-harness/`, outside Astro:
+
+- `py/` — the harness's Python source, unmodified (`run.py`, `harness/`, `game/`,
+  `sources/`). Edit it here.
+- `worker.js` — loads Pyodide 0.29.5 (numpy, OpenCV, Pillow) from jsDelivr, copies
+  `py/` into an in-memory folder and runs `run.py` / `game/build.py` there. **If you
+  add a file to `py/`, add it to the `FILES` list at the top of `worker.js`.** The
+  game it builds from is `public/lab/pavement/index.html` (fetched in as
+  `game/pavement_base.html`), so there's one copy of the game. `harness/gemini.py`
+  is swapped for a stand-in that calls the Gemini REST API with a key typed into the
+  page, since the `google-genai` SDK doesn't run in Pyodide.
+- `index.html` — the page: buttons for each step, a `python run.py …` command box,
+  the harness's own gallery (its "Save picks" writes `picks.json` into the workspace),
+  a file browser, and zip download/upload of the whole workspace.
+
+`public/lab/pavement/workshop.html` is a prebuilt copy of the harness output; to
+refresh it, run "Pack and build the game" on the harness page, then download
+`out/pavement-workshop.html` from the Files tab and replace it.
 
 ## Adding a writing piece
 

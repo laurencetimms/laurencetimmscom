@@ -1,0 +1,502 @@
+<title>Pavement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --stone:#1d1a17; --stone2:#27231f; --stone3:#342f29; --line:#4a4239;
+  --vellum:#e9dcc0; --vellum2:#cdbd9c; --ink:#2e2217; --muted:#a39580; --text:#e6dcc8;
+  --red:#9c3f24; --gold:#c9a03f;
+  --serif:"IM Fell English","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sc:"IM Fell English SC","IM Fell English",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--stone)}
+body{color:var(--text);font-family:var(--serif);font-size:17px;line-height:1.5;padding:0 16px;
+  background:radial-gradient(ellipse at 50% 30%, #2b2621 0%, var(--stone) 70%) fixed}
+.wrap{max-width:760px;margin:0 auto;padding-block:28px 56px;display:flex;flex-direction:column;gap:22px;align-items:center}
+header{text-align:center;display:flex;flex-direction:column;gap:4px}
+h1{font-family:var(--sc);font-weight:400;font-size:38px;letter-spacing:.04em;margin:0;color:var(--vellum);text-wrap:balance}
+.sub{color:var(--muted);font-style:italic;font-size:16px;margin:0}
+.play{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:18px;align-items:start}
+@media (max-width:720px){.play{grid-template-columns:1fr}}
+.stage{position:relative;width:100%}
+.hand{background:var(--stone2);border:1px solid var(--line);border-radius:3px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+@media (max-width:720px){.hand{flex-direction:row;flex-wrap:wrap;justify-content:center;text-align:left}}
+.hand h3{font-family:var(--sc);font-weight:400;font-size:17px;margin:0;color:var(--vellum2);letter-spacing:.05em;width:100%}
+@media (max-width:720px){.hand h3{text-align:center}}
+#handcv{width:150px;height:150px;box-shadow:0 0 0 1px #0006,0 10px 24px #0009;border-radius:2px;background:#15110e}
+.hand .turns{display:flex;gap:6px}
+.hand p{margin:0;font-size:14px;color:var(--muted);font-style:italic;max-width:22ch}
+canvas{display:block;width:100%;height:auto;border-radius:3px;box-shadow:0 0 0 1px #0006,0 18px 50px #000a;touch-action:manipulation;cursor:pointer}
+canvas:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.status{font-family:var(--sc);letter-spacing:.06em;color:var(--vellum2);font-size:16px;min-height:1.5em;text-align:center}
+button{font-family:var(--serif);font-size:15px;color:var(--text);background:var(--stone2);border:1px solid var(--line);border-radius:3px;padding:4px 11px;cursor:pointer}
+button:hover{border-color:var(--vellum2)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){canvas{transition:none}}
+.panelnote{width:100%;max-width:760px;color:var(--vellum2);font-size:16px;margin:0;text-align:center;font-style:italic}
+[hidden]{display:none!important}
+.dateline{font-family:var(--sc);letter-spacing:.08em;color:var(--muted);font-size:15px;margin:0}
+.title{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.title h2{font-family:var(--sc);font-weight:400;font-size:26px;color:var(--vellum);margin:0;letter-spacing:.04em}
+.whole{width:100%;max-width:560px;background:var(--vellum);color:var(--ink);border-radius:2px;padding:22px 26px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;box-shadow:0 8px 24px #0007}
+.whole h2{font-family:var(--sc);font-weight:400;font-size:26px;margin:0;color:var(--red)}
+.whole p{margin:0;max-width:44ch}
+.whole .quiet{font-style:italic;color:#6b5a45}
+.whole button{background:var(--ink);color:var(--vellum);border-color:var(--ink)}
+.week{display:flex;gap:8px;justify-content:center;align-items:flex-end}
+.week div{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--sc);font-size:12px;color:var(--muted);letter-spacing:.04em}
+.week i{display:block;width:18px;height:18px;border:1px solid var(--line);border-radius:1px;background:#15110e}
+.week .done i{background:linear-gradient(135deg,#e2c46e,#a8822c);border-color:#caa446}
+.week .today{color:var(--vellum)}
+.week .today i{outline:1px solid var(--vellum2);outline-offset:2px}
+.whole .week div{color:#6b5a45}.whole .week i{border-color:#b6a27c;background:#ddcfae}.whole .week .today{color:var(--ink)}.whole .week .today i{outline-color:#6b5a45}
+details.how{width:100%;max-width:560px;color:var(--vellum2);font-size:15.5px;border-top:1px solid var(--line);padding-top:10px}
+details.how summary{cursor:pointer;font-family:var(--sc);letter-spacing:.05em;text-align:center;list-style:none}
+details.how summary::-webkit-details-marker{display:none}
+details.how p{margin:10px 0 0}
+details.how .rub{color:#d58a6a}
+.whole .week .done i{background:linear-gradient(135deg,#e2c46e,#a8822c);border-color:#a8822c}
+body.is-whole .hand{display:none}
+body.is-whole .play{grid-template-columns:minmax(0,560px);justify-content:center}
+@media (max-width:720px){#handcv{width:104px;height:104px}}
+.copied{font-size:14px;font-style:italic;color:#6b5a45;min-height:1.3em}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Pavement</h1>
+    <p class="dateline" id="dateline"></p>
+  </header>
+  <div class="title"><h2 id="pname"></h2><p class="panelnote" id="pnote"></p></div>
+  <div class="play">
+    <div class="stage">
+      <canvas id="floor" tabindex="0" aria-label="Today's pavement. Tap a tile to lift it into your hand, then tap a place to lay it. Arrow keys move, Enter lifts or lays, R turns the tile in your hand."></canvas>
+    </div>
+    <aside class="hand" aria-label="Your hand">
+      <h3>In your hand</h3>
+      <canvas id="handcv" width="300" height="300" aria-hidden="true"></canvas>
+      <div class="turns"><button id="left" aria-label="Turn the tile left">Turn left</button><button id="right" aria-label="Turn the tile right">Turn right</button></div>
+      <p id="handnote">Tap a tile to lift it.</p>
+    </aside>
+  </div>
+  <div class="status" id="status" aria-live="polite"></div>
+  <section class="whole" id="whole" hidden aria-live="polite">
+    <h2 id="wtitle"></h2>
+    <p id="wline"></p>
+    <div class="week" id="wweek"></div>
+    <button id="share">Copy a note of it</button>
+    <p class="copied" id="copied"></p>
+    <p class="quiet" id="tomorrow"></p>
+  </section>
+  <div class="week" id="week" aria-label="This week"></div>
+  <details class="how">
+    <summary>How the floor works</summary>
+    <p>Each day a different pavement is laid, the same for everyone. Its tiles have been disturbed: some turned, some moved.</p>
+    <p><span class="rub">Lift and lay.</span> Tap a tile to take it into your hand, turn it there if it needs turning, and tap a place to lay it. Laying it on another tile exchanges the two.</p>
+    <p><span class="rub">Read the seams.</span> Where two tiles agree, the join closes and both grow clearer. A tile agreeing on every side takes its glaze. Dark seams still disagree.</p>
+    <p><span class="rub">Two kinds of tile.</span> Patterned tiles are turned and matched by their edges. Plain and field tiles (chequers, fleurs, crosses, rosettes, stars) look the same whichever way they face, so only their place matters: follow the repeat.</p>
+    <p><span class="rub">Bedded fast.</span> A tile with a small iron stain at its foot has never moved. Build around it.</p>
+    <p>The floor is whole when every seam agrees. There is one floor a day; the next is laid at midnight.</p>
+    <p style="text-align:center"><button id="restart">Lay today's floor afresh</button></p>
+  </details>
+</div>
+
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const cv = $("floor"), ctx = cv.getContext("2d"), hcv = $("handcv"), hctx = hcv.getContext("2d");
+const BODY = "#8f3a1e", BODY_D = "#6f2a14", SLIP = "#ecd29a", GREEN = "#55773a", GROUT = "#2a1d14", P = Math.PI;
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function dot(c, x, y, r) { c.beginPath(); c.arc(x, y, r, 0, 2 * P); c.fill(); }
+function band(c, cx, cy, r1, r2) { c.beginPath(); c.arc(cx, cy, r1, 0, 2 * P); c.arc(cx, cy, r2, 2 * P, 0, true); c.closePath(); c.fill(); }
+function mk(n) { const c = document.createElement("canvas"); c.width = c.height = Math.max(1, Math.ceil(n)); return c; }
+
+// ================= the pavements =================
+// Each layout: size, which cells are void (a pier or step), roundel blocks (2x2, turned tiles) and fields (placed tiles).
+const FIELDS = {
+  chequer:    { name: "a chequer of plain tiles", kinds: ["cream", "red"], at: (x, y) => (x + y) % 2 ? "red" : "cream" },
+  fleurcross: { name: "fleurs and flowered crosses, alternating", kinds: ["fleur", "cross"], at: (x, y) => (x + y) % 2 ? "cross" : "fleur" },
+  powdered:   { name: "a field of rosettes, powdered with crosses on every third diagonal", kinds: ["rosette", "cross"], at: (x, y) => (x + y) % 3 === 0 ? "cross" : "rosette" },
+  rows:       { name: "rows of fleurs and stars", kinds: ["fleur", "star"], at: (x, y) => y % 2 ? "star" : "fleur" },
+};
+const SHAPES = {
+  chapel:   { name: "The Chapel",    w: 6, h: 6, blocks: [[1, 1], [3, 1], [1, 3], [3, 3]], fields: [] },
+  aisle:    { name: "The Aisle",     w: 10, h: 4, blocks: [[1, 1], [5, 1]], fields: [{ x0: 3, y0: 1, w: 2, h: 2 }, { x0: 7, y0: 1, w: 2, h: 2 }] },
+  crossing: { name: "The Crossing",  w: 8, h: 8, blocks: [[3, 3]], fields: [{ x0: 1, y0: 1, w: 6, h: 6, skip: [[3, 3, 2, 2]] }] },
+  chancel:  { name: "The Chancel",   w: 8, h: 6, blocks: [[1, 1], [3, 1], [1, 3], [3, 3]], fields: [{ x0: 5, y0: 1, w: 2, h: 4 }] },
+  pier:     { name: "The Pier Base", w: 7, h: 7, blocks: [], voids: [[3, 3]], fields: [{ x0: 1, y0: 1, w: 5, h: 5, skip: [[3, 3, 1, 1]] }] },
+};
+const FIELD_CHOICES = { aisle: ["fleurcross", "rows"], crossing: ["powdered", "fleurcross", "chequer"], chancel: ["rows", "fleurcross"], pier: ["chequer", "powdered", "fleurcross"] };
+function mul32(a) { return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function layoutFor(key, seed) {                               // the day decides the glaze and the field
+  const r = mul32(seed ^ 0x9E3779B9), v = Math.floor(r() * 3), sh = SHAPES[key], style = v === 2 ? "green" : "roundel", counter = v === 1;
+  const choices = FIELD_CHOICES[key] || [], p = choices[Math.floor(r() * choices.length)];
+  const kinds = { roundel: counter ? "counterchanged roundels" : "roundels", green: "green-glazed foliage" }[style];
+  const fieldName = p ? FIELDS[p].name : null;
+  const note = sh.blocks.length ? (fieldName ? `${kinds}, with ${fieldName}` : kinds) : fieldName;
+  return { ...sh, key, style, counter, note, fields: sh.fields.map(f => ({ ...f, p })) };
+}
+let L, W, H, blocks = [], kindAt = [], role = [], voidAt = [], invAt = [], types = [];
+let tiles = [], spots = [], hand = null, T = 0, fp = [], solved = false, starting = false; const MODE = "join", SWAP = "exchange";
+let log = { lifts: 0, lays: 0, moved: 0, turned: 0, second: 0 }, history = [];
+const idx = (x, y) => y * W + x;
+
+function setupLayout(key, r, seed) {
+  L = layoutFor(key, seed); W = L.w; H = L.h;
+  role = new Array(W * H).fill("border"); kindAt = new Array(W * H).fill(null); voidAt = new Array(W * H).fill(false); invAt = new Array(W * H).fill(false);
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) role[idx(x, y)] = "plain";
+  blocks = L.blocks.map(([x0, y0]) => ({ x0, y0, type: Math.floor(r() * 4) }));
+  blocks.forEach(b => { for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) { const k = idx(b.x0 + i, b.y0 + j); role[k] = "block"; if (L.counter) invAt[k] = (b.x0 + i + b.y0 + j) % 2 === 1; } });
+  (L.fields || []).forEach(f => { for (let y = f.y0; y < f.y0 + f.h; y++) for (let x = f.x0; x < f.x0 + f.w; x++) {
+    if ((f.skip || []).some(([sx, sy, sw, sh]) => x >= sx && x < sx + sw && y >= sy && y < sy + sh)) continue;
+    role[idx(x, y)] = "field"; kindAt[idx(x, y)] = FIELDS[f.p].at(x - f.x0, y - f.y0); } });
+  (L.voids || []).forEach(([x, y]) => { voidAt[idx(x, y)] = true; role[idx(x, y)] = "void"; });
+}
+
+// ================= drawing the designed tiles (in floor units) =================
+function centreQuarter(c, type) {
+  c.fillStyle = SLIP;
+  if (type === 0) { c.beginPath(); c.arc(.23, 0, .13, 0, P); c.fill(); c.beginPath(); c.arc(0, .23, .13, -P / 2, P / 2); c.fill(); dot(c, .2, .2, .07);
+    c.fillStyle = BODY; c.beginPath(); c.arc(.23, 0, .06, 0, P); c.fill(); c.beginPath(); c.arc(0, .23, .06, -P / 2, P / 2); c.fill(); }
+  else if (type === 1) { c.beginPath(); c.moveTo(0, 0); [[0, .4], [P / 8, .19], [P / 4, .4], [3 * P / 8, .19], [P / 2, .4]].forEach(([a, r]) => c.lineTo(Math.cos(a) * r, Math.sin(a) * r)); c.closePath(); c.fill();
+    c.fillStyle = BODY; c.beginPath(); c.arc(0, 0, .09, 0, P / 2); c.lineTo(0, 0); c.fill(); }
+  else if (type === 2) { c.save(); c.rotate(P / 4); c.beginPath(); c.ellipse(.2, 0, .17, .06, 0, 0, 2 * P); c.fill(); c.beginPath(); c.ellipse(.17, .09, .1, .035, .6, 0, 2 * P); c.fill();
+    c.beginPath(); c.ellipse(.17, -.09, .1, .035, -.6, 0, 2 * P); c.fill(); c.fillRect(.1, -.1, .025, .2); c.restore(); c.beginPath(); c.arc(0, 0, .07, 0, P / 2); c.lineTo(0, 0); c.fill(); }
+  else { c.fillRect(0, 0, .36, .055); c.fillRect(0, 0, .055, .36); c.beginPath(); c.arc(.38, 0, .075, 0, P); c.fill(); c.beginPath(); c.arc(0, .38, .075, -P / 2, P / 2); c.fill();
+    c.beginPath(); c.ellipse(.2, .2, .09, .04, P / 4, 0, 2 * P); c.fill(); }
+}
+function leaf(c, len, w, kind, col) {
+  c.fillStyle = col;
+  if (kind === 0) { c.fillRect(0, -w * .12, len * .35, w * .24); for (let k = 0; k < 4; k++) { const x = len * (.35 + k * .17), r = w * (.5 - k * .08); dot(c, x, -r * .55, r); dot(c, x, r * .55, r); } dot(c, len * .98, 0, w * .3); }
+  else if (kind === 1) { c.fillRect(0, -w * .1, len * .5, w * .2); dot(c, len * .62, 0, w * .42); dot(c, len * .82, -w * .4, w * .36); dot(c, len * .82, w * .4, w * .36); }
+  else if (kind === 2) { c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(len * .45, -w * .9, len, 0); c.quadraticCurveTo(len * .45, w * .9, 0, 0); c.fill(); }
+  else { c.fillRect(0, -w * .1, len * .4, w * .2); c.beginPath(); c.moveTo(len, 0); c.bezierCurveTo(len * .7, -w * .2, len * .35, -w * 1.1, len * .55, -w * .05); c.bezierCurveTo(len * .35, w * 1.1, len * .7, w * .2, len, 0); c.fill(); }
+}
+function drawBlock(c, b) {
+  const cx = b.x0 + 1, cy = b.y0 + 1;
+  if (L.style === "green") {                                  // foliage, kept clear of the block's outer edges
+    c.fillStyle = SLIP; band(c, cx, cy, .7, .63);
+    for (let k = 0; k < 8; k++) { const a = k * P / 4 + .28; c.save(); c.translate(cx + Math.cos(a) * .66, cy + Math.sin(a) * .66); c.rotate(a + .55); leaf(c, .24, .09, b.type, GREEN); c.restore(); }
+    for (let k = 0; k < 4; k++) {
+      c.save(); c.translate(cx, cy); c.rotate(k * P / 2 + P / 4); leaf(c, .46, .1, 2, GREEN); c.restore();
+      c.save(); c.translate(cx, cy); c.rotate(k * P / 2); c.translate(.09, 0); leaf(c, .3, .1, b.type, GREEN); c.restore();
+      c.fillStyle = SLIP; for (const r of [[.43], [.43, .55], [.49], [.55]][b.type]) dot(c, cx + Math.cos(k * P / 2) * r, cy + Math.sin(k * P / 2) * r, .028);
+    }
+    c.fillStyle = BODY; dot(c, cx, cy, .09); c.fillStyle = SLIP; dot(c, cx, cy, .055);
+  } else {
+    c.fillStyle = SLIP; band(c, cx, cy, .92, .83); band(c, cx, cy, .5, .43);
+    for (let i = 0; i < 16; i++) { const a = (i + .5) * P / 8; dot(c, cx + Math.cos(a) * .67, cy + Math.sin(a) * .67, .045); }
+    for (let q = 0; q < 4; q++) { c.save(); c.translate(cx, cy); c.rotate(q * P / 2); centreQuarter(c, b.type); c.restore(); }
+  }
+}
+function borderPath() {
+  const pts = [], a = .5, bx = W - .5, by = H - .5, Lw = W - 1, Lh = H - 1, Ltot = 2 * (Lw + Lh);
+  for (let s = 0; s <= Ltot + 1e-9; s += 1 / 24) {
+    let x, y, nx, ny, u = s;
+    if (u <= Lw) { x = a + u; y = a; nx = 0; ny = -1; } else if ((u -= Lw) <= Lh) { x = bx; y = a + u; nx = 1; ny = 0; }
+    else if ((u -= Lh) <= Lw) { x = bx - u; y = by; nx = 0; ny = 1; } else { u -= Lw; x = a; y = by - u; nx = -1; ny = 0; }
+    const w = Math.sin(P * s) * .2; pts.push([x + nx * w, y + ny * w, s, nx, ny]);
+  }
+  return pts;
+}
+function drawBorder(c) {
+  const e = .07; c.fillStyle = SLIP;
+  c.fillRect(0, 0, W, e); c.fillRect(0, H - e, W, e); c.fillRect(0, 0, e, H); c.fillRect(W - e, 0, e, H);
+  c.fillRect(1 - e, 1 - e, W - 2 + 2 * e, e * .8); c.fillRect(1 - e, H - 1 + e * .2, W - 2 + 2 * e, e * .8);
+  c.fillRect(1 - e, 1 - e, e * .8, H - 2 + 2 * e); c.fillRect(W - 1 + e * .2, 1 - e, e * .8, H - 2 + 2 * e);
+  const pts = borderPath(); c.strokeStyle = SLIP; c.lineWidth = .075; c.lineCap = "round"; c.beginPath(); pts.forEach(([x, y], k) => k ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
+  const Lt = 2 * (W - 1 + H - 1);
+  for (let s = .5; s < Lt; s += 1) { const p = pts[Math.round(s * 24)]; const side = Math.sin(P * s) > 0 ? 1 : -1; const [x, y, , nx, ny] = p;
+    c.save(); c.translate(x + nx * side * .12, y + ny * side * .12); c.rotate(Math.atan2(ny * side, nx * side) + .5 * side); c.beginPath(); c.ellipse(0, 0, .13, .05, 0, 0, 2 * P); c.fill(); c.restore(); }
+  for (const [x, y] of [[.5, .5], [W - .5, .5], [W - .5, H - .5], [.5, H - .5]]) { c.fillStyle = SLIP; dot(c, x, y, .3); c.fillStyle = BODY; dot(c, x, y, .2); c.fillStyle = SLIP; for (let k = 0; k < 6; k++) dot(c, x + Math.cos(k * P / 3) * .12, y + Math.sin(k * P / 3) * .12, .045); dot(c, x, y, .05); }
+}
+function drawDesign(c) { drawBorder(c); blocks.forEach(b => drawBlock(c, b)); }
+
+// ================= the placed tiles: one motif each, the same whichever way it's turned =================
+function fleurShape(c, s) {                                   // a fleur-de-lis pointing up from the origin
+  c.beginPath(); c.moveTo(0, -.34 * s); c.bezierCurveTo(.07 * s, -.24 * s, .07 * s, -.12 * s, 0, -.04 * s); c.bezierCurveTo(-.07 * s, -.12 * s, -.07 * s, -.24 * s, 0, -.34 * s); c.fill();
+  for (const d of [-1, 1]) { c.beginPath(); c.moveTo(0, -.08 * s); c.bezierCurveTo(d * .12 * s, -.3 * s, d * .28 * s, -.14 * s, d * .16 * s, -.02 * s); c.bezierCurveTo(d * .2 * s, -.12 * s, d * .1 * s, -.14 * s, 0, -.04 * s); c.fill(); }
+  c.fillRect(-.12 * s, -.06 * s, .24 * s, .05 * s);
+}
+function drawKind(c, kind) {                                  // in a unit tile
+  if (kind === "cream") { c.fillStyle = SLIP; c.fillRect(0, 0, 1, 1); return; }
+  if (kind === "red") return;
+  c.fillStyle = SLIP;
+  if (kind === "fleur") { for (let k = 0; k < 4; k++) { c.save(); c.translate(.5, .5); c.rotate(k * P / 2 + P / 4); c.translate(0, -.06); fleurShape(c, 1); c.restore(); } dot(c, .5, .5, .06); }
+  else if (kind === "cross") { c.fillRect(.44, .14, .12, .72); c.fillRect(.14, .44, .72, .12); for (const [x, y] of [[.5, .14], [.5, .86], [.14, .5], [.86, .5]]) { dot(c, x, y, .08); } for (const [x, y] of [[.2, .2], [.8, .2], [.8, .8], [.2, .8]]) dot(c, x, y, .05); c.fillStyle = BODY; dot(c, .5, .5, .06); }
+  else if (kind === "rosette") { band(c, .5, .5, .4, .35); for (let k = 0; k < 8; k++) { c.save(); c.translate(.5, .5); c.rotate(k * P / 4); c.beginPath(); c.ellipse(.17, 0, .13, .055, 0, 0, 2 * P); c.fill(); c.restore(); } c.fillStyle = BODY; dot(c, .5, .5, .06); c.fillStyle = SLIP; dot(c, .5, .5, .03); }
+  else if (kind === "star") { c.beginPath(); for (let i = 0; i < 16; i++) { const a = i * P / 8, r = i % 2 ? .17 : .38; i ? c.lineTo(.5 + Math.cos(a) * r, .5 + Math.sin(a) * r) : c.moveTo(.5 + Math.cos(a) * r, .5 + Math.sin(a) * r); } c.closePath(); c.fill(); c.fillStyle = BODY; dot(c, .5, .5, .08); }
+}
+
+// ================= tile images =================
+function counterchange(c) {
+  const x = c.getContext("2d"), im = x.getImageData(0, 0, c.width, c.height), d = im.data;
+  const b = [143, 58, 30], s2 = [236, 210, 154], v = [s2[0] - b[0], s2[1] - b[1], s2[2] - b[2]], vv = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+  for (let i = 0; i < d.length; i += 4) { let t = ((d[i] - b[0]) * v[0] + (d[i + 1] - b[1]) * v[1] + (d[i + 2] - b[2]) * v[2]) / vv; t = Math.max(0, Math.min(1, t));
+    if (Math.abs(d[i + 1] - d[i]) > 30 && d[i + 1] > d[i]) continue; for (let k = 0; k < 3; k++) d[i + k] = s2[k] + (b[k] - s2[k]) * t; }
+  x.putImageData(im, 0, 0);
+}
+function renderClean(t, size, grout) {
+  const c = mk(size), x = c.getContext("2d"); x.scale(size, size);
+  const g = x.createLinearGradient(0, 0, 1, 1); g.addColorStop(0, BODY); g.addColorStop(1, BODY_D); x.fillStyle = g; x.fillRect(0, 0, 1, 1);
+  if (t.kind) drawKind(x, t.kind);
+  else { x.save(); x.beginPath(); x.rect(0, 0, 1, 1); x.clip(); x.translate(-t.hx, -t.hy); drawDesign(x); x.restore(); }
+  if (t.inv) counterchange(c);
+  if (grout) { x.setTransform(size, 0, 0, size, 0, 0); x.strokeStyle = GROUT; x.lineWidth = .02; x.strokeRect(0, 0, 1, 1); }
+  return c;
+}
+function renderTile(t) {
+  t.sharp = renderClean(t, T, true);
+  const w = mk(T), wx = w.getContext("2d"); wx.drawImage(t.sharp, 0, 0); wx.scale(T, T); const r = rng(t.seed);
+  const blob = (x, y, rad, jag) => { wx.beginPath(); for (let k = 0; k <= 9; k++) { const a = k / 9 * 2 * P, rr = rad * (1 - jag + r() * jag * 2); k ? wx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : wx.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } wx.closePath(); wx.fill(); };
+  for (let i = 0; i < 14; i++) { wx.fillStyle = `rgba(${120 + r() * 30},${48 + r() * 20},${28 + r() * 12},${.3 + r() * .3})`; blob(r(), r(), .04 + r() * .1, .45); }
+  for (let i = 0; i < 10; i++) { wx.fillStyle = `rgba(226,219,204,${.15 + r() * .22})`; blob(r(), r(), .03 + r() * .08, .5); }
+  wx.globalCompositeOperation = "saturation"; wx.fillStyle = "hsla(0,0%,50%,.62)"; wx.fillRect(0, 0, 1, 1);
+  wx.globalCompositeOperation = "multiply"; wx.fillStyle = "rgb(188,168,146)"; wx.fillRect(0, 0, 1, 1); wx.globalCompositeOperation = "source-over";
+  const eg = wx.createRadialGradient(.5, .5, .25, .5, .5, .75); eg.addColorStop(0, "rgba(40,28,18,0)"); eg.addColorStop(1, "rgba(40,28,18,.42)"); wx.fillStyle = eg; wx.fillRect(0, 0, 1, 1);
+  for (let i = 0; i < 120; i++) { wx.fillStyle = `rgba(${r() < .6 ? "25,19,14" : "150,140,125"},${.25 + r() * .4})`; dot(wx, r(), r(), .003 + r() * .011); }
+  for (let k = 0, n = 1 + Math.floor(r() * 3); k < n; k++) { const side = Math.floor(r() * 4), u = r(), dp = .04 + r() * .08, sp = .08 + r() * .18;
+    const pts = [[u - sp / 2, 0], [u - sp / 4, dp], [u + sp / 5, dp * .9], [u + sp / 2, 0]].map(([a, b]) => side === 0 ? [a, b] : side === 1 ? [1 - b, a] : side === 2 ? [a, 1 - b] : [b, a]);
+    wx.beginPath(); pts.forEach(([x, y], i) => i ? wx.lineTo(x, y) : wx.moveTo(x, y)); wx.closePath(); wx.fillStyle = r() < .5 ? "#7d7064" : "#9a8674"; wx.fill(); }
+  wx.strokeStyle = "rgba(12,8,5,.85)"; for (let k = 0, n = 1 + Math.floor(r() * 2); k < n; k++) { let px = r(), py = r() < .5 ? 0 : 1; if (r() < .5) [px, py] = [py, px]; wx.lineWidth = .008 + r() * .008;
+    wx.beginPath(); wx.moveTo(px, py); for (let j = 0; j < 6; j++) { px = Math.max(0, Math.min(1, px + (r() - .5) * .3)); py = Math.max(0, Math.min(1, py + (r() - .5) * .3)); wx.lineTo(px, py); } wx.stroke(); }
+  t.worn = w;
+  const gc = mk(T), gx = gc.getContext("2d"); gx.scale(T, T); const gg = gx.createLinearGradient(0, 0, 1, 1); gg.addColorStop(0, "rgba(255,215,120,.3)"); gg.addColorStop(1, "rgba(150,90,20,.15)"); gx.fillStyle = gg; gx.fillRect(0, 0, 1, 1); t.glazeImg = gc;
+}
+const FS = 40, fcv = mk(FS), fctx = fcv.getContext("2d", { willReadFrequently: true });
+function analyse(img, r) {
+  fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, FS, FS); fctx.translate(FS / 2, FS / 2); fctx.rotate(r * P / 2); fctx.drawImage(img, -FS / 2, -FS / 2, FS, FS);
+  const d = fctx.getImageData(0, 0, FS, FS).data, bit = (x, y) => { const i = (y * FS + x) * 4; if (d[i + 1] > d[i] + 12) return 2; return (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) > 150 ? 1 : 0; };
+  const full = new Uint8Array(FS * FS); for (let y = 0; y < FS; y++) for (let x = 0; x < FS; x++) full[y * FS + x] = bit(x, y);
+  const e = [[], [], [], []]; for (let k = 0; k < FS; k++) { e[0].push(bit(k, 0)); e[1].push(bit(FS - 1, k)); e[2].push(bit(k, FS - 1)); e[3].push(bit(0, k)); }
+  return { full, e };
+}
+function fuzzy(a, b) { let n = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i] && a[i] !== b[i - 1] && a[i] !== b[i + 1]) n++; return n; }
+function diff(a, b, lim) { let n = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i] && ++n > lim) return false; return true; }
+
+// ================= joins: seams for turned tiles, the repeat for placed tiles =================
+const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+function isField(i) { return role[i] === "field"; }
+function joined(i, j, dir) {
+  const a = spots[i], b = spots[j]; if (!a || !b) return false;
+  if (!!a.kind !== isField(i) || !!b.kind !== isField(j)) return false;          // a placed tile in a designed place, or the reverse
+  if (isField(i) && isField(j)) return (a.kind === b.kind) === (kindAt[i] === kindAt[j]) && sameSet(a.kind, kindAt[i]) && sameSet(b.kind, kindAt[j]); // keep the repeat
+  const norm = (e, inv) => inv ? e.map(v => v === 0 ? 1 : v === 1 ? 0 : v) : e;
+  if (isField(i) || isField(j)) {                               // where a field meets the design, the designed tile's edge must look as it should there
+    const [t, pos, d] = isField(i) ? [b, j, (dir + 2) % 4] : [a, i, dir];
+    return fuzzy(norm(fp[t.id][t.rot].e[d], t.inv), norm(fp[pos][0].e[d], invAt[pos])) <= 2;
+  }
+  if ((a.inv ? 1 : 0) ^ (b.inv ? 1 : 0) ^ (invAt[i] ? 1 : 0) ^ (invAt[j] ? 1 : 0)) return false;
+  return fuzzy(norm(fp[a.id][a.rot].e[dir], a.inv), norm(fp[b.id][b.rot].e[(dir + 2) % 4], b.inv)) <= 2;
+}
+function sameSet(k1, k2) { return Object.values(FIELDS).some(f => f.kinds.includes(k1) && f.kinds.includes(k2)); }
+function isTrue(t, i) { if (isField(i)) return t.kind === kindAt[i]; if (t.kind) return false; return diff(fp[t.id][t.rot].full, fp[i][0].full, 30); }
+
+// ================= a new pavement =================
+function newPavement(key, seed) {
+  const r = rng(seed); setupLayout(key, r, seed);
+  solved = false; hand = null; history = []; log = { lifts: 0, lays: 0, moved: 0, turned: 0, second: 0 };
+  tiles = []; spots = new Array(W * H).fill(null);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = idx(x, y); if (voidAt[i]) continue;
+    const t = { id: i, hx: x, hy: y, rot: 0, angle: 0, seed: (r() * 1e9) | 0, kind: kindAt[i], inv: invAt[i], clar: 0, glaze: 0, drop: 0, fixed: false }; tiles.push(t); spots[i] = t; }
+  fp = []; tiles.forEach(t => { if (!t.kind) { const img = renderClean(t, 64, false); fp[t.id] = [0, 1, 2, 3].map(rr => analyse(img, rr)); } });
+  // some tiles never moved: they anchor each pattern
+  const byField = {}; tiles.filter(t => t.kind).forEach(t => (byField[t.kind] ||= []).push(t));
+  Object.values(byField).forEach(list => list.sort(() => r() - .5).slice(0, Math.max(1, Math.round(list.length * .18))).forEach(t => t.fixed = true));
+  tiles.filter(t => !t.kind).sort(() => r() - .5).slice(0, Math.round(tiles.filter(t => !t.kind).length * .12)).forEach(t => t.fixed = true);
+  // disturb: shuffle the placed tiles among their free places, move a share of the turned tiles, turn most of them
+  const free = f => tiles.filter(t => !t.fixed && f(t));
+  const shuffle = list => { const pos = list.map(t => spots.indexOf(t)), order = [...pos].sort(() => r() - .5); list.forEach((t, k) => spots[order[k]] = t); };
+  shuffle(free(t => t.kind));
+  shuffle(free(t => !t.kind).sort(() => r() - .5).slice(0, Math.round(free(t => !t.kind).length * .35)));
+  for (let k = 0; k < 2; k++) {                                  // a couple of tiles have wandered into the wrong kind of place
+    const a = free(t => t.kind)[Math.floor(r() * free(t => t.kind).length)], b = free(t => !t.kind)[Math.floor(r() * free(t => !t.kind).length)];
+    if (a && b) { const ia = spots.indexOf(a), ib = spots.indexOf(b); spots[ia] = b; spots[ib] = a; }
+  }
+  tiles.forEach(t => { if (!t.kind && !t.fixed && r() < .6) t.rot = 1 + Math.floor(r() * 3); t.angle = t.rot * 90; });
+  resize(); update(true);
+}
+
+// ================= feedback =================
+let seam = [];
+function update(instant) {
+  seam = spots.map((_, i) => { const x = i % W, y = Math.floor(i / W); return [x < W - 1 && !voidAt[i] && !voidAt[i + 1] ? joined(i, i + 1, 1) : null, y < H - 1 && !voidAt[i] && !voidAt[i + W] ? joined(i, i + W, 2) : null]; });
+  const frac = spots.map((t, i) => { if (!t) return 0; const x = i % W, y = Math.floor(i / W); let n = 0, j = 0;
+    DIRS.forEach(([dx, dy], d) => { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= W || ny >= H || voidAt[idx(nx, ny)]) return; n++; if (joined(i, idx(nx, ny), d)) j++; }); return n ? j / n : 1; });
+  const filled = spots.every((t, i) => voidAt[i] || t), all = filled && seam.every(([a, b]) => a !== false && b !== false);
+  spots.forEach((t, i) => { if (!t) return; t.tc = MODE === "join" ? frac[i] : all ? 1 : 0; t.tg = frac[i] === 1 && (MODE === "join" || all) ? 1 : 0; if (instant) { t.clar = t.tc; t.glaze = t.tg; } });
+  const n = tiles.length, whole = spots.filter((t, i) => t && frac[i] === 1).length;
+  $("status").textContent = all ? "" : `${whole} of ${n} tiles set`;
+  if (all && !solved) { solved = true; sweepStart = performance.now(); if (!starting && window.DAY) window.DAY.whole(log, getState()); }
+  if (!instant && !starting && window.DAY) window.DAY.changed(getState());
+  kick();
+}
+// ================= drawing =================
+function resize() {
+  const w = cv.getBoundingClientRect().width || 600, dpr = Math.min(devicePixelRatio || 1, 2.5);
+  cv.style.aspectRatio = `${W} / ${H}`; cv.width = Math.round(w * dpr); T = cv.width / W; cv.height = Math.round(T * H);
+  tiles.forEach(renderTile); draw();
+}
+function draw() {
+  const ts = T; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#15110e"; ctx.fillRect(0, 0, cv.width, cv.height);
+  for (let i = 0; i < W * H; i++) {
+    const x = i % W, y = Math.floor(i / W);
+    if (voidAt[i]) {                                           // the column's base
+      const g = ctx.createRadialGradient((x + .4) * ts, (y + .4) * ts, ts * .05, (x + .5) * ts, (y + .5) * ts, ts * .6); g.addColorStop(0, "#a49a8a"); g.addColorStop(1, "#4e473e");
+      ctx.fillStyle = "#2a241e"; ctx.fillRect(x * ts, y * ts, ts, ts); ctx.fillStyle = g; ctx.beginPath(); ctx.arc((x + .5) * ts, (y + .5) * ts, ts * .47, 0, 2 * P); ctx.fill();
+      ctx.strokeStyle = "rgba(20,16,12,.6)"; ctx.lineWidth = ts * .03; ctx.beginPath(); ctx.arc((x + .5) * ts, (y + .5) * ts, ts * .36, 0, 2 * P); ctx.stroke(); continue;
+    }
+    const t = spots[i];
+    if (!t) { ctx.fillStyle = "#2c2520"; ctx.fillRect(x * ts, y * ts, ts, ts); ctx.strokeStyle = "rgba(240,210,120,.55)"; ctx.setLineDash([ts * .06, ts * .05]); ctx.lineWidth = Math.max(1.5, ts * .02); ctx.strokeRect(x * ts + ts * .06, y * ts + ts * .06, ts * .88, ts * .88); ctx.setLineDash([]); continue; }
+    ctx.save(); const s = 1 + t.drop * .06; ctx.translate((x + .5) * ts, (y + .5) * ts); ctx.scale(s, s); ctx.rotate(t.angle * P / 180); ctx.translate(-ts / 2, -ts / 2);
+    if (t.clar < 1) { ctx.globalAlpha = 1; ctx.drawImage(t.worn, 0, 0, ts, ts); }
+    if (t.clar > 0) { ctx.globalAlpha = t.clar; ctx.drawImage(t.sharp, 0, 0, ts, ts); }
+    if (t.glaze > 0) { ctx.globalAlpha = t.glaze; ctx.drawImage(t.glazeImg, 0, 0, ts, ts); }
+    ctx.globalAlpha = 1; ctx.restore();
+    if (t.fixed) { const sx = (x + .5) * ts, sy = (y + .88) * ts; const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, ts * .09); g.addColorStop(0, "rgba(150,70,20,.95)"); g.addColorStop(.6, "rgba(110,50,15,.6)"); g.addColorStop(1, "rgba(110,50,15,0)"); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, ts * .09, 0, 2 * P); ctx.fill(); }   // a small iron stain: bedded fast
+  }
+  if (MODE !== "none") seam.forEach(([rr, d], i) => {
+    const x = i % W, y = Math.floor(i / W);
+    const line = (x1, y1, x2, y2, ok) => { ctx.strokeStyle = ok ? "rgba(20,14,10,.45)" : "rgba(12,8,6,.95)"; ctx.lineWidth = ok ? Math.max(1, ts * .012) : Math.max(3, ts * .06); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
+    if (rr !== null && spots[i] && spots[i + 1]) line((x + 1) * ts, y * ts + 2, (x + 1) * ts, (y + 1) * ts - 2, rr);
+    if (d !== null && spots[i] && spots[i + W]) line(x * ts + 2, (y + 1) * ts, (x + 1) * ts - 2, (y + 1) * ts, d);
+  });
+  if (sweepStart) {                                           // a sweep of light across the finished floor
+    const u = (performance.now() - sweepStart) / 2600;
+    if (u < 1.4) { const g = ctx.createLinearGradient(0, 0, cv.width, cv.height), p0 = Math.max(0, Math.min(1, u - .25)), p1 = Math.max(0, Math.min(1, u)), p2 = Math.max(0, Math.min(1, u + .25));
+      g.addColorStop(0, "rgba(255,230,170,0)"); g.addColorStop(p0, "rgba(255,230,170,0)"); g.addColorStop(p1, "rgba(255,236,190,.38)"); g.addColorStop(p2, "rgba(255,230,170,0)"); g.addColorStop(1, "rgba(255,230,170,0)");
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height); ctx.restore(); kick(); }
+  }
+  if (focus.show) { ctx.strokeStyle = "#e7c96a"; ctx.lineWidth = Math.max(2, ts * .045); ctx.strokeRect(focus.x * ts + 2, focus.y * ts + 2, ts - 4, ts - 4); }
+  drawHand();
+}
+function drawHand() {
+  const S = hcv.width; hctx.setTransform(1, 0, 0, 1, 0, 0); hctx.fillStyle = "#15110e"; hctx.fillRect(0, 0, S, S);
+  $("left").disabled = $("right").disabled = !hand || !!(hand && hand.tile.kind);
+  if (!hand) { $("handnote").textContent = solved ? "The floor is whole." : "Tap a tile to lift it."; return; }
+  const t = hand.tile; hctx.save(); hctx.translate(S / 2, S / 2); hctx.rotate(t.angle * P / 180); hctx.translate(-S / 2, -S / 2); hctx.drawImage(t.sharp, 0, 0, S, S); hctx.restore();
+  $("handnote").textContent = t.kind ? "This tile is the same whichever way it faces. Only its place matters." : "Turn it, then tap a place to lay it.";
+}
+let sweepStart = 0; let raf = 0; const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+function loop() {
+  raf = 0; let moving = false; if (sweepStart && performance.now() - sweepStart < 3700) moving = true; const k = reduce ? 1 : .09;
+  for (const t of tiles) { const d = t.rot * 90 - t.angle; if (Math.abs(d) > .3) { t.angle += reduce ? d : d * .3; moving = true; } else t.angle = t.rot * 90;
+    for (const [p, q] of [["clar", "tc"], ["glaze", "tg"]]) { const e = (t[q] || 0) - t[p]; if (Math.abs(e) > .005) { t[p] += e * k; moving = true; } else t[p] = t[q] || 0; }
+    if (t.drop > .01) { t.drop *= reduce ? 0 : .8; moving = true; } else t.drop = 0; }
+  draw(); if (moving) kick();
+}
+
+// ================= the hand =================
+const focus = { x: 0, y: 0, show: false };
+function lift(i) {
+  const t = spots[i]; if (!t || solved) return;
+  if (t.fixed) { $("handnote").textContent = "That tile has never moved: it is bedded fast. Build around it."; return; }
+  if (history.slice(-3).includes(t)) log.second++;
+  log.lifts++; spots[i] = null; hand = { tile: t, from: i, rot0: t.rot, carried: false }; update();
+}
+function lay(i) {
+  if (!hand || solved || voidAt[i]) return;
+  const other = spots[i]; if (other && other.fixed) { $("handnote").textContent = "That tile is bedded fast; lay this one elsewhere."; return; }
+  const t = hand.tile; spots[i] = t; t.drop = 1; log.lays++; if (i !== hand.from) log.moved++; else if (t.rot !== hand.rot0) log.turned++; history.push(t);
+  if (!other) hand = null; else if (SWAP === "exchange") { spots[hand.from] = other; other.drop = 1; hand = null; } else hand = { tile: other, from: hand.from, rot0: other.rot, carried: true };
+  update();
+}
+function turnHand(dir) { if (!hand || hand.tile.kind) return; const t = hand.tile; t.rot = (t.rot + dir + 4) % 4; if (t.rot === 0 && dir > 0) t.angle -= 360; if (t.rot === 3 && dir < 0) t.angle += 360; kick(); }
+function act(i) { if (hand) lay(i); else lift(i); }
+cv.addEventListener("click", e => { const rc = cv.getBoundingClientRect(), x = Math.floor((e.clientX - rc.left) / rc.width * W), y = Math.floor((e.clientY - rc.top) / rc.height * H);
+  if (x < 0 || y < 0 || x >= W || y >= H) return; focus.show = false; focus.x = x; focus.y = y; act(idx(x, y)); });
+hcv.addEventListener("click", () => turnHand(1));
+$("left").onclick = () => turnHand(-1); $("right").onclick = () => turnHand(1);
+cv.addEventListener("keydown", e => { const mv = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (mv) { e.preventDefault(); focus.show = true; focus.x = (focus.x + mv[0] + W) % W; focus.y = (focus.y + mv[1] + H) % H; draw(); }
+  else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focus.show = true; act(idx(focus.x, focus.y)); }
+  else if (e.key === "r" || e.key === "R") turnHand(e.shiftKey ? -1 : 1); });
+cv.addEventListener("blur", () => { focus.show = false; draw(); });
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => tiles.length && resize(), 150); });
+function getState() { const order = spots.map(t => t ? t.id : -1); if (hand) order[hand.from] = hand.tile.id; return { order, rots: tiles.map(t => [t.id, t.rot]), log }; }
+function setState(st) {
+  if (!st || !st.order || st.order.length !== spots.length) return;
+  const byId = {}; tiles.forEach(t => byId[t.id] = t);
+  st.order.forEach((id, i) => spots[i] = id >= 0 ? byId[id] : null);
+  st.rots.forEach(([id, r]) => { if (byId[id]) { byId[id].rot = r; byId[id].angle = r * 90; } });
+  if (st.log) log = st.log;
+}
+window.PAVE = {
+  start(key, seed, saved) { starting = true; hand = null; newPavement(key, seed); setState(saved); update(true); starting = false; sweepStart = 0; if (solved) draw(); return { name: L.name, note: L.note }; },
+  get solved() { return solved; }, resize() { resize(); }
+};
+if (location.search.includes("debug")) window.__dbg = { get fp() { return fp; }, get tiles() { return tiles; }, get spots() { return spots; }, get W() { return W; }, get H() { return H; }, joined, isTrue, update, newPavement, get solved() { return solved; }, voidAt: () => voidAt };
+})();
+</script>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const ORDER = { 0: "aisle", 1: "chapel", 2: "aisle", 3: "pier", 4: "chancel", 5: "chapel", 6: "crossing" };   // Sunday first; Saturday's is the large floor
+const NAMES = { chapel: "The Chapel", aisle: "The Aisle", crossing: "The Crossing", chancel: "The Chancel", pier: "The Pier Base" };
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("pavement." + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("pavement." + k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem("pavement." + k); } catch (e) {} },
+};
+function today() {
+  const q = new URLSearchParams(location.search).get("date");                  // for testing another day
+  if (q && /^\d{4}-\d\d-\d\d$/.test(q)) { const [y, m, d] = q.split("-").map(Number); return new Date(y, m - 1, d); }
+  const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+}
+const dayIndex = d => Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(2026, 0, 1)) / 864e5);
+const seedFor = di => { let h = (di + 1) * 2654435761 >>> 0; h ^= h >>> 15; h = Math.imul(h, 2246822519) >>> 0; h ^= h >>> 13; return h >>> 0; };
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const fmt = d => d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+let D, DI, KEY, info;
+function weekHTML() {
+  let h = "";
+  for (let k = -6; k <= 0; k++) { const d = addDays(D, k), rec = store.get("d" + dayIndex(d), null);
+    h += `<div class="${rec && rec.done ? "done" : ""} ${k === 0 ? "today" : ""}" title="${fmt(d)}${rec && rec.done ? ": whole" : ""}"><i></i>${DAYS[d.getDay()]}</div>`; }
+  return h;
+}
+function showWhole(rec, fresh) {
+  const done = rec.done;
+  $("whole").hidden = false; $("week").hidden = true; document.body.classList.add("is-whole"); window.PAVE.resize();
+  $("wtitle").textContent = `${info.name} is whole`;
+  const lays = done.lays, parts = [];
+  if (done.moved) parts.push(`${done.moved} moved to a new place`);
+  if (done.turned) parts.push(`${done.turned} turned where ${done.turned === 1 ? "it lay" : "they lay"}`);
+  $("wline").textContent = lays ? `Laid again in ${lays} ${lays === 1 ? "lay" : "lays"}${parts.length ? ": " + parts.join(", ") + "." : "."}` : "Laid again.";
+  $("wweek").innerHTML = weekHTML();
+  const tm = addDays(D, 1);
+  $("tomorrow").textContent = `Tomorrow, ${NAMES[ORDER[tm.getDay()]]}. The next floor is laid at midnight.`;
+  $("copied").textContent = "";
+  if (fresh) setTimeout(() => $("whole").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" }), 1400);
+}
+function load() {
+  D = today(); DI = dayIndex(D); KEY = "d" + DI;
+  const key = ORDER[D.getDay()], rec = store.get(KEY, null);
+  $("dateline").textContent = fmt(D);
+  info = window.PAVE.start(key, seedFor(DI), rec && rec.state);
+  $("pname").textContent = info.name;
+  $("pnote").textContent = info.note.charAt(0).toUpperCase() + info.note.slice(1);
+  $("whole").hidden = true; $("week").hidden = false; document.body.classList.remove("is-whole"); $("week").innerHTML = weekHTML();
+  if (rec && rec.done) showWhole(rec, false);
+}
+window.DAY = {
+  changed(state) { const rec = store.get(KEY, {}); if (rec.done) return; rec.state = state; store.set(KEY, rec); },
+  whole(log, state) { const rec = store.get(KEY, {}); rec.state = state; rec.done = { lays: log.lays, moved: log.moved, turned: log.turned }; store.set(KEY, rec); showWhole(rec, true); },
+};
+$("share").onclick = async () => {
+  const rec = store.get(KEY, {}), d = rec.done || { lays: 0 };
+  const marks = Array.from({ length: 7 }, (_, k) => { const r = store.get("d" + dayIndex(addDays(D, k - 6)), null); return r && r.done ? "▣" : "□"; }).join("");
+  const text = `Pavement · ${D.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}\n${info.name} is whole, in ${d.lays} lays\n${marks}`;
+  let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+  $("copied").textContent = ok ? "Copied." : text;
+};
+$("restart").onclick = () => { store.del(KEY); load(); };
+document.addEventListener("visibilitychange", () => { if (!document.hidden && dayIndex(today()) !== DI) load(); });
+load();
+})();
+</script>
