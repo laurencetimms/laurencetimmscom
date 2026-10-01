@@ -1,9 +1,20 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const projects = [
+type Project = { name: string; desc: string; links?: { label: string; href: string }[] };
+
+const projects: Project[] = [
   { name: 'SHIPSHAP.EXE', desc: 'A sparse, text-based starship game built on a graph-based simulation.' },
   { name: 'The Barrow', desc: 'Text-based exploration in a warped, ancient Britain.' },
+  {
+    name: 'Pavement',
+    desc: 'A daily puzzle: relay a medieval tile floor. Plus the Python tile harness that makes its designs and materials, running in the browser.',
+    links: [
+      { label: 'Play', href: '/lab/pavement/' },
+      { label: 'Workshop', href: '/lab/pavement/workshop.html' },
+      { label: 'Tile harness', href: '/lab/tile-harness/' },
+    ],
+  },
 ];
 ---
 <Layout
@@ -21,6 +32,9 @@ const projects = [
       <div class="card">
         <h3>{p.name}</h3>
         <p>{p.desc}</p>
+        {p.links && (
+          <p>{p.links.map((l, i) => <>{i > 0 && ' · '}<a href={l.href}>{l.label}</a></>)}</p>
+        )}
       </div>
     ))}
   </div>
