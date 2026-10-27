@@ -332,3 +332,21 @@ All internal links were rewritten from the source repo's GitHub-Pages-era
 `${base}/...` templating (via `astro.config`'s `base: '/loadedzone'`) to
 plain `/loadedzone/...` paths, since here `/loadedzone/` is a normal
 nested route on this domain, not the whole site's root.
+
+## Underglaze privacy policy (`/underglaze/privacy`): raw static HTML, not an Astro page
+
+Underglaze (Whimwham Games) is a separate Android app — the Play Store
+listing for its tile puzzle (built on the Lab's Pavement/tile-harness
+work) needs a privacy policy URL. The page lives at
+`public/underglaze/privacy.html`, a plain static file copied verbatim
+into `dist/client` — same pattern as `public/lab/pavement/` — rather
+than an `.astro` page wrapped in the shared `<Layout>`.
+
+Two reasons: it's a legal document supplied as complete, already-styled
+HTML, so copying it verbatim guarantees it's served byte-for-byte as
+given, with no exposure to Astro's whitespace-collapsing-at-line-breaks
+bug seen elsewhere on this site. And Cloudflare's default asset
+`html_handling` (`auto-trailing-slash`) serves a flat `foo.html` file at
+`/foo` with no trailing slash — exactly the URL Google Play needs —
+while redirecting both `/foo.html` and `/foo/` to it, confirmed against
+`wrangler dev` before deploying.
