@@ -10,6 +10,8 @@ interface Props {
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
+  /** Use as the full <title>, without the site-name suffix. */
+  exactTitle?: string;
 }
 
 const {
@@ -20,9 +22,10 @@ const {
   imageAlt = 'Laurence Timms',
   imageWidth = 1200,
   imageHeight = 630,
+  exactTitle,
 } = Astro.props;
 const siteName = 'Laurence Timms';
-const fullTitle = path === '/' ? `${siteName} — Coaching, systems change, and CLAUS` : `${title} — ${siteName}`;
+const fullTitle = exactTitle ?? (path === '/' ? `${siteName} — Coaching, systems change, and CLAUS` : `${title} — ${siteName}`);
 
 const nav = [
   { href: '/writing/', label: 'Writing' },
