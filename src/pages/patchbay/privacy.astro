@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="Patch Bay – Privacy policy"
+  exactTitle="Patch Bay – Privacy policy"
+  path="/patchbay/privacy/"
+  description="Privacy policy for Patch Bay, a free Claude plugin for 70s and 80s electronic pop. It runs in your own Claude account, and its author sees nothing unless you choose to send it."
+>
+  <p class="eyebrow">Patch Bay</p>
+  <h1>Privacy policy</h1>
+  <p class="post-meta" style="margin-bottom: 1.5rem;">Last updated 3 November 2026</p>
+
+  <div class="prose">
+    <h2>The short version</h2>
+    <p>
+      Patch Bay runs inside your own Claude account. I have no servers, no
+      tracking and no analytics of my own, and I never see your
+      conversations, your playlists or anything you save. The only way
+      anything reaches me is if you choose to send it.
+    </p>
+
+    <h2>Who I am</h2>
+    <p>
+      Patch Bay is a free, open-source (MIT) plugin by Laurence Timms, an
+      individual developer in the UK. The source is on GitHub. It is a
+      synth-nerd companion for 70s and 80s electronic pop: chart weeks with
+      playlists, which machines made a record's sound (with honest confidence
+      grades), and a game, Six Degrees of Being Boiled.
+    </p>
+
+    <h2>What the plugin is</h2>
+    <p>
+      A set of written instructions, a small data file of records, machines
+      and people, and some scripts. Claude follows the instructions and runs
+      the scripts inside your own Claude account. No separate software runs
+      anywhere else.
+    </p>
+
+    <h2>What data is involved, and where it lives</h2>
+    <ul>
+      <li>
+        <strong>Web research.</strong> To check charts and credits, Claude
+        searches the web and reads public pages, such as the Official Charts
+        archive, Sound On Sound and Wikipedia. Searches contain record,
+        artist and machine names, not personal details.
+      </li>
+      <li>
+        <strong>The gear graph.</strong> The records, machines and people
+        that ship with the plugin come from public sources, each one linked.
+        It contains no information about you.
+      </li>
+      <li>
+        <strong>Session finds.</strong> Links Claude finds while you play are
+        kept in a file in your Claude session. They stay there unless you
+        choose to send them to me.
+      </li>
+      <li>
+        <strong>Playlists.</strong> If you've connected a music service to
+        Claude, such as the Spotify connector, Patch Bay can create a
+        playlist in your account. It asks first. If you haven't connected
+        one, you get a plain track list instead.
+      </li>
+      <li>
+        <strong>The live Map of Being Boiled.</strong> If you publish the
+        map, it is a page in your own Claude account, private to you until
+        you share it. Its Claude features (Ask the map, Tell the story,
+        Suggest leads) use the Claude usage of whoever is viewing, and Claude
+        asks that person before the first use. If someone saves a lead, the
+        page stores the lead, the record it's about, the time, and an
+        anonymous Claude account id for the person who saved it. Anyone you
+        share the page with can see saved leads. When you ask Patch Bay in
+        chat to check the leads, it updates them on the page.
+      </li>
+    </ul>
+
+    <h2>Third parties</h2>
+    <p>
+      Claude is provided by Anthropic, under <a href="https://www.anthropic.com/legal/privacy">Anthropic's privacy policy</a>.
+      That covers your conversations, the published map and its saved leads.
+      If you use a music connector, the service behind it, such as Spotify,
+      handles your playlists under its own policy. I have no access to any of
+      it.
+    </p>
+
+    <h2>Usage figures from the directory</h2>
+    <!-- Laurence: confirm against the directory portal's Usage tab before publishing. -->
+    <p>
+      If Patch Bay is listed in Anthropic's plugin directory, I may see
+      aggregate figures such as installs, versions in use, how often it runs
+      and error rates. I don't see what you asked, what Claude answered, or
+      anything you saved.
+    </p>
+
+    <h2>Things you send me</h2>
+    <p>
+      If you send me a finds file or a lead, for example by email or as a
+      GitHub issue, I'll receive what you send, along with whatever your
+      email or GitHub account shows. I use it only to check and improve the
+      gear graph. A confirmed find may be added to the public graph with its
+      source, but never your name unless you ask to be credited.
+    </p>
+
+    <h2>Keeping and deleting your data</h2>
+    <p>
+      I keep nothing unless you send it to me. To remove Patch Bay's data,
+      delete the published map (which deletes its saved leads), any playlists
+      it made, and the plugin itself. Requests about data held by Anthropic or
+      a music service go to those companies. If you've sent me something and
+      want it removed, use the contact form and I'll delete it.
+    </p>
+
+    <h2>This web page</h2>
+    <p>
+      This page sets no cookies and uses no analytics or tracking. Fonts are
+      served by Google Fonts, which receives your IP address and browser
+      details. The site is hosted on Cloudflare.
+    </p>
+
+    <h2>Children</h2>
+    <p>Patch Bay is not intended for anyone under 18.</p>
+
+    <h2>Changes</h2>
+    <p>
+      If this policy changes, I'll post the new version here with a new "last
+      updated" date. Significant changes to what the plugin does are noted in
+      its README on GitHub.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions about this policy go through the <a href="/coaching/#contact">contact form</a> on my site.
+    </p>
+  </div>
+</Layout>
