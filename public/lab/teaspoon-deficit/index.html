@@ -34,8 +34,10 @@ button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px so
 #app{height:100%;display:flex;flex-direction:column;max-width:1180px;margin:0 auto}
 
 /* the window */
-#view{position:relative;flex:none;height:136px;background:#070a10;overflow:hidden;color:#eef2ec}
-#sky{display:block;width:100%;height:100%;cursor:crosshair}
+#view{position:relative;flex:none;height:136px;transition:height .35s ease;cursor:zoom-in;background:#070a10;overflow:hidden;color:#eef2ec}
+#sky{display:block;width:100%;height:100%}
+#view.big{height:62vh;cursor:zoom-out}
+#vcap{left:12px;right:12px;bottom:58px;font:11px/1.5 var(--mono);color:#e7efe9;pointer-events:none;opacity:0;transition:opacity .3s} #view.big #vcap{opacity:1}
 #sky.nogl{background:radial-gradient(120% 90% at 50% 120%,#1b2a22 0 38%,transparent 39%),linear-gradient(#05070d,#0d0c1c)}
 #view::before{content:"";position:absolute;left:0;right:0;bottom:0;height:64px;background:linear-gradient(transparent,#000c);pointer-events:none}
 #view>*:not(#sky){position:absolute;text-shadow:0 1px 3px #000,0 0 8px #000}
@@ -53,8 +55,8 @@ button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px so
 
 /* stores */
 #body{flex:1;min-height:0;display:flex;flex-direction:column}
-#res{flex:none;display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--rule);background:var(--panel)}
-.r{padding:4px 8px 5px;border-right:1px solid var(--rule);border-top:1px solid var(--rule);min-width:0}
+#res{flex:none;display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--rule);background:var(--panel)}
+.r{position:relative;display:block;width:100%;text-align:left;padding:4px 8px 6px;border-right:1px solid var(--rule);border-top:1px solid var(--rule);min-width:0}
 .rn{display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--mute);white-space:nowrap}
 .rr{font-family:var(--mono);font-size:10.5px}
 .rr[data-s="bad"]{color:var(--bad)}
@@ -93,7 +95,7 @@ p{margin:0}
 .item.hit{animation:hit .25s}
 @keyframes hit{from{background:color-mix(in srgb,var(--accent) 30%,var(--panel))}to{background:var(--panel)}}
 .costs{display:flex;flex-direction:column;gap:1px;font:12px var(--mono);font-variant-numeric:tabular-nums}
-.cost{display:flex;justify-content:space-between;max-width:260px}
+.cost{display:grid;grid-template-columns:minmax(64px,auto) 1fr;gap:12px;max-width:340px} .cv{text-align:right}
 .cost[data-s="ok"] .cv{color:var(--good)} .cost[data-s="no"] .cv{color:var(--ink)} .cost[data-s="cap"] .cv{color:var(--bad)}
 .ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
 .ctl-s{font:11px var(--mono)}
@@ -173,10 +175,13 @@ p{margin:0}
 .end-x{font:16px/1.5 var(--serif);text-wrap:pretty}
 .code{width:100%;height:110px;font:11px var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:8px;resize:vertical}
 
-@media (max-width:420px){ .r{padding:3px 6px 4px} .rn{font-size:10px} .rr{font-size:9.5px} .rv{font-size:12.5px} .rc{font-size:9.5px} .opts{grid-template-columns:1fr} }
+@media (max-width:420px){ .opts{grid-template-columns:1fr} }
+.rbar{position:absolute;left:0;bottom:0;height:3px;background:var(--accent);opacity:.55} .r[data-s="full"] .rbar{background:var(--full);opacity:1}
+.tasks{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px} .opt.on,.chip.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
 @media (max-width:359px){ #res{grid-template-columns:repeat(3,1fr)} }
 @media (min-width:900px){
   #view{height:190px}
+  #view.big{height:70vh}
   #count{font-size:38px}
   #body{display:grid;grid-template-columns:230px minmax(0,1fr) 310px;grid-template-rows:minmax(0,1fr)}
   #res{display:flex;flex-direction:column;border-bottom:0;border-right:1px solid var(--rule);overflow-y:auto}
@@ -201,6 +206,7 @@ p{margin:0}
     <div class="hud"><h1>The Teaspoon Deficit</h1><div><span id="count">0</span> <span id="count-l">spoons made</span></div></div>
     <div id="date"></div>
     <div class="vr"><div id="deficit" hidden></div></div>
+    <div id="vcap" aria-live="off"></div>
   </section>
   <div id="body">
     <aside id="res" aria-label="Stores"></aside>
@@ -275,9 +281,9 @@ function newState(quirk){
     mand:0, mp:0, accord:60, accMod:0, fest:0, weather:0, hails:3, stand:{choir:0, bloom:0, quorate:0}, traded:{},
     pedlar:0, pedT:rnd(500,800), comet:0, cometT:rnd(120,200), comets:0,
     st:{cur:null, done:{}, step:{}, flags:{}, nextT:rnd(150,240), last:[], ign:0, wait:{}},
-    duty:{}, keep:{}, mind:{nodes:[{k:'stem', lv:1, p:-1, cond:1, v:1}], heat:0, offer:null, ct:0, trial:null, sulk:{}, glT:0, sockT:0, temp:{}, sel:0},
+    duty:{}, keep:{}, mind:{nodes:[{k:'stem', lv:1, p:-1, cond:1, v:1}], task:'idle', coach:'', dream:0, dreams:0, fc:0, heat:0, offer:null, ct:0, trial:null, sulk:{}, glT:0, sockT:0, temp:{}, sel:0},
     lastAct:0, taste:Math.floor(Math.random()*3), cand:null, fleet:[], goodNames:0,
-    m:{graze:1,bed:1,scav:1,press:1,yield:1,craft:1,smelt:1,notion:1,ice:1,cond:1,kettle:1,warm:1,fuel:1,cap:1,icecap:1,ncap:1,lcap:1,learn:1,comfort:1,hail:1,obs:1,mind:1,hand:1,berth:0,rota:1,stem:1,hcap:1},
+    m:{graze:1,bed:1,scav:1,press:1,yield:1,craft:1,smelt:1,notion:1,ice:1,cond:1,kettle:1,warm:1,fuel:1,cap:1,icecap:1,ncap:1,lcap:1,learn:1,comfort:1,hail:1,obs:1,mind:1,hand:1,berth:0,rota:1,stem:1,hcap:1,bunk:1,rackB:5,warrenB:4},
     tmpm:[], accPerm:0, quirk:quirk||'', heir:hz, log:[], ended:'', bank:0, flux:0, sunTaps:0, _sp:0, _used:0, acts:0};
   if (hz.small) { S.b.hut = 2; S.b.bed = 1; S.seen.lichen = 1; }
   return S;
@@ -303,12 +309,19 @@ const BLD = {
  band:{n:'Bandstand',d:'For the bards, who were going to perform anyway.',c:{plate:25,wire:5},k:1.3,e:'comfort +2',req:S=>S.done.music},
  shelf:{n:'Ledger shelves',d:'Floor-to-ceiling, then a bit more.',c:{plate:15,ledger:2},k:1.2,e:'+1.5K notion storage',req:S=>S.done.bookkeeping},
  mill:{n:'Drawing mill',d:'Pulls plate into wire, slowly, with a noise like a cat.',c:{plate:40,gear:2},k:1.15,e:'turns plate into wire',req:S=>S.done.drawmill},
+ bunker:{n:'Scrap bunker',d:'A sealed hold for scrap, lined with plate so it does not wander off.',c:{plate:40,spring:4},k:1.25,e:'+1.5K scrap storage',req:S=>S.done.springs},
+ warren:{n:'Warren',d:'Dug by the crew themselves, into the old insulation. They will not let you see the plans.',c:{lichen:1500,plate:12},k:1.3,e:'+4 berths',req:S=>S.st.flags.homes},
  garden:{n:'Moss garden',d:'Ornamental lichen. Grown from neighbours’ spores, for looking at.',c:{spores:3,plate:10},k:1.2,e:'comfort +3, +0.4 lichen/s',req:S=>S.done.gardening}};
-function bcost(S, id, q){ const d = BLD[id], n = nb(S,id), o = {}; const f = Math.pow(d.k,n) * (Math.pow(d.k,q)-1)/(d.k-1); for (const r in d.c) o[r] = d.c[r]*f; return o; }
+const scrapCap = S => (100 + 150*nb(S,'locker') + 1500*nb(S,'bunker')*S.m.bunk)*S.m.cap;
+/* a building never asks for more scrap than 90% of what you can store: the rest is asked in plate, 50 scrap to a plate */
+function bcost(S, id, q, raw){ const d = BLD[id], n = nb(S,id), o = {}; const f = Math.pow(d.k,n) * (Math.pow(d.k,q)-1)/(d.k-1); for (const r in d.c) o[r] = d.c[r]*f;
+  if (!raw && o.scrap) { const lim = scrapCap(S)*0.9; if (o.scrap > lim) { o.plate = (o.plate||0) + (o.scrap - lim)/50; o.scrap = lim; } }
+  return o; }
+function buy1cost(S, id){ return bcost(S, id, 1); }
 function buy(S, id, q){
   if (!BLD[id].req(S)) return 0;
   let got = 0; q = q || 1;
-  while (got < q && got < 500) { const c = bcost(S,id,1); if (!canPay(S,c)) break; pay(S,c); S.b[id] = nb(S,id)+1; got++; }
+  while (got < q && got < 500) { const c = buy1cost(S,id); if (!canPay(S,c)) break; pay(S,c); S.b[id] = nb(S,id)+1; got++; }
   if (got && id == 'bench' && nb(S,'bench') == got) log(S,'The Workshop is open. Scrap can be hammered into plate.','big');
   hook(got ? 'buy' : 'fail'); return got;
 }
@@ -368,6 +381,7 @@ const UPG = [
  {id:'lathe',n:'Lathe',d:'Crafting +25%.',c:{gear:5,plate:20},req:S=>S.done.gears,fx:mulf('craft',1.25)},
  {id:'stemgear',n:'Brainstem gearing',d:'The Brainstem thinks three times as fast.',c:{gear:8,wire:10},req:S=>S.done.gears,fx:mulf('stem',3)},
  {id:'ferment',n:'Fermentation vats',d:'Grazers and beds ×2.',c:{plate:40,ice:300},req:S=>S.done.ferment,fx:S=>{S.m.graze*=2;S.m.bed*=2;}},
+ {id:'rivbunk',n:'Riveted bunkers',d:'Scrap bunkers hold twice as much.',c:{gear:10,plate:60},req:S=>nb(S,'bunker')>=3,fx:mulf('bunk',2)},
  {id:'tess',n:'Tessellated storage',d:'Lockers hold 50% more.',c:{plate:60,spring:5},req:S=>S.done.tess,fx:mulf('cap',1.5)}];
 const UPG_BY = {}; UPG.forEach(u => UPG_BY[u.id] = u);
 const upgOpen = S => UPG.filter(u => !S.up[u.id] && u.req(S));
@@ -443,8 +457,13 @@ function mindCalc(S, c){
   return {cps: cps*(1-div), out, heat: net, hcap, pen, cap: cap*(S.done.attic2 ? 1.5 : 1), notions: cps*div/6, gland, bilge, raw: cps};
 }
 function mindScore(S){ const c = calc(S); return c.mind.cps + c.mind.notions*4 + c.mind.cap/500; }
-function mindDraft(S){ if (S.mp < 1 || S.mind.offer) return hook('fail'); S.mp--; const p = MPOOL(S).slice().sort(() => Math.random()-0.5);
-  const seen = {}; S.mind.offer = []; for (const k of p) { if (!seen[k]) { seen[k] = 1; S.mind.offer.push(k); } if (S.mind.offer.length == 3) break; } hook('buy'); }
+function draftOffer(S){ const p = MPOOL(S).slice().sort(() => Math.random()-0.5), seen = {}, o = []; for (const k of p) { if (!seen[k]) { seen[k] = 1; o.push(k); } if (o.length == 3) break; } return o; }
+const dreamNeed = S => 15000*Math.pow(1.7, S.mind.dreams);
+function mindDraft(S){ if (S.mp < 1 || S.mind.offer) return hook('fail'); S.mp--; S.mind.offer = draftOffer(S); S.mind.dreamt = 0; hook('buy'); }
+const TASKS = {idle:['Leak whimsy','The old way. A full Mind leaks whimsy, and nothing else happens.'], ponder:['Ponder','Spare thought becomes notions for the scholars, eight thoughts to a notion.'],
+ coach:['Coach a duty','Spare thought helps one duty team learn faster.'], forecast:['Forecast','The Mind watches the sky. Comets come 30% more often and teach half as much again, and you can see the weather coming.'],
+ dream:['Dream','Spare thought piles up until the Mind dreams up a subsystem of its own, free of Mandate.']};
+function setTask(S, t, duty){ if (!S.done.sparework || !TASKS[t]) return hook('fail'); S.mind.task = t; if (duty != null) S.mind.coach = duty; hook('tap'); }
 function mindTake(S, k, parent){ if (!S.mind.offer || S.mind.offer.indexOf(k) < 0) return; const N = S.mind.nodes;
   N.push({k, lv:1, p: parent == null ? suggestParent(S,k) : parent, cond:1, v:1}); S.mind.offer = null; S.mind.sel = N.length - 1; S.mind.rew = S.age;
   log(S, 'A ' + MT[k].n + ' has been fitted to the Mind, wired to the ' + MT[N[N[N.length-1].p].k].n + '.','good'); hook('unlock'); }
@@ -476,7 +495,15 @@ function mindTick(S, dt, c, online){
   S.r.cycles += inflow*dt; S.r.notions = Math.min(c.caps.notions, S.r.notions + mc.notions*dt);
   if (mc.bilge) S.r.cycles *= Math.pow(1 - 0.0015*mc.bilge, dt);
   const full = S.r.cycles >= mc.cap*0.995; if (S.r.cycles > mc.cap) S.r.cycles = mc.cap;
-  S.r.whimsy += (full ? mc.raw*0.006*(1 + mc.gland) : mc.raw*0.0004*mc.gland) * (qk(S).whim||1) * Math.pow(0.85, S.mind.nodes.filter(n => n.k == 'bureau').length) * dt;
+  const task = S.done.sparework ? md.task : 'idle', busy = full && task != 'idle';
+  S.r.whimsy += (full ? mc.raw*0.006*(1 + mc.gland)*(busy ? 0.25 : 1) : mc.raw*0.0004*mc.gland) * (qk(S).whim||1) * Math.pow(0.85, S.mind.nodes.filter(n => n.k == 'bureau').length) * dt;
+  /* standing work for spare thought: only what overflows a full Mind is spent */
+  const spare = busy ? mc.cps*dt : 0; md.fc = busy && task == 'forecast' ? 1 : 0;
+  if (spare > 0) {
+    if (task == 'ponder') S.r.notions = Math.min(c.caps.notions, S.r.notions + spare/8);
+    if (task == 'coach') { const D = S.duty[md.coach]; if (D && team(S, md.coach).length) D.c = Math.min(100, D.c + spare*0.00006*(1 - D.c/105)); }
+    if (task == 'dream') { md.dream += spare; const need = dreamNeed(S); if (md.dream >= need && !md.offer) { md.dream -= need; md.dreams++; md.offer = draftOffer(S); md.dreamt = 1; log(S,'The Mind has dreamt up a subsystem nobody sent. (Mind)','big'); hook('unlock'); } }
+  }
   md.temp.twitch = 0;
   for (const k in md.temp) if (k != 'twitch' && k != 'giggle' && md.temp[k] > 0) md.temp[k] = Math.max(0, md.temp[k] - dt);
   for (const k in md.sulk) if (md.sulk[k] > 0) md.sulk[k] -= dt;
@@ -579,9 +606,9 @@ function calc(S){
   c.yield = m.yield*(1 + 0.03*J.tinker);
   c.notionsIn = J.scholar*0.1*m.notion*(1 + 0.05*nb(S,'nook')) + nb(S,'obs')*0.1*m.obs;
   c.smelt = nb(S,'smelter')*1*m.smelt; c.kettle = nb(S,'kettle')*m.kettle*(S.mind.temp.teapot > 0 ? 2 : 1); c.mill = nb(S,'mill');
-  c.caps = {lichen:(2000 + 1500*nb(S,'locker') + 500*nb(S,'cellar'))*m.cap*m.lcap, scrap:(100 + 150*nb(S,'locker'))*m.cap,
+  c.caps = {lichen:(2000 + 1500*nb(S,'locker') + 500*nb(S,'cellar'))*m.cap*m.lcap, scrap:scrapCap(S),
     ice:(200 + 100*nb(S,'locker') + 300*nb(S,'cellar'))*m.icecap, notions:(250 + 250*nb(S,'nook')*(m.nook||1) + 2500*nb(S,'obs') + 1500*nb(S,'shelf'))*m.ncap, cycles:c.mind.cap};
-  c.capPop = (2 + (q.berth||0) + m.berth)*nb(S,'hut') + 5*nb(S,'rack');
+  c.capPop = (2 + (q.berth||0) + m.berth)*nb(S,'hut') + m.rackB*nb(S,'rack') + m.warrenB*nb(S,'warren');
   c.capHails = 2 + nb(S,'antenna');
   /* warmth and comfort make up accord */
   const aph = c.cal.i == 2;
@@ -664,7 +691,7 @@ function tick(S, dt, online){
   }
   if (online) {
     if (S.comet > 0) { S.comet -= dt; if (S.comet <= 0 && Math.random() < 0.15*nb(S,'obs')*S.m.obs) observe(S, 'obs'); }
-    else if (pop >= 1 && (S.cometT -= dt) <= 0) { S.comet = 22; S.cometT = rnd(200,380)*(q.comet||1); log(S,'A comet is crossing the sky. Tap Observe.','big'); hook('unlock'); }
+    else if (pop >= 1 && (S.cometT -= dt*(S.mind.fc ? 1.3 : 1)) <= 0) { S.comet = 22; S.cometT = rnd(200,380)*(q.comet||1); log(S,'A comet is crossing the sky. Tap Observe.','big'); hook('unlock'); }
     storyTick(S, dt);
     if (nb(S,'antenna') >= 1) {
       if (S.pedlar > 0) S.pedlar -= dt;
@@ -689,7 +716,7 @@ const festCost = S => ({lichen:200 + 40*S.pop, tea:2 + 0.2*S.pop});
 function festival(S){ const c = festCost(S); if (!S.done.brewing || S.fest > 0 || !canPay(S,c)) return hook('fail'); pay(S,c); S.fest = 400; S.seen.fest = 1; log(S,'A Brew-up! The crew are delighted.','good'); if (cal(S).i == 2) ach('wake'); hook('buy'); }
 function observe(S, by){
   if (S.comet <= 0) return hook('fail'); touch(S);
-  const c = calc(S), g = 20 + 0.12*c.caps.notions; S.comet = 0; S.comets++; add(S,'notions',g,c); add(S,'ice', 10 + c.caps.ice*0.05, c);
+  const c = calc(S), g = (20 + 0.12*c.caps.notions)*(S.mind.fc ? 1.5 : 1); S.comet = 0; S.comets++; add(S,'notions',g,c); add(S,'ice', 10 + c.caps.ice*0.05, c);
   log(S, (by == 'obs' ? 'The observatory caught the comet' : by == 'watch' ? 'The sky-watch observed the comet' : 'You watch the comet with the scholars') + '. +' + Math.round(g) + ' notions and some ice.','good'); if (!by) hook('buy');
   if (S.comets >= 10) ach('comets'); if (S.comets >= 5) marg('m1');
 }
@@ -754,6 +781,10 @@ const CHAINS = [
  {id:'wine',trig:S=>nb(S,'kettle')>=2,steps:[
   {t:'Somebody has left the tea too long. It now has an opinion of its own, and {who} has had three cups.',a:['Allow lichen wine','Accord +6; duties make more mistakes',S=>{S.accMod+=6;S.m.learn*=1.1;S.st.flags.wine=1;},'Lichen wine becomes a fixture. The rota is livelier. So are the spoons.',1],b:['Ban it','Accord −3',S=>{S.accMod-=3;},'Banned. A still appears in a locker within the hour. You choose not to look.',1]},
   {t:'{who} proposes a vintage, aged through a whole Aphelion.',a:['Lay it down','Costs 20 tea; whimsy +40 next spring',S=>{S.r.tea=Math.max(0,S.r.tea-20);S.st.flags.vintage=S.age;},'Twenty jars go into the ice cellar, labelled in a hand that gets worse down the shelf.',-1],b:['Drink it now','Accord +3',S=>{S.accMod+=3;},'There is a party. There is a second party, to recover from the first.',-1]}]},
+ {id:'home',trig:S=>S.pop>=30&&S.done.survey&&S.age>4*3600,steps:[
+  {t:'{who} has painted the inside of their hut. Then the one next door. The crew ask, politely, whether they might arrange the living quarters themselves.',a:['Let them','Unlocks Warrens, dug by the crew',S=>{S.st.flags.homes=1;},'They begin at once, in the old insulation, in shifts, singing. You are not shown the plans.',1],b:['Keep to the plan','Accord \u22123',S=>{S.accMod-=3;},'The paint stays. The plan stays. Everyone is very slightly sulky.',1]},
+  {t:'Two huts have been knocked together overnight. The crew call it the Commons. {who} is standing in the middle of it, looking pleased.',a:['Bless the Commons','Accord +3 for good',S=>{S.accPerm+=3;S.st.flags.homes=1;},'The Commons becomes the place where everything is discussed, and some things are decided.',2],b:['Ask for the wall back','Accord \u22122, 20 plate back',S=>{S.accMod-=2;S.r.plate+=20;},'The wall goes back up, with a door in it, which nobody shuts.',2]},
+  {t:'{who} asks, on behalf of the Commons, for a say in where the next racks go.',a:['Give them a vote','Warrens hold 6; accord +2 for good',S=>{S.m.warrenB=6;S.accPerm+=2;S.st.flags.homes=1;},'The vote takes four hours. The racks go somewhere you would never have thought of, and it is better.',-1],b:['The plan is the plan','Tun-racks hold one more',S=>{S.m.rackB+=1;},'You pack the racks tighter. Efficient. Nobody says anything, which is its own kind of saying something.',-1]}]},
  {id:'tuesday',trig:S=>S.seen.ped&&S.r.whimsy>=10,steps:[
   {t:'Odd Tuesday left a parcel. The label says: OPEN ON A WEDNESDAY.',a:['Wait for Wednesday','Something good, later',S=>{S.st.flags.parcel=1;},'You put it on a shelf. It ticks, faintly, on the hour.',1],b:['Open it now','Whimsy +12',S=>{S.r.whimsy+=12;},'Inside is a smaller parcel. It says OPEN ON A WEDNESDAY. You feel admonished.',1]},
   {t:'It is Wednesday. Probably. The parcel is warm.',a:['Open it','A gift from the pedlar',S=>{S.r.grit+=6;S.r.spores+=3;S.r.footnotes+=2;},'Grit, spores, footnotes, and a note: “For later. You will know.”',-1],b:['Return it','Trades pay better',S=>{S.m.hail*=1.25;},'Odd Tuesday is delighted. Nobody has ever returned one. It tells everyone.',-1]}]}];
@@ -855,6 +886,9 @@ const PRJ = [
  {id:'rivets',tab:'mind',n:'Name every rivet',d:'All 4,180,223 of them. Mandate +2.',c:{whimsy:200},req:S=>S.done.holiday,fx:S=>{S.mp+=2;}},
  {id:'smallprint',tab:'mind',n:'Read the Mandate’s small print',d:'All nine thousand pages of it.',c:{cycles:8000},req:S=>S.done.manual&&S.mand>=8,fx:S=>{log(S,'The small print names a number. It is not a small number.','big');}},
  {id:'index',tab:'mind',n:'Cross-referencing',d:'Every notion, filed under every other notion. Notion storage +50%.',c:{cycles:20000,ledger:10},req:S=>S.done.bookkeeping,fx:mulf('ncap',1.5)},
+ {id:'bunkdesign',tab:'mind',n:'Design denser bunks',d:'The Mind works out how to fold a tardigrade without upsetting it. Tun-racks hold 7.',c:{cycles:12000,plate:80},req:S=>nb(S,'rack')>=4,fx:S=>{S.m.rackB+=2;}},
+ {id:'hammock',tab:'mind',n:'Hammock theory',d:'Slung from the ceiling, swaying gently. Every moss hut holds one more.',c:{cycles:30000,wire:40},req:S=>S.done.bunkdesign&&S.done.springs,fx:S=>{S.m.berth+=1;}},
+ {id:'sparework',tab:'mind',n:'Find the Mind something to do',d:'A full Mind just leaks whimsy. Give it standing work for its spare thought.',c:{cycles:3000},req:S=>S.mind.nodes.length>=4},
  {id:'selfmap',tab:'mind',n:'Map yourself',d:'Shows how much each subsystem thinks, on the diagram.',c:{cycles:2000},req:S=>S.mind.nodes.length>=4},
  {id:'cool1',tab:'mind',n:'Breathe out',d:'The Mind tolerates 50% more heat.',c:{cycles:5000},req:S=>S.seen.glitch>=1,fx:mulf('hcap',1.5)},
  {id:'stay',tab:'mind',n:'Decline the call',d:'Unplug the antenna. Stay on the rock with the crew. This ends the story.',c:{whimsy:400},req:S=>S.done.orbital&&S.accord>=90&&S.pop>=60,fx:S=>endRun(S,'small')},
@@ -948,7 +982,7 @@ function simulate(S, el){ const steps = Math.min(4000, Math.ceil(el/0.5)), dt = 
 /* ===== the window: one fragment shader draws the sky, the hull, the belt and the fleet ===== */
 const FRAG = `
 precision mediump float;
-uniform vec2 R; uniform float T, SEA, WARM, BEDS, POP, PH, COM, DRIFT, PULSE, TUN, GOLD, FLEET, BELT;
+uniform vec2 R; uniform float T, SEA, WARM, BEDS, POP, PH, COM, DRIFT, PULSE, TUN, GOLD, FLEET, BELT, HUTS, RACKS, ANT, OBS, STEAM, PRESS, MIND, HOT, CREW, BIG;
 float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
 float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
@@ -956,6 +990,7 @@ float fbm(vec2 p){ float a=.5, s=0.; for(int i=0;i<4;i++){ s+=a*n(p); p*=2.03; a
 float stars(vec2 uv, float sc, float th){ vec2 g=floor(uv*sc), f=fract(uv*sc)-.5; float r=h(g);
   vec2 o=vec2(h(g+3.1),h(g+7.7))-.5; float d=length(f-o*.6);
   return step(th,r)*smoothstep(.10,.0,d)*(.6+.4*sin(T*(1.+r*3.)+r*40.)); }
+float hullY(float x){ return .27 - .10*x*x + .010*n(vec2(x*9.,1.)) - (PH>2.5?.08:0.); }
 void main(){
   vec2 uv=gl_FragCoord.xy/R; float asp=R.x/R.y; vec2 p=vec2((uv.x-.5)*asp, uv.y);
   vec3 col=mix(vec3(.020,.030,.055), vec3(.045,.040,.095), uv.y);
@@ -984,8 +1019,25 @@ void main(){
   if(COM>=0.){ vec2 hd=vec2(mix(-.55,.55,COM)*asp, .90-.22*COM), dir=normalize(vec2(asp*1.1,-.22));
     vec2 v=p-hd; float al=dot(v,-dir), pe=length(v+dir*al);
     col+=vec3(.75,.9,1.)*(smoothstep(.014*(1.+al*6.),0.,pe)*smoothstep(.38,0.,al)*step(0.,al)*.7+.0007/(dot(v,v)+.0004)); }
-  /* the hull */
-  float hy=.27-.10*p.x*p.x+.010*n(vec2(p.x*9.,1.))-(PH>2.5?.08:0.);
+  /* the hull, and the life on it */
+  float hy=hullY(p.x);
+  vec3 amber=vec3(1.,.72,.36);
+  /* steam from the boilers, rising and leaning */
+  if(STEAM>0.){ for(int i=0;i<3;i++){ float fi=float(i); float x0=(fi-1.)*.42*asp+.07; float bx=hullY(x0);
+      float up=p.y-bx; if(up>0.&&up<.5){ float w=.012+up*.16; float lean=x0+up*up*.5;
+        float m=exp(-pow((p.x-lean)/w,2.))*smoothstep(.5,.0,up)*fbm(vec2(p.x*14.-lean*14., up*7.-T*.5)+fi*7.);
+        col=mix(col, vec3(.78,.8,.82), clamp(m*1.6*STEAM*step(fi+.5,STEAM*3.+.5),0.,.65)); } } }
+  /* the Mind: a porthole that glows as it thinks */
+  { vec2 mp=vec2(.0, hullY(0.)+.012); float md=length((p-mp)*vec2(1.,1.25));
+    vec3 mc=mix(vec3(1.,.78,.4), vec3(1.,.25,.15), HOT*(.6+.4*sin(T*11.)));
+    col+=mc*MIND*(.55+.45*sin(T*1.7))*exp(-md*md*900.)*.9; col+=mc*MIND*.25*exp(-md*14.)*smoothstep(-.02,.06,p.y-hy); }
+  /* antennas */
+  for(int i=0;i<3;i++){ float fi=float(i); if(fi<ANT){ float ax=(.18+fi*.11)*asp*(mod(fi,2.)<1.?1.:-1.); float ab=hullY(ax), at=ab+.09+.03*fi;
+      float l=smoothstep(.0028,.0,abs(p.x-ax))*step(ab,p.y)*step(p.y,at); col=mix(col, vec3(.55,.6,.6), l);
+      float blink=step(.5,fract(T*.6+fi*.37)); col+=vec3(1.,.2,.15)*blink*exp(-dot(p-vec2(ax,at),p-vec2(ax,at))*9000.)*1.4; } }
+  /* observatory dome with its slit open */
+  if(OBS>0.){ float ox=-.30*asp, ob=hullY(ox); vec2 q=p-vec2(ox,ob); float r=.034+.004*min(OBS,4.);
+    if(length(q*vec2(1.,1.15))<r&&q.y>0.){ col=vec3(.12,.13,.14)+.05*q.y/r; float slit=smoothstep(.004,.0,abs(q.x+q.y*.4))*step(.004,q.y); col+=vec3(.6,.75,1.)*slit*.7; } }
   if(p.y<hy){ float dep=hy-p.y;
     vec3 hull=vec3(.085,.095,.105)+.03*n(p*vec2(30.,60.));
     float seam=smoothstep(.04,.0,abs(fract(p.x*7.+.5*floor(dep*13.))-.5)-.46)+smoothstep(.06,.0,abs(fract(dep*13.)-.5)-.44);
@@ -994,11 +1046,21 @@ void main(){
     vec3 lich=mix(vec3(.36,.52,.10), vec3(.86,.74,.18), n(p*40.))*(.30+.55*WARM);
     hull=mix(hull, lich, lm*.9);
     hull+=sunc*smoothstep(.035,0.,dep)*.30*WARM;
+    hull+=vec3(.9,.6,.3)*PRESS*.05*pow(max(0.,sin(T*7.+p.x*3.)),8.)*smoothstep(.12,.0,dep);
     float gx=floor(p.x*16.), r=h(vec2(gx,5.)); vec2 lp=vec2(fract(p.x*16.)-.5, (dep-.035-r*.12)*16.);
     float lit=step(r,POP)*smoothstep(.20,.0,length(lp))*(.75+.25*sin(T*2.+r*30.))*(1.-TUN*.85);
-    hull+=vec3(1.,.72,.36)*lit*1.2;
+    hull+=amber*lit*1.2;
+    float rx=floor(p.x*40.), ry=floor(dep*55.); float rr=h(vec2(rx,ry+3.));
+    if(dep>.07&&dep<.16&&rr<RACKS*.5){ vec2 cl=fract(vec2(p.x*40.,dep*55.))-.5; hull+=amber*.5*smoothstep(.22,.1,max(abs(cl.x),abs(cl.y)))*(1.-TUN*.85)*step(rr, RACKS*.5*(.6+.4*sin(T*.3+rr*20.))); }
     hull+=vec3(.9,.95,1.)*PULSE*exp(-length(p-vec2(0.,hy-.04))*26.);
     col=hull; }
+  /* moss huts along the skyline, windows lit as the crew grows */
+  for(int i=0;i<20;i++){ float fi=float(i); if(fi<HUTS){ float hx=((h(vec2(fi,2.))-.5)*.92+(fi-9.5)*.004)*asp; float hb=hullY(hx);
+      vec2 q=p-vec2(hx,hb-.004); float rr=.016+.006*h(vec2(fi,9.));
+      if(length(q*vec2(1.,1.3))<rr&&q.y>-.004){ col=vec3(.16,.22,.12)+.06*n(q*300.); if(fi<POP*20.+.5&&length(q-vec2(0.,rr*.35))<rr*.32) col=mix(col, amber*(.8+.2*sin(T*1.3+fi)), 1.-TUN*.85); } } }
+  /* crew out on the hull, at work */
+  for(int i=0;i<24;i++){ float fi=float(i); if(fi<CREW*24.){ float sp=(h(vec2(fi,4.))-.5)*.02; float cx=(fract(h(vec2(fi,7.))+T*sp)-.5)*asp*.95; float cy=hullY(cx)+.004;
+      float d=length((p-vec2(cx,cy))*vec2(1.,1.6)); col=mix(col, vec3(.85,.9,.8), smoothstep(.0035,.0015,d)*(1.-TUN)); } }
   col=mix(col, col*vec3(1.25,1.02,.62)+vec3(.03,.02,0.), GOLD);
   col*=1.-.35*pow(length(uv-.5)*1.25,2.5);
   col+=(h(gl_FragCoord.xy+T)-.5)*.012;
@@ -1020,7 +1082,7 @@ const Sky = {
       gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
       const a = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
-      for (const k of ['R','T','SEA','WARM','BEDS','POP','PH','COM','DRIFT','PULSE','TUN','GOLD','FLEET','BELT']) this.u[k] = gl.getUniformLocation(pr, k);
+      for (const k of ['R','T','SEA','WARM','BEDS','POP','PH','COM','DRIFT','PULSE','TUN','GOLD','FLEET','BELT','HUTS','RACKS','ANT','OBS','STEAM','PRESS','MIND','HOT','CREW','BIG']) this.u[k] = gl.getUniformLocation(pr, k);
       this.ok = true;
     } catch (e) { this.ok = false; cv.classList.add('nogl'); }
   },
@@ -1031,7 +1093,7 @@ const Sky = {
     if (cv.width != w || cv.height != hgt) { cv.width = w; cv.height = hgt; }
     gl.viewport(0, 0, w, hgt);
     gl.uniform2f(this.u.R, w, hgt); gl.uniform1f(this.u.T, (performance.now() - this.t0)/1000);
-    for (const k in v) gl.uniform1f(this.u[k], v[k]);
+    for (const k in v) if (this.u[k]) gl.uniform1f(this.u[k], v[k]);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   },
   /* where the sun is, in 0..1 canvas coordinates, for people who cannot resist tapping it */
@@ -1044,7 +1106,7 @@ const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e
 const btn = (cls, txt, fn) => { const b = h('button', cls, txt); b.type = 'button'; if (fn) b.onclick = fn; return b; };
 let S, C, cur = 'hull', ups = [], fixed = [], sig = '', tabSig = '', buyQ = 1, openK = {}, showDone = false, pulseV = 0, needEnd = false, logSeen = null;
 let opt = {sound:0, calm:0}, main, loadedT = 0, mindCv = null;
-const SAVE_KEY = 'tsd2.save';
+const SAVE_KEY = 'tsd2.save', BUILD = 'Stage one \u00b7 build 18 Nov 2026';
 const U = fn => { ups.push(fn); fn(); };
 const setT = (el, t) => { if (el._t !== t) { el._t = t; el.textContent = t; } };
 const setD = (el, k, v) => { if (el.dataset[k] !== v) el.dataset[k] = v; };
@@ -1067,7 +1129,7 @@ function item(key, o){
   const sync = () => { d.hidden = !openK[key]; m.classList.toggle('on', !!openK[key]); m.setAttribute('aria-expanded', !!openK[key]); };
   m.onclick = () => { openK[key] = !openK[key]; sync(); }; sync();
   if (o.desc) d.append(h('p','', o.desc)); if (o.eff) d.append(h('p','eff', o.eff)); if (o.cost) d.append(costEl(o.cost)); if (o.more) o.more(d);
-  const sub = o.sub ? h('span','asub') : null;
+  const sub = o.sub ? h('span','asub') : null; if (o.sub && !o.sub()) o.sub = null;
   w.append(a, m, d);
   U(() => { const t = o.title(); if (sub) { if (a.firstChild !== a._tn) { a.textContent = ''; a._tn = document.createTextNode(''); a.append(a._tn, sub); } if (a._tn.data !== t) a._tn.data = t; setT(sub, o.sub()); } else setT(a, t); setD(w, 's', o.state ? o.state() : o.cost ? costState(o.cost()) : ''); });
   return w;
@@ -1093,7 +1155,25 @@ const TABS = [
 const R = {}, SIG = {};
 
 /* ---------- Hull ---------- */
-SIG.hull = () => [S.ended, S.pop < 6, S.seen.pb, S.seen.lb, Object.keys(BLD).filter(k => BLD[k].req(S)).join(), nb(S,'press')>0, Object.values(S.b).some(v => v >= 5)].join('|');
+const UPGB = {rakes:'bed',ferment:'bed',slats:'locker',tess:'locker',vice:'bench',jig:'bench',lathe:'bench',oil:'press',dies:'press',sprung:'press',geared:'press',thingauge:'press',frost:'cellar',vats:'cellar',bellows:'smelter',crucible:'smelter',coils:'cond',shelving:'nook',whistle:'kettle',jacket:'boiler',bell:'school',slates:'school',bunks:'hut',tube:'obs',brass:'band',dish:'antenna',rivbunk:'bunker'};
+const PRJB = {hammock:'hut',bunkdesign:'rack',dies1:'press'};
+const fittedOn = id => [...UPG.filter(u => S.up[u.id] && UPGB[u.id] == id).map(u => u.n), ...Object.keys(PRJB).filter(k => S.done[k] && PRJB[k] == id).map(k => PRJ_BY[k].n), ...(id == 'warren' && S.m.warrenB > 4 ? ['the Commons\u2019 vote'] : []), ...(id == 'rack' && S.m.rackB > 5 && !S.done.bunkdesign ? ['tighter packing'] : [])];
+function effText(id){ const m = S.m, d = BLD[id];
+  switch (id) {
+    case 'hut': return '+' + (2 + (qk(S).berth||0) + m.berth) + ' berths';
+    case 'rack': return '+' + m.rackB + ' berths';
+    case 'warren': return '+' + m.warrenB + ' berths';
+    case 'locker': return '+' + fmt(150*m.cap) + ' scrap, +' + fmt(1500*m.cap*m.lcap) + ' lichen and +' + fmt(100*m.icecap) + ' ice storage';
+    case 'bunker': return '+' + fmt(1500*m.bunk*m.cap) + ' scrap storage';
+    case 'press': return 'turns ' + fmt(0.5*m.press) + ' scrap/s into ' + fmt(0.5*m.press*C.yield) + ' spoons/s';
+    case 'smelter': return 'turns ' + fmt(m.smelt) + ' scrap/s into ' + fmt(m.smelt/50) + ' plate/s, using only scrap above half the store';
+    case 'kettle': return 'brews ' + fmt(0.01*m.kettle*60) + ' tea a minute from lichen and ice (pauses when lichen falls below 30%)';
+    case 'boiler': return '+' + fmt(2*m.warm) + ' warmth; burns ' + fmt(0.2*m.fuel) + ' scrap/s at Aphelion';
+    case 'cond': return '+' + fmt(0.08*m.cond) + ' ice/s, doubled at Aphelion';
+    case 'nook': return '+' + fmt(250*(m.nook||1)*m.ncap) + ' notion storage, scholars +5%';
+    default: return d.e; } }
+
+SIG.hull = () => [S.ended, S.pop < 6, Object.keys(S.up).length, S.done.hammock, S.done.bunkdesign, S.m.warrenB, S.seen.pb, S.seen.lb, Object.keys(BLD).filter(k => BLD[k].req(S)).join(), nb(S,'press')>0, Object.values(S.b).some(v => v >= 5)].join('|');
 R.hull = el => {
   const hands = h('div','hands');
   const mk = (t, sub, fn, cls) => { const b = btn('hand ' + (cls||'')), s = h('span','hs'); b.append(h('span','ht',t), s); b.onclick = act(fn); U(() => setT(s, sub())); hands.append(b); };
@@ -1111,7 +1191,9 @@ R.hull = el => {
   }
   if (Object.values(S.b).some(v => v >= 5)) buyMode(el);
   for (const id in BLD) { const d = BLD[id]; if (!d.req(S)) continue;
-    el.append(item('b_'+id, {title:() => d.n + ' (' + nb(S,id) + ')', act:() => buy(S,id,qn()), cost:() => bcost(S,id,1), desc:d.d, eff:'Each: ' + d.e + '.'})); }
+    const fit = fittedOn(id);
+    el.append(item('b_'+id, {title:() => d.n + ' (' + nb(S,id) + ')', sub: fit.length ? () => 'Upgraded: ' + fit.join(', ') : null, act:() => buy(S,id,qn()), cost:() => buy1cost(S,id), desc:d.d,
+      more:dd => { const e = h('p','eff'); U(() => setT(e, 'Each: ' + effText(id) + '.')); dd.insertBefore(e, dd.children[1] || null); const pn = h('p','note'); U(() => { const raw = bcost(S,id,1,true); setT(pn, raw.scrap && raw.scrap > buy1cost(S,id).scrap + 1 ? 'You cannot store ' + fmt(raw.scrap) + ' scrap, so the part over 90% of your store is asked in plate instead, 50 scrap to a plate.' : ''); }); dd.append(pn); }})); }
 };
 
 /* ---------- Workshop ---------- */
@@ -1233,11 +1315,11 @@ function drawMind(){
 function mindTap(e){ const r = mindCv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; tickle(S);
   let best = -1, bd = 900; (mindCv._xy||[]).forEach(([px,py],i) => { const d = (px-x)*(px-x) + (py-y)*(py-y); if (d < bd) { bd = d; best = i; } });
   if (best >= 0) { S.mind.sel = best; hook('tap'); frameUI(); } }
-SIG.mind = () => [prjOpen(S,'mind').map(p => p.id).join(), S.mind.offer ? S.mind.offer.join() : '', S.mind.nodes.length, S.mind.nodes.map(n => n.p).join('.'), S.mind.sel, S.cand ? S.cand.map(c => c.n).join() : '', S.done.naming, S.fleet[0], S.done.hydraulics, S.duty.mind && team(S,'mind').length > 0].join('|');
+SIG.mind = () => [S.done.sparework, S.mind.task, S.mind.task == 'coach' ? Object.keys(S.duty).join() + S.mind.coach : '', prjOpen(S,'mind').map(p => p.id).join(), S.mind.offer ? S.mind.offer.join() : '', S.mind.nodes.length, S.mind.nodes.map(n => n.p).join('.'), S.mind.sel, S.cand ? S.cand.map(c => c.n).join() : '', S.done.naming, S.fleet[0], S.done.hydraulics, S.duty.mind && team(S,'mind').length > 0].join('|');
 R.mind = el => {
   note(el, () => 'Mandate ' + S.mand + (S.mp ? ' · ' + S.mp + ' unspent' : '') + ' · next at ' + fmt(thr(S)) + ' spoons made').className = 'lede';
   meter(el, () => { const lo = S.mand ? thr(S)/2.1 : 0; return (S.made - lo)/(thr(S) - lo); });
-  if (S.mind.offer) { const box = h('div','offer'); box.append(h('p','pt','Requisition: choose one subsystem'));
+  if (S.mind.offer) { const box = h('div','offer'); box.append(h('p','pt', S.mind.dreamt ? 'The Mind dreamt these: choose one' : 'Requisition: choose one subsystem'));
     S.mind.offer.forEach(k => { const T = MT[k], b = btn('opt'); b.append(h('b','',T.n), h('span','', MG[T.g] + '. ' + T.d)); b.onclick = act(() => mindTake(S, k)); box.append(b); });
     box.append(h('p','note','It will be wired where it seems most useful. You can move it afterwards.')); el.append(box); }
   else el.append(item('draft', {title:() => 'Requisition a subsystem', act:() => mindDraft(S), state:() => S.mp >= 1 ? '' : 'no', desc:'Spend 1 Mandate. The Bureau sends three candidates, all second-hand. Pick one to fit.', more:d => note(d, () => S.mp >= 1 ? S.mp + ' Mandate to spend.' : 'You need Mandate, which comes from making spoons.')}));
@@ -1258,6 +1340,13 @@ R.mind = el => {
       const rr = h('div','row'); opts.forEach(j => rr.append(btn('chip', MT[N[j].k].n + (N[j].lv > 1 ? ' ' + N[j].lv : ''), act(() => rewire(S, i, j))))); det.append(rr, h('p','note','Neighbours matter. Amplifiers boost whatever they touch, coolers calm the whole Mind, and some subsystems take against each other.')); pn.append(det); } }
   el.append(pn);
   if (team(S,'mind').length) { const D = S.duty.mind; note(el, () => 'Mind crew: ' + band(D.c).toLowerCase() + '. ' + (D.last || 'They are reading the diagram upside down.')); }
+  if (S.done.sparework) { head(el, 'Spare thought');
+    note(el, () => S.r.cycles >= C.mind.cap*0.995 ? 'The Mind is full. Every thought past the brim goes to: ' + TASKS[S.mind.task][0].toLowerCase() + '.' : 'Spare thought is only what overflows a full Mind. ' + fmt(C.mind.cap - S.r.cycles) + ' to go.');
+    const g = h('div','tasks'); for (const t in TASKS) { const b = btn('opt'); b.append(h('b','',TASKS[t][0]), h('span','',TASKS[t][1])); b.onclick = act(() => setTask(S,t)); U(() => b.classList.toggle('on', S.mind.task == t)); g.append(b); } el.append(g);
+    if (S.mind.task == 'coach') { const dk = Object.keys(S.duty).filter(k => team(S,k).length); if (!dk.length) el.append(h('p','note','Nobody is on a duty yet, so there is nobody to coach.')); else { const rr = h('div','row'); dk.forEach(k => { const b = btn('chip', DUTY[k].n, act(() => setTask(S,'coach',k))); U(() => b.classList.toggle('on', S.mind.coach == k)); rr.append(b); }); el.append(rr); } }
+    if (S.mind.task == 'dream') { note(el, () => 'Dreaming: ' + Math.floor(100*S.mind.dream/dreamNeed(S)) + '% of the way to a new subsystem.'); meter(el, () => S.mind.dream/dreamNeed(S), 'dutym'); }
+    if (S.mind.task == 'forecast') note(el, () => S.mind.fc ? (S.comet > 0 ? 'A comet is overhead now.' : 'Next comet in about ' + fmtTime(Math.max(0, S.cometT/1.3)) + '.') + ' ' + (S.weather > 0 ? 'A flare is feeding the lichen this season.' : S.weather < 0 ? 'Dust is dimming the light this season.' : 'A quiet season.') : 'The forecast only runs while the Mind is full.');
+  }
   head(el, 'Projects');
   const o = prjOpen(S,'mind'); if (!o.length) el.append(h('p','note','Nothing on the desk. Keep making spoons.'));
   o.forEach(p => el.append(prjItem(p)));
@@ -1310,21 +1399,49 @@ R.rec = el => {
 };
 
 /* ---------- fixed chrome ---------- */
-const RES = [
- ['lichen',() => 1,() => C.lichenIn - C.eat - (C.kettle && S.r.lichen > C.caps.lichen*0.3 ? C.kettle*0.5 : 0)],
- ['scrap',() => 1,() => C.scrapIn - S._used - (C.smelt && S.r.scrap > C.caps.scrap*0.5 ? C.smelt : 0)],
- ['spoons',() => S.made >= 1,() => S._sp],
- ['ice',() => S.r.ice > 0 || S.done.condense,() => C.iceIn],
- ['notions',() => nb(S,'nook') >= 1,() => C.notionsIn + C.mind.notions],
- ['cycles',() => S.seen.mind,() => C.mind.cps],
- ['whimsy',() => S.r.whimsy >= 0.5 || S.done.apology,() => 0],
- ['plate',() => S.r.plate > 0 || S.done.craft,() => 0],
- ['tea',() => S.done.brewing,() => -C.teaUse]];
+const ALLRES = ['lichen','scrap','spoons','ice','notions','cycles','whimsy','plate','wire','spring','gear','lens','ledger','tea','grit','spores','footnotes'];
+const TABRES = {hull:['lichen','scrap','spoons','ice','plate'], shop:['scrap','plate','wire','spring','gear','lens','ledger','tea'], crew:['lichen','tea','spoons','whimsy'],
+  sci:['notions','plate','lens','ledger','spores','footnotes'], mind:['cycles','whimsy','notions','plate','gear'], trade:['spoons','tea','ledger','grit','spores','footnotes'],
+  time:['lichen','scrap','spoons','notions','cycles'], margin:['lichen','scrap','spoons','notions','cycles'], rec:['lichen','scrap','spoons','notions','cycles']};
+const resUnlocked = r => r == 'lichen' || r == 'scrap' || (r == 'spoons' && S.made >= 1) || (r == 'ice' && (S.r.ice > 0 || S.done.condense)) || (r == 'notions' && nb(S,'nook') >= 1) || (r == 'cycles' && S.seen.mind) || (r == 'whimsy' && (S.r.whimsy >= 0.5 || S.done.apology)) || (CRAFT[r] && (CRAFT[r].req(S) || S.r[r] > 0)) || ((r == 'grit' || r == 'spores' || r == 'footnotes') && (S.r[r] > 0 || nb(S,'antenna') >= 1));
+const wide = () => window.matchMedia && matchMedia('(min-width:900px)').matches;
+const resShown = () => (wide() ? ALLRES : TABRES[cur] || TABRES.hull).filter(resUnlocked);
+/* where each store comes from and where it goes, per second */
+function flows(r){ const c = C, m = S.m, f = [], aph = c.cal.i == 2;
+  const add = (l, x) => { if (Math.abs(x) > 1e-6) f.push([l, x]); };
+  if (r == 'lichen') { add('Lichen beds and gardens', c.bedIn); add('Grazers', c.lichenIn - c.bedIn); add('Crew eating', -c.eat); if (c.kettle && S.r.lichen > c.caps.lichen*0.3) add('Kettle-houses', -c.kettle*0.5); }
+  if (r == 'scrap') { add('Scavengers', c.scrapIn); add('Presses and the rota', -S._used); if (c.smelt && S.r.scrap > c.caps.scrap*0.5) add('Smelters', -c.smelt); if (aph && nb(S,'boiler')) add('Boilers (Aphelion)', -nb(S,'boiler')*0.2*m.fuel); }
+  if (r == 'spoons') add('Presses and the rota', S._sp);
+  if (r == 'ice') { add('Icers and condensers', c.iceIn); if (c.kettle && S.r.lichen > c.caps.lichen*0.3) add('Kettle-houses', -c.kettle*0.2); }
+  if (r == 'notions') { add('Scholars', c.notionsIn - nb(S,'obs')*0.1*m.obs); add('Observatories', nb(S,'obs')*0.1*m.obs); add('Notion Press', c.mind.notions); }
+  if (r == 'cycles') { add('The Mind thinking', c.mind.cps); }
+  if (r == 'tea') { if (c.kettle && S.r.lichen > c.caps.lichen*0.3) add('Kettle-houses', c.kettle*0.01); add('Crew drinking', -c.teaUse); }
+  if (r == 'plate') { if (c.smelt && S.r.scrap > c.caps.scrap*0.5) add('Smelters', c.smelt/50); if (c.mill) add('Drawing mills', -c.mill*0.03); }
+  if (r == 'wire' && c.mill) add('Drawing mills', c.mill*0.015);
+  return f; }
+const ORIGIN = {whimsy:'Leaks from a full Mind and from bards. Spent on odd projects, latitude and the pedlar.', plate:'Hammered from scrap in the Workshop, or sweated out by smelters.', wire:'Drawn from plate in the Workshop or by drawing mills.', spring:'Coiled from wire in the Workshop.', gear:'Cut in the Workshop from plate and springs.', lens:'Ground from ice and grit in the Workshop.', ledger:'Pressed from plate and notions in the Workshop. The Quorate want them.', tea:'Brewed by kettle-houses or by hand in the Workshop. The crew drink it constantly.', grit:'Only the Gravel Choir have it. Hail them from the Trade tab.', spores:'Only the Slow Bloom have them.', footnotes:'Only the Quorate sell them, for ledgers.', spoons:'Stamped from scrap by hand, by presses and by the rota.', cycles:'Thought. The Mind makes it; projects and the naming committee spend it.'};
+function showStore(r){
+  sheet((el, close) => {
+    const cap = capOf(S,C,r), f = flows(r), net = f.reduce((a,x) => a + x[1], 0);
+    el.append(h('p','pt','Store'), h('h2','', RNAME[r].charAt(0).toUpperCase() + RNAME[r].slice(1)));
+    const big = h('p','end-x'); el.append(big);
+    const list = h('div','parts'); el.append(list);
+    const eta = h('p','note'); el.append(eta);
+    if (ORIGIN[r]) el.append(h('p','note', ORIGIN[r]));
+    const upd = () => { const ff = flows(r), n = ff.reduce((a,x) => a + x[1], 0), x = S.r[r];
+      big.textContent = fmt(x) + (isFinite(cap) ? ' of ' + fmt(capOf(S,C,r)) : '') + (Math.abs(n) > 1e-6 ? ', ' + (n > 0 ? '+' : '') + fmt(n) + ' a second' : '');
+      list.replaceChildren(...ff.map(p => { const rr = h('div','part'); rr.append(h('span','',p[0]), h('b', p[1] < 0 ? 'neg' : '', (p[1] > 0 ? '+' : '') + fmt(p[1]) + '/s')); return rr; }));
+      const c2 = capOf(S,C,r); eta.textContent = n > 1e-6 && isFinite(c2) ? (x >= c2*0.995 ? 'Full. Anything more is wasted.' : 'Full in ' + fmtTime((c2 - x)/n) + '.') : n < -1e-6 ? 'Empty in ' + fmtTime(x/-n) + '.' : ''; };
+    upd(); const iv = setInterval(() => { if (!el.isConnected) return clearInterval(iv); upd(); }, 500);
+    el.append(btn('chip wide','Close', close));
+  });
+}
 function buildChrome(){
   const res = $('res'); res.replaceChildren(); fixed = [];
-  RES.forEach(([r, show, rate]) => { const w = h('div','r r-' + r), top = h('div','rn'), v = h('div','rv'), rt = h('span','rr'), cp = h('span','rc'); top.append(h('span','',RNAME[r]), rt); v.append(h('span','rx'), cp); w.append(top, v); res.append(w);
-    fixed.push(() => { const vis = !!show(); if (w.hidden === vis) w.hidden = !vis; if (!vis) return; const x = S.r[r], c = capOf(S,C,r), d = rate();
-      setT(v.firstChild, fmt3(x)); setT(cp, isFinite(c) ? '/' + fmt3(c).replace(/\.0+(?=[A-Z]|$)/, '') : ''); setT(rt, Math.abs(d) < 0.005 ? '' : (d > 0 ? '+' : '') + fmt3(d));
+  ALLRES.forEach(r => { const w = btn('r r-' + r), top = h('div','rn'), v = h('div','rv'), rt = h('span','rr'), cp = h('span','rc'), bar = h('i','rbar'); top.append(h('span','',RNAME[r]), rt); v.append(h('span','rx'), cp); w.append(top, v, bar); w.onclick = () => showStore(r); w.setAttribute('aria-label', RNAME[r] + ' details'); res.append(w);
+    fixed.push(sh => { const vis = sh.includes(r); if (w.hidden === vis) w.hidden = !vis; if (!vis) return; const x = S.r[r], c = capOf(S,C,r), d = flows(r).reduce((a,p) => a + p[1], 0);
+      setT(v.firstChild, fmt3(x)); setT(cp, isFinite(c) && wide() ? '/' + fmt3(c).replace(/\.0+(?=[A-Z]|$)/, '') : ''); setT(rt, Math.abs(d) < 0.005 ? '' : (d > 0 ? '+' : '') + fmt3(d));
+      const pc = isFinite(c) ? clamp(x/c, 0, 1) : -1; bar.hidden = pc < 0; if (pc >= 0) { const wv = (pc*100).toFixed(1) + '%'; if (bar._w !== wv) { bar._w = wv; bar.style.width = wv; } }
       setD(w, 's', isFinite(c) && x >= c*0.995 ? 'full' : x <= 0 && d < 0 ? 'bad' : ''); setD(rt, 's', d < 0 ? 'bad' : ''); }); });
   const crew = h('div','r'), ct = h('div','rn'), cv = h('div','rv'); ct.append(h('span','','crew'), h('span','rr')); cv.append(h('span','rx'), h('span','rc')); crew.append(ct, cv); res.append(crew);
   fixed.push(() => { const vis = S.pop > 0 || C.capPop > 0; if (crew.hidden === vis) crew.hidden = !vis; setT(cv.firstChild, String(S.pop)); setT(cv.lastChild, '/' + C.capPop); setT(ct.lastChild, S.tun ? S.tun + ' tun' : S.done.philosophy ? 'acc ' + Math.round(S.accord) + '%' : ''); setD(ct.lastChild, 's', S.tun ? 'bad' : ''); });
@@ -1333,16 +1450,18 @@ function buildChrome(){
   $('menu').onclick = showMenu;
   $('observe').onclick = act(() => observe(S));
   $('log').onclick = () => $('logbar').classList.toggle('tall');
-  $('sky').onclick = e => { const r = $('sky').getBoundingClientRect(), x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
-    if (S.comet > 0) return act(() => observe(S))();
-    const s = Sky.sun(C.cal.frac); if (Math.hypot((x - s.x)*r.width, (y - s.y)*r.height) < 30) { S.sunTaps++; if (S.sunTaps == 3) log(S,'Please do not tap the sun.',''); if (S.sunTaps == 10) { log(S,'The sun has now been tapped ten times. It is fine. You are the one who has to live with yourself.',''); ach('sun'); } frameUI(); } };
+  let bigT = 0;
+  $('view').onclick = e => { if (e.target.closest('button')) return;
+    const r = $('sky').getBoundingClientRect(), x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height, s = Sky.sun(C.cal.frac);
+    if (Math.hypot((x - s.x)*r.width, (y - s.y)*r.height) < 26) { S.sunTaps++; if (S.sunTaps == 3) log(S,'Please do not tap the sun.',''); if (S.sunTaps == 10) { log(S,'The sun has now been tapped ten times. It is fine. You are the one who has to live with yourself.',''); ach('sun'); } frameUI(); return; }
+    const v = $('view'), open = !v.classList.contains('big'); v.classList.toggle('big', open); clearTimeout(bigT); if (open) bigT = setTimeout(() => v.classList.remove('big'), 12000); };
 }
 function drawTabs(){
   const nav = $('tabs'); nav.replaceChildren();
   TABS.filter(t => t.show()).forEach(t => { const b = btn(t.id == cur ? 'on' : '', t.n, () => { cur = t.id; S.seen['v_'+t.id] = 1; tabSig = ''; frameUI(); main.scrollTop = 0; }); if (t.badge() || (!S.seen['v_'+t.id] && t.id != 'hull')) b.append(h('i','dot')); b.id = 'tab-' + t.id; nav.append(b); });
 }
 function drawTop(){
-  for (const f of fixed) f();
+  const sh = resShown(); for (const f of fixed) f(sh);
   setT($('ship'), S.ship.n);
   const cl = C.cal, sn = SEASONS[cl.i];
   setT($('date'), S.done.calendar ? 'Year ' + cl.year + ' · ' + sn.n + (sn.w ? ' (' + sn.w + ')' : '') + ', day ' + cl.day : 'Day ' + (Math.floor(S.age/DAY) + 1) + (S.seen.aph || cl.i ? ' · ' + sn.n : ''));
@@ -1386,7 +1505,7 @@ function sheet(build, lock){
 }
 function showMenu(){
   sheet((el, close) => {
-    el.append(h('h2','','The Teaspoon Deficit'), h('p','note','Stage one. You are a derelict ship. Stamp spoons, wake the crew, teach them your jobs, grow your Mind. The game saves itself and keeps working for up to twelve hours while you are away. Pause banks time instead.'));
+    el.append(h('h2','','The Teaspoon Deficit'), h('p','pt', BUILD), h('p','note','Stage one. You are a derelict ship. Stamp spoons, wake the crew, teach them your jobs, grow your Mind. The game saves itself and keeps working for up to twelve hours while you are away. Pause banks time instead.'));
     const row = (t, fn) => { const b = btn('chip wide', t, fn); el.append(b); return b; };
     row(S.paused ? 'Resume' : 'Pause', () => { setPause(!S.paused); close(); });
     row('Save now', () => { save(true); toast('Saved.'); close(); });
@@ -1481,7 +1600,10 @@ function paint(){
   rafN++; if (rafN % (opt.calm ? 30 : 2)) return;
   pulseV *= 0.86;
   Sky.draw({SEA:C.cal.frac, WARM:clamp(C.seasonM/1.5, 0.12, 1.1), BEDS:clamp(Math.log(1 + nb(S,'bed') + nb(S,'garden'))/Math.log(60), 0, 1), POP:clamp(Math.sqrt(S.pop)/14 + (S.pop > 0 ? 0.07 : 0), 0, 1), PH:1,
-    COM:S.comet > 0 ? 1 - S.comet/22 : -1, DRIFT:0, PULSE:pulseV, TUN:S.pop ? S.tun/S.pop : 0, GOLD:0, FLEET:0, BELT:1});
+    COM:S.comet > 0 ? 1 - S.comet/22 : -1, DRIFT:0, PULSE:pulseV, TUN:S.pop ? S.tun/S.pop : 0, GOLD:0, FLEET:0, BELT:1,
+    HUTS:Math.min(20, nb(S,'hut') + nb(S,'warren')), RACKS:clamp(nb(S,'rack')/12, 0, 1), ANT:Math.min(3, nb(S,'antenna')), OBS:nb(S,'obs'), STEAM:C.cal.i == 2 && nb(S,'boiler') && S.r.scrap > 1 ? clamp(nb(S,'boiler')/3, 0.34, 1) : 0,
+    PRESS:clamp(S._sp/200, 0, 1)*(S.share > 0 ? 1 : 0), MIND:S.seen.mind ? clamp(0.25 + Math.log10(1 + C.mind.cps)/3, 0, 1) : 0, HOT:C.mind.heat > C.mind.hcap ? 1 : 0, CREW:clamp((S.pop - S.tun)/80, 0, 1), BIG:$('view').classList.contains('big') ? 1 : 0});
+  if ($('view').classList.contains('big')) { const t = [nb(S,'hut') + ' huts', nb(S,'rack') ? nb(S,'rack') + ' tun-racks' : '', nb(S,'warren') ? nb(S,'warren') + ' warrens' : '', S.pop + ' crew' + (S.tun ? ' (' + S.tun + ' tuns)' : ''), nb(S,'boiler') ? nb(S,'boiler') + ' boilers' + (C.cal.i == 2 ? ' steaming' : '') : '', nb(S,'antenna') ? nb(S,'antenna') + ' antennas' : '', nb(S,'obs') ? nb(S,'obs') + ' observatories' : '', S.seen.mind ? 'Mind ' + fmt(C.mind.cps) + '/s' + (C.mind.heat > C.mind.hcap ? ', overheating' : '') : '', nb(S,'press') ? fmt(S._sp) + ' spoons/s' : ''].filter(Boolean).join(' \u00b7 '); setT($('vcap'), t); }
   if (cur == 'mind') drawMind();
 }
 function start(hot){
