@@ -1285,9 +1285,9 @@ const Sky = {
 const $ = id => document.getElementById(id);
 const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 const btn = (cls, txt, fn) => { const b = h('button', cls, txt); b.type = 'button'; if (fn) b.onclick = fn; return b; };
-let S, C, cur = 'hull', ups = [], fixed = [], sig = '', tabSig = '', buyQ = 1, openK = {}, showDone = false, pulseV = 0, needEnd = false, logSeen = null;
+let S, C, cur = 'hull', ups = [], fixed = [], sig = '', tabSig = '', buyQ = 1, jobQ = 1, openK = {}, showDone = false, pulseV = 0, needEnd = false, logSeen = null;
 let opt = {sound:0, calm:0}, main, loadedT = 0, mindCv = null;
-const SAVE_KEY = 'tsd2.save', BUILD = 'Stage one \u00b7 build 19 Nov 2026 b';
+const SAVE_KEY = 'tsd2.save', VERSION = '1.4.1', BUILD = 'Stage one \u00b7 version ' + VERSION + ' \u00b7 19 Nov 2026';
 const U = fn => { ups.push(fn); fn(); };
 const setT = (el, t) => { if (el._t !== t) { el._t = t; el.textContent = t; } };
 const setD = (el, k, v) => { if (el.dataset[k] !== v) el.dataset[k] = v; };
@@ -1320,6 +1320,7 @@ const note = (el, fn) => { const p = h('p','note'); U(() => setT(p, fn())); el.a
 function meter(el, fn, cls){ const m = h('div','meter ' + (cls||'')), f = h('i'); m.append(f); U(() => { const v = clamp(fn(),0,1); const w = (v*100).toFixed(1) + '%'; if (f._w !== w) { f._w = w; f.style.width = w; } }); el.append(m); return m; }
 function seg(el, label, opts, get, set){ const row = h('div','ctl'); row.append(h('span','ctl-l',label)); const g = h('div','seg'); opts.forEach(([v,t]) => { const b = btn('', t, () => { set(v); frameUI(); }); U(() => b.classList.toggle('on', get() === v)); g.append(b); }); row.append(g); el.append(row); }
 const buyMode = el => seg(el, 'Each tap buys', [[1,'1'],[10,'10'],['max','max']], () => buyQ, v => { buyQ = v; });
+const jobMode = el => seg(el, 'Each tap moves', [[1,'1'],[5,'5'],[10,'10'],['max','all']], () => jobQ, v => { jobQ = v; });   /* the crew tab's own, separate from the hull's */
 
 /* ---------- tabs ---------- */
 const anyStory = () => !!S.st.cur;
@@ -1409,7 +1410,7 @@ function storyCard(el){
   if (team(S,'cttee').length) note(card, () => 'The committee will decide in ' + fmtTime(Math.max(0, 90 - S.st.cur.age)) + ' if you do not.');
   el.append(card);
 }
-SIG.crew = () => [S.st.cur ? (S.st.cur.ch||'') + (S.st.cur.s||0) + (S.st.cur.p||0) : '', S.done.philosophy, S.done.brewing, Object.keys(JOBS).filter(k => JOBS[k].req(S)).join(), Object.keys(DUTY).filter(k => DUTY[k].unl(S)).join(), Math.min(60, S.crew.length), S.pop >= 10].join('|');
+SIG.crew = () => [S.st.cur ? (S.st.cur.ch||'') + (S.st.cur.s||0) + (S.st.cur.p||0) : '', S.done.philosophy, S.done.brewing, Object.keys(JOBS).filter(k => JOBS[k].req(S)).join(), Object.keys(DUTY).filter(k => DUTY[k].unl(S)).join(), Math.min(60, S.crew.length), S.pop >= 2].join('|');
 R.crew = el => {
   note(el, () => S.pop + ' of ' + C.capPop + ' berths filled' + (S.tun ? ' · ' + S.tun + ' curled up as tuns, waiting for lichen' : S.pop < C.capPop ? ' · more are waking' : ' · build huts to wake more')).className = 'lede';
   storyCard(el);
@@ -1422,10 +1423,10 @@ R.crew = el => {
   }
   if (S.done.brewing) el.append(item('fest', {title:() => S.fest > 0 ? 'Brew-up in full swing (' + fmtTime(S.fest) + ')' : 'Hold a Brew-up', act:() => festival(S), cost:() => festCost(S), state:() => S.fest > 0 ? 'no' : costState(festCost(S)), desc:'Tea for everyone. Accord +10 and newcomers wake twice as fast while it lasts.'}));
   head(el, 'Trades');
-  if (S.pop >= 10) buyMode(el);
+  if (S.pop >= 2 && Object.keys(JOBS).some(j => j != 'grazer' && JOBS[j].req(S))) jobMode(el);
   for (const j in JOBS) { const d = JOBS[j]; if (!d.req(S)) continue;
     const w = h('div','job'), nm = h('div','jn'), left = h('div','jl'), sk = h('div','jd'); left.append(nm, h('div','jd', d.d), sk); w.append(left);
-    if (j != 'grazer') w.append(btn('pm','−', act(() => setJob(S,j,-(buyQ=='max'?1e9:buyQ)))), btn('pm','+', act(() => setJob(S,j,buyQ=='max'?1e9:buyQ))));
+    if (j != 'grazer') w.append(btn('pm','−', act(() => setJob(S,j,-(jobQ=='max'?1e9:jobQ)))), btn('pm','+', act(() => setJob(S,j,jobQ=='max'?1e9:jobQ))));
     else w.classList.add('nobtn');
     U(() => { setT(nm, d.n + ' (' + C.N[j] + ')'); const ws = S.crew.filter(t => !t.d && t.j == j); const best = ws.reduce((a,t) => Math.max(a, lvl(t.x[j])), 0); setT(sk, ws.length && j != 'grazer' ? 'Best hand: ' + lvlName(best).toLowerCase() + ' (level ' + best + ', +' + best*5 + '%)' : ''); });
     el.append(w); }
@@ -1433,13 +1434,14 @@ R.crew = el => {
   if (dk.length) { head(el, 'Duties');
     el.append(h('p','note','Duties are your own jobs, handed to the crew. They start out hopeless and learn by doing, and they learn most from their mistakes. Crew on duty come from the grazers.'));
     for (const k of dk) { const d = DUTY[k], w = h('div','duty'), top = h('div','dtop'), nm = h('b'), cnt = h('span','dcnt'); top.append(nm, cnt);
-      const ctl = h('div','dctl'); ctl.append(btn('pm','−', act(() => setDuty(S,k,-1))), btn('pm','+', act(() => setDuty(S,k,1))));
+      const ctl = h('div','dctl'); ctl.append(btn('pm','−', act(() => setDuty(S,k,-(jobQ=='max'?1e9:jobQ)))), btn('pm','+', act(() => setDuty(S,k,jobQ=='max'?1e9:jobQ))));
       const last = h('p','dlast'); w.append(top, h('p','note',d.d)); meter(w, () => (S.duty[k] ? S.duty[k].c : 0)/100, 'dutym'); w.append(last, ctl);
       U(() => { const D = S.duty[k] || {c:0}, n = team(S,k).length; setT(nm, d.n); setT(cnt, n ? n + ' on duty · ' + band(D.c) + ' (' + Math.round(D.c) + '%)' : 'Nobody on duty'); setT(last, D.last ? 'Latest: ' + D.last : n ? 'No news yet.' : ''); });
       el.append(w); } }
-  if (S.crew.length) { const det = h('details','census'); det.open = !!openK.census; det.ontoggle = () => { openK.census = det.open; frameUI(); };
+  if (S.crew.length) { const det = h('details','census'); det.open = !!openK.census;
     det.append(h('summary','', 'Census of ' + S.crew.length));
-    if (det.open) { const list = h('div','names'); S.crew.slice(0, 60).forEach(t => { const b = h('div','nm'), l = t.d ? DUTY[t.d].n : JOBS[t.j].n, lv = t.d ? '' : ' · ' + lvlName(lvl(t.x[t.j])).toLowerCase(); b.append(h('b','',t.n), h('span','', l + lv + ' · ' + TRAITS[t.t][0].toLowerCase())); b.title = TRAITS[t.t][1]; list.append(b); }); det.append(list); if (S.crew.length > 60) det.append(h('p','note','And ' + (S.crew.length - 60) + ' more, who are also doing their best.')); }
+    const fill = () => { det.querySelectorAll('.names, .note').forEach(x => x.remove()); if (!det.open) return; const list = h('div','names'); S.crew.slice(0, 60).forEach(t => { const b = h('div','nm'), l = t.d ? DUTY[t.d].n : JOBS[t.j].n, lv = t.d ? '' : ' · ' + lvlName(lvl(t.x[t.j])).toLowerCase(); b.append(h('b','',t.n), h('span','', l + lv + ' · ' + TRAITS[t.t][0].toLowerCase())); b.title = TRAITS[t.t][1]; list.append(b); }); det.append(list); if (S.crew.length > 60) det.append(h('p','note','And ' + (S.crew.length - 60) + ' more, who are also doing their best.')); };
+    det.ontoggle = () => { openK.census = det.open; fill(); }; fill();   /* fill it the moment it opens, not on the next redraw */
     el.append(det); }
 };
 
