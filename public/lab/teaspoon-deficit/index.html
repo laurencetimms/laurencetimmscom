@@ -42,7 +42,11 @@ button:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px so
 #sky.nogl{background:radial-gradient(120% 90% at 50% 120%,#1b2a22 0 38%,transparent 39%),linear-gradient(#05070d,#0d0c1c)}
 #view::before{content:"";position:absolute;left:0;right:0;bottom:0;height:64px;background:linear-gradient(transparent,#000c);pointer-events:none}
 #view>*:not(#sky){position:absolute;text-shadow:0 1px 3px #000,0 0 8px #000}
-#ship{top:8px;left:12px;max-width:calc(100% - 170px);font:italic 15px/1.2 var(--serif);text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:4px 0}
+#ship{top:8px;left:12px;max-width:calc(100% - 170px);font:italic 15px/1.2 var(--serif);text-align:left;white-space:nowrap;overflow:hidden;padding:4px 0}
+#ship .sn{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:top}
+#ship.pan{-webkit-mask-image:linear-gradient(90deg,transparent,#000 6px,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(90deg,transparent,#000 6px,#000 calc(100% - 14px),transparent)}
+#ship.pan .sn{max-width:none;overflow:visible;padding-left:4px;animation:shippan var(--dur) ease-in-out infinite alternate}
+@keyframes shippan{0%,18%{transform:translateX(0)}82%,100%{transform:translateX(var(--pan))}}
 .hbs{top:8px;right:10px;display:flex;gap:6px}
 .hb{font:12px var(--mono);padding:6px 10px;border:1px solid #ffffff55;border-radius:4px;background:#00000066;min-width:58px}
 .hud{left:12px;bottom:8px;pointer-events:none}
@@ -195,7 +199,7 @@ p{margin:0}
   #log{cursor:default;padding:10px 12px}
   #log p{margin-bottom:5px}
 }
-@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} #ship.pan{-webkit-mask-image:none;mask-image:none} #ship.pan .sn{max-width:100%;overflow:hidden;padding-left:0} }
 
 /* the Bureau's dispatches and the crisis banner */
 .sheet.memo{background:var(--memo);border-radius:2px;box-shadow:0 1px 0 var(--rule),0 12px 40px #0006;position:relative;padding:22px 20px 18px;gap:12px}
@@ -845,11 +849,12 @@ function observe(S, by){
 function nameSession(S){ if (S.r.cycles < 500) return hook('fail'); S.r.cycles -= 500; S.cand = [0,1,2].sort(() => rand()-0.5).map(t => shipName(t)); hook('buy'); }
 function nameChoose(S, i){
   if (!S.cand) return; const nm = S.cand[i]; if (!nm) return; const hit = nm.t == S.taste, g = (hit ? 20 : 5)*(1 + S.mind.nodes.length/10);
-  S.r.whimsy += g; S.cand = null; S.fleet.unshift(nm.n); S.fleet.length = Math.min(S.fleet.length, 8); S.seen.named = 1;
+  S.r.whimsy += g; S.cand = null; S.fleet = S.fleet.filter(n => n != nm.n); S.fleet.unshift(nm.n); S.fleet.length = Math.min(S.fleet.length, 8); S.seen.named = 1; S.ship = {n:nm.n, t:nm.t};
   if (hit) { S.goodNames++; if (S.goodNames >= 10) ach('patron'); }
-  log(S, '“' + nm.n + '”. ' + (hit ? 'The crew ripple with approval.' : 'The crew are polite about it.') + ' +' + Math.round(g) + ' whimsy.', hit?'good':''); hook('buy');
+  log(S, '“' + nm.n + '”. ' + (hit ? 'The crew ripple with approval.' : 'The crew are polite about it.') + ' +' + Math.round(g) + ' whimsy. The hull is repainted.', hit?'good':''); hook('buy');
 }
-function rename(S){ S.ship = shipName(); S.renames++; if (S.renames >= 7) ach('indecisive'); tickle(S); hook('tap'); }
+/* before the committee sits, a tap draws a random name; after, it cycles through the names the committee has chosen */
+function rename(S){ const F = S.fleet || []; if (F.length > 1 || (F.length == 1 && S.ship.n != F[0])) { const i = F.indexOf(S.ship.n); S.ship = {n:F[(i + 1) % F.length], t:S.ship.t}; } else if (F.length == 1) { hook('fail'); return; } else S.ship = shipName(); S.renames++; if (S.renames >= 7) ach('indecisive'); tickle(S); hook('tap'); }
 function cycleShare(S){ S.share = S.share >= 1 ? 0 : S.share > 0 ? 1 : 0.5; hook('tap'); }
 function setKeep(S, r, d){ S.keep[r] = Math.max(0, (S.keep[r]||0) + d); hook('tap'); }
 
@@ -1287,7 +1292,7 @@ const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e
 const btn = (cls, txt, fn) => { const b = h('button', cls, txt); b.type = 'button'; if (fn) b.onclick = fn; return b; };
 let S, C, cur = 'hull', ups = [], fixed = [], sig = '', tabSig = '', buyQ = 1, jobQ = 1, openK = {}, showDone = false, pulseV = 0, needEnd = false, logSeen = null;
 let opt = {sound:0, calm:0}, main, loadedT = 0, mindCv = null;
-const SAVE_KEY = 'tsd2.save', VERSION = '1.4.1', BUILD = 'Stage one \u00b7 version ' + VERSION + ' \u00b7 19 Nov 2026';
+const SAVE_KEY = 'tsd2.save', VERSION = '1.4.2', BUILD = 'Stage one \u00b7 version ' + VERSION + ' \u00b7 19 Nov 2026';
 const U = fn => { ups.push(fn); fn(); };
 const setT = (el, t) => { if (el._t !== t) { el._t = t; el.textContent = t; } };
 const setD = (el, k, v) => { if (el.dataset[k] !== v) el.dataset[k] = v; };
@@ -1641,6 +1646,14 @@ function bureauFile(el){
   a.files.slice().reverse().forEach(f => { const b = btn('done file'); b.append(h('b','', f.t), h('span','', memoRef(f))); b.onclick = () => showDispatch(f); el.append(b); });
 }
 
+/* the ship's name: a long one pans slowly back and forth instead of being cut off */
+function drawShip(){
+  const b = $('ship'); let sp = b.firstElementChild; if (!sp) { b.textContent = ''; sp = h('span','sn'); b.append(sp); }
+  const key = S.ship.n + '|' + b.clientWidth + '|' + opt.calm; if (b._k === key) return; b._k = key;
+  sp.textContent = S.ship.n; b.title = S.fleet && S.fleet.length ? 'Tap to wear another name from the register' : 'Tap to rename your ship';
+  const over = sp.scrollWidth - b.clientWidth, on = over > 2 && !opt.calm;
+  b.classList.toggle('pan', on); if (on) { b.style.setProperty('--pan', -(over + 8) + 'px'); b.style.setProperty('--dur', (5 + (over + 8)/14).toFixed(1) + 's'); }
+}
 /* ---------- fixed chrome ---------- */
 const ALLRES = ['lichen','scrap','spoons','ice','notions','cycles','whimsy','plate','wire','spring','gear','lens','ledger','tea','grit','spores','footnotes'];
 const TABRES = {hull:['lichen','scrap','spoons','ice','plate'], shop:['scrap','plate','wire','spring','gear','lens','ledger','tea'], crew:['lichen','tea','spoons','whimsy'],
@@ -1706,7 +1719,7 @@ function drawTabs(){
 }
 function drawTop(){
   const sh = resShown(); for (const f of fixed) f(sh);
-  setT($('ship'), S.ship.n);
+  drawShip();
   const cl = C.cal, sn = SEASONS[cl.i];
   setT($('date'), S.done.calendar ? 'Year ' + cl.year + ' · ' + sn.n + (sn.w ? ' (' + sn.w + ')' : '') + ', day ' + cl.day : 'Day ' + (Math.floor(S.age/DAY) + 1) + (S.seen.aph || cl.i ? ' · ' + sn.n : ''));
   arcBar();
