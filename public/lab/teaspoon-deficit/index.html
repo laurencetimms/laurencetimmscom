@@ -221,7 +221,10 @@ p{margin:0}
 /* ===== THE TEASPOON DEFICIT, stage one: game rules (no DOM in this file) ===== */
 const DEFICIT = 7.3e27, DAY = 2, SEASON_LEN = 200;
 const SEASONS = [{n:'Perihelion',m:1.5,w:'warm'},{n:'Outswing',m:1,w:''},{n:'Aphelion',m:0.25,w:'cold'},{n:'Inswing',m:1,w:''}];
-const rnd = (a,b) => a + Math.random()*(b-a), pick = a => a[Math.floor(Math.random()*a.length)];
+/* all randomness goes through rand(), so the test harness can seed it and replay a life exactly */
+let rand = Math.random;
+function setSeed(seed){ let a = seed >>> 0; rand = () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const rnd = (a,b) => a + rand()*(b-a), pick = a => a[Math.floor(rand()*a.length)];
 const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
 let M = null;            // meta: survives across lives
 let hook = () => {};     // ui feedback
@@ -231,7 +234,7 @@ const NAMEP = [
  [['Technically','Arguably','Broadly','Provisionally','Mostly','Nominally','Reasonably Sure This Is'],['Within Tolerance','Fine','On Schedule','A Ship','Load-Bearing','Accounted For','Somebody Else’s Job']],
  [['The Unanswerable','Thunderous','Last Great','Inevitable','Sovereign','Incandescent','Magnificent And Final'],['Teaspoon','Rounding Error','Inventory','Afterthought','Paperweight','Drawer','Clerical Oversight']],
  [['Sorry About','Please Ignore','Regrettably,','Do Excuse','Awfully Sorry For','We Meant To Mention','Nobody Warned Us About'],['The Noise','The Hull','Last Tuesday','The Smell Of Lichen','All The Spoons','What Happened','The Forks']]];
-const shipName = tag => { const t = tag == null ? Math.floor(Math.random()*3) : tag; return {n: pick(NAMEP[t][0]) + ' ' + pick(NAMEP[t][1]), t}; };
+const shipName = tag => { const t = tag == null ? Math.floor(rand()*3) : tag; return {n: pick(NAMEP[t][0]) + ' ' + pick(NAMEP[t][1]), t}; };
 const TN1 = ['Mossy','Pip','Dew','Lumen','Burr','Fen','Odo','Quill','Rime','Sorrel','Wick','Nub','Bram','Tansy','Ember','Plum','Hob','Teasel','Clem','Moth','Sedge','Poppet','Orris','Juniper','Barley','Nettle','Wren','Coble'];
 const TN2 = ['Eightlegs','Slowstep','Dampfoot','Underleaf','Longnap','Softclaw','Driftwater','Hullwarm','Crumb','Thimble','Rivetsby','Tunwise','Mosswright','Coldtoe','Halfspoon','Bowlby'];
 
@@ -282,7 +285,7 @@ function newState(quirk){
     pedlar:0, pedT:rnd(500,800), comet:0, cometT:rnd(120,200), comets:0,
     st:{cur:null, done:{}, step:{}, flags:{}, nextT:rnd(150,240), last:[], ign:0, wait:{}},
     duty:{}, keep:{}, mind:{nodes:[{k:'stem', lv:1, p:-1, cond:1, v:1}], task:'idle', coach:'', dream:0, dreams:0, fc:0, heat:0, offer:null, ct:0, trial:null, sulk:{}, glT:0, sockT:0, temp:{}, sel:0},
-    lastAct:0, taste:Math.floor(Math.random()*3), cand:null, fleet:[], goodNames:0,
+    lastAct:0, taste:Math.floor(rand()*3), cand:null, fleet:[], goodNames:0,
     m:{graze:1,bed:1,scav:1,press:1,yield:1,craft:1,smelt:1,notion:1,ice:1,cond:1,kettle:1,warm:1,fuel:1,cap:1,icecap:1,ncap:1,lcap:1,learn:1,comfort:1,hail:1,obs:1,mind:1,hand:1,berth:0,rota:1,stem:1,hcap:1,bunk:1,rackB:5,warrenB:4},
     tmpm:[], accPerm:0, quirk:quirk||'', heir:hz, log:[], ended:'', bank:0, flux:0, sunTaps:0, _sp:0, _used:0, acts:0};
   if (hz.small) { S.b.hut = 2; S.b.bed = 1; S.seen.lichen = 1; }
@@ -313,9 +316,9 @@ const BLD = {
  warren:{n:'Warren',d:'Dug by the crew themselves, into the old insulation. They will not let you see the plans.',c:{lichen:1500,plate:12},k:1.3,e:'+4 berths',req:S=>S.st.flags.homes},
  garden:{n:'Moss garden',d:'Ornamental lichen. Grown from neighbours’ spores, for looking at.',c:{spores:3,plate:10},k:1.2,e:'comfort +3, +0.4 lichen/s',req:S=>S.done.gardening}};
 const scrapCap = S => (100 + 150*nb(S,'locker') + 1500*nb(S,'bunker')*S.m.bunk)*S.m.cap;
-/* a building never asks for more scrap than 90% of what you can store: the rest is asked in plate, 50 scrap to a plate */
+/* a building never asks for more scrap than 40% of what you can store (smelters take everything above half): the rest is asked in plate, 50 scrap to a plate */
 function bcost(S, id, q, raw){ const d = BLD[id], n = nb(S,id), o = {}; const f = Math.pow(d.k,n) * (Math.pow(d.k,q)-1)/(d.k-1); for (const r in d.c) o[r] = d.c[r]*f;
-  if (!raw && o.scrap) { const lim = scrapCap(S)*0.9; if (o.scrap > lim) { o.plate = (o.plate||0) + (o.scrap - lim)/50; o.scrap = lim; } }
+  if (!raw && o.scrap) { const lim = scrapCap(S)*0.4; if (o.scrap > lim) { o.plate = (o.plate||0) + (o.scrap - lim)/50; o.scrap = lim; } }
   return o; }
 function buy1cost(S, id){ return bcost(S, id, 1); }
 function buy(S, id, q){
@@ -399,7 +402,7 @@ const MT = {
  worry:{n:'Worry Loop',s:'WRRY',g:'prod',p:0,h:0,d:'Makes nothing of its own. Turns heat back into thought, badly. Wants things hot.'},
  daydream:{n:'Daydream Sump',s:'DAYD',g:'prod',p:6,h:0.5,d:'Only works when nobody has touched anything for a minute. Leave it alone and it thrives.'},
  attic:{n:'Attic',s:'ATTC',g:'store',cap:1000,h:0,d:'Holds thoughts in boxes, labelled in a hand nobody recognises.'},
- bilge:{n:'Bilge of Forgetting',s:'BLGE',g:'store',cap:4000,h:0,d:'Holds an enormous amount and keeps very little. Leaks stored thought.'},
+ bilge:{n:'Bilge of Forgetting',s:'BLGE',g:'store',cap:4000,h:0,d:'Holds an enormous amount and keeps very little. Whatever spills into it slowly leaks away.'},
  sock:{n:'Sock Drawer',s:'SOCK',g:'store',cap:600,h:0,d:'Holds a little. Now and then produces something it should not contain.'},
  second:{n:'Second Opinion',s:'2ND',g:'amp',a:0.35,h:0,d:'Boosts its neighbours. Occasionally disagrees with them and everything stops until it calms down.'},
  hunch:{n:'Hunch Valve',s:'HNCH',g:'amp',a:0.2,h:0,d:'A gentle boost to its neighbours, and it lets their heat out.'},
@@ -457,7 +460,7 @@ function mindCalc(S, c){
   return {cps: cps*(1-div), out, heat: net, hcap, pen, cap: cap*(S.done.attic2 ? 1.5 : 1), notions: cps*div/6, gland, bilge, raw: cps};
 }
 function mindScore(S){ const c = calc(S); return c.mind.cps + c.mind.notions*4 + c.mind.cap/500; }
-function draftOffer(S){ const p = MPOOL(S).slice().sort(() => Math.random()-0.5), seen = {}, o = []; for (const k of p) { if (!seen[k]) { seen[k] = 1; o.push(k); } if (o.length == 3) break; } return o; }
+function draftOffer(S){ const p = MPOOL(S).slice().sort(() => rand()-0.5), seen = {}, o = []; for (const k of p) { if (!seen[k]) { seen[k] = 1; o.push(k); } if (o.length == 3) break; } return o; }
 const dreamNeed = S => 15000*Math.pow(1.7, S.mind.dreams);
 function mindDraft(S){ if (S.mp < 1 || S.mind.offer) return hook('fail'); S.mp--; S.mind.offer = draftOffer(S); S.mind.dreamt = 0; hook('buy'); }
 const TASKS = {idle:['Leak whimsy','The old way. A full Mind leaks whimsy, and nothing else happens.'], ponder:['Ponder','Spare thought becomes notions for the scholars, eight thoughts to a notion.'],
@@ -468,7 +471,7 @@ function mindTake(S, k, parent){ if (!S.mind.offer || S.mind.offer.indexOf(k) < 
   N.push({k, lv:1, p: parent == null ? suggestParent(S,k) : parent, cond:1, v:1}); S.mind.offer = null; S.mind.sel = N.length - 1; S.mind.rew = S.age;
   log(S, 'A ' + MT[k].n + ' has been fitted to the Mind, wired to the ' + MT[N[N[N.length-1].p].k].n + '.','good'); hook('unlock'); }
 function suggestParent(S, k){ const N = S.mind.nodes, g = MT[k].g; let best = 0, bs = -1;
-  N.forEach((n,i) => { const t = MT[n.k]; let s = Math.random()*0.5 - nbrs(N,i).length*0.6;
+  N.forEach((n,i) => { const t = MT[n.k]; let s = rand()*0.5 - nbrs(N,i).length*0.6;
     if (g == 'amp' && (t.g == 'prod' || t.g == 'core')) s += 3; if (g == 'prod' && t.g == 'amp') s += 2; if (g == 'cool' && t.h) s += 1; if (g == 'store') s += t.g == 'core' ? 1 : 0;
     if (s > bs) { bs = s; best = i; } }); return best; }
 const isDesc = (N, a, b) => { let x = N[a].p; while (x >= 0) { if (x == b) return true; x = N[x].p; } return false; };
@@ -484,7 +487,7 @@ const GLITCH = [
  [S => { S.mind.temp.teapot = 60; }, 'The Mind briefly believes it is a teapot. Kettle-houses run twice as fast for a minute.'],
  [S => { const c = calc(S); add(S,'notions', c.caps.notions*0.15, c); S.r.cycles *= 0.5; }, 'A fugue. The Mind loses half its thoughts and the scholars find the other half written on the walls.'],
  [S => { S.r.whimsy += 3; }, 'The Mind recites the Mandate backwards. It scans better. +3 whimsy.'],
- [S => { const N = S.mind.nodes; if (N.length < 3) return; const i = 1 + Math.floor(Math.random()*(N.length-1)), opts = N.map((_,j) => j).filter(j => canWire(N,i,j)); if (opts.length) rewire(S, i, pick(opts), true); }, 'A subsystem wanders off and plugs itself in somewhere else.'],
+ [S => { const N = S.mind.nodes; if (N.length < 3) return; const i = 1 + Math.floor(rand()*(N.length-1)), opts = N.map((_,j) => j).filter(j => canWire(N,i,j)); if (opts.length) rewire(S, i, pick(opts), true); }, 'A subsystem wanders off and plugs itself in somewhere else.'],
  [S => { add(S,'spoons', 20 + S._sp*30); }, 'The Mind imagines a spoon so hard that one appears. Then several.'],
  [S => { S.mind.nodes.forEach(n => { n.cond = Math.max(0, n.cond - 0.08); }); }, 'Something in the Mind goes pop. Every subsystem is a little the worse for it.'],
  [S => { S.accMod -= 1; }, 'The Mind shouts in its sleep. The crew are unsettled. Accord −1.'],
@@ -493,7 +496,9 @@ function mindTick(S, dt, c, online){
   const mc = c.mind, md = S.mind;
   let inflow = mc.cps*(md.temp.lucid > 0 ? 4 : 1);
   S.r.cycles += inflow*dt; S.r.notions = Math.min(c.caps.notions, S.r.notions + mc.notions*dt);
-  if (mc.bilge) S.r.cycles *= Math.pow(1 - 0.0015*mc.bilge, dt);
+  if (mc.bilge) { /* the Bilge forgets only what is kept in it: thought above the rest of the Mind's storage */
+    const own = S.mind.nodes.reduce((a,n) => a + (n.k == 'bilge' ? MT.bilge.cap*n.lv : 0), 0)*(S.done.attic2 ? 1.5 : 1), over = Math.max(0, S.r.cycles - (mc.cap - own));
+    S.r.cycles -= over*(1 - Math.pow(1 - 0.0015*mc.bilge, dt)); }
   const full = S.r.cycles >= mc.cap*0.995; if (S.r.cycles > mc.cap) S.r.cycles = mc.cap;
   const task = S.done.sparework ? md.task : 'idle', busy = full && task != 'idle';
   S.r.whimsy += (full ? mc.raw*0.006*(1 + mc.gland)*(busy ? 0.25 : 1) : mc.raw*0.0004*mc.gland) * (qk(S).whim||1) * Math.pow(0.85, S.mind.nodes.filter(n => n.k == 'bureau').length) * dt;
@@ -509,17 +514,17 @@ function mindTick(S, dt, c, online){
   for (const k in md.sulk) if (md.sulk[k] > 0) md.sulk[k] -= dt;
   md.nodes.forEach(n => { n.cond = Math.max(0, n.cond - dt*0.01/360); });
   if (!online) return;
-  md.nodes.forEach((n,i) => { if (n.k == 'second' && !(md.sulk[i] > 0) && Math.random() < dt*0.0004*n.lv) { md.sulk[i] = 30; log(S,'The Second Opinion disagrees with its neighbours. They stop to argue.',''); } });
-  if (mc.heat > mc.hcap && Math.random() < dt*0.004*(mc.heat/mc.hcap)) { const g = pick(GLITCH); g[0](S); log(S,'Glitch: ' + g[1],'bad'); S.seen.glitch = (S.seen.glitch||0) + 1; }
+  md.nodes.forEach((n,i) => { if (n.k == 'second' && !(md.sulk[i] > 0) && rand() < dt*0.0004*n.lv) { md.sulk[i] = 30; log(S,'The Second Opinion disagrees with its neighbours. They stop to argue.',''); } });
+  if (mc.heat > mc.hcap && rand() < dt*0.004*(mc.heat/mc.hcap)) { const g = pick(GLITCH); g[0](S); log(S,'Glitch: ' + g[1],'bad'); S.seen.glitch = (S.seen.glitch||0) + 1; }
   const socks = md.nodes.filter(n => n.k == 'sock').reduce((a,n) => a + n.lv, 0);
   if (socks && (md.sockT += dt*Math.sqrt(socks)) > 400) { md.sockT = 0; const f = pick([['grit',1],['spores',1],['whimsy',2],['spoons',50],['plate',2]]); S.r[f[0]] += f[1]; log(S,'The Sock Drawer produces ' + (f[0]=='spoons'?'a handful of spoons':f[1] + ' ' + f[0]) + '. Nobody put it there.',''); }
 }
 
 /* ---------- duties: crew learning to do your jobs ---------- */
 const DUTY = {
- stamp:{n:'Stamping rota',d:'They take turns at the hull arm, stamping spoons the way you do. Badly at first. They leave the last 30% of the scrap alone, and stop when you switch the presses off.',unl:S=>S.done.delegation&&S.hand.stamp>=150},
+ stamp:{n:'Stamping rota',d:'They take turns at the hull arm, stamping spoons the way you do. Badly at first. They leave the bottom half of the scrap store alone, and stop when you switch the presses off.',unl:S=>S.done.delegation&&S.hand.stamp>=150},
  pry:{n:'Salvage gang',d:'They pry scrap off the hull for you. Some of the hull is load-bearing.',unl:S=>S.done.delegation&&S.hand.pry>=150},
- craft:{n:'Workshop crew',d:'They craft whatever you ask them to keep in stock. Waste is part of the syllabus.',unl:S=>S.done.delegation&&S.hand.craft>=30&&nb(S,'bench')>=1},
+ craft:{n:'Workshop crew',d:'They craft whatever you ask them to keep in stock, using only what is above half of each store. Waste is part of the syllabus.',unl:S=>S.done.delegation&&S.hand.craft>=30&&nb(S,'bench')>=1},
  watch:{n:'Sky-watch',d:'They watch for comets and observe them for you. Not everything in the sky is a comet.',unl:S=>S.done.delegation&&S.comets>=3},
  mind:{n:'Mind crew',d:'They service the Mind, work the valves, and try rewiring it to see what happens. Sometimes it is better.',unl:S=>S.st.flags.mindcrew},
  cttee:{n:'Petition committee',d:'If you leave a petition for a minute and a half, they decide it. Their choices improve with practice.',unl:S=>S.st.flags.committee}};
@@ -544,18 +549,19 @@ function dutiesTick(S, dt, c, online){
     const learnMis = n => { D.mis += n; D.c = Math.min(100, D.c + n*0.25*(T.some(t => t.t == 'clumsy') ? 2 : 1)); };
     if (k == 'stamp' || k == 'pry') {
       const acts = 0.45*Math.pow(T.length,0.75)*dt*(online ? 1 : 0.8), hm = handMult(S)*S.m.rota;
-      if (k == 'stamp') { const use = S.share <= 0 ? 0 : Math.max(0, Math.min(S.r.scrap - c.caps.scrap*0.3, acts*hm)); S.r.scrap -= use; const good = use*(1 - mp); addSpoons(S, good*c.yield); S.mind.temp.twitch = (S.mind.temp.twitch||0) + acts*(1-mp)/dt; learnMis(acts*mp*0.01);
-        D.acc += acts*mp; if (D.acc > 25) { D.acc = 0; if (Math.random() < 0.15) { S.r.whimsy += 1; dutyNote(S,k,who() + ' has stamped a spork. It is being kept, for study. +1 whimsy.',online); } else dutyNote(S,k,pick([who() + ' stamped a spoon inside out.', who() + ' stamped the same spoon nine times.', who() + ' stamped a bowl with no handle and called it a cup.', who() + ' got a leg caught in the die. Everyone is fine. The spoon is not.']), online); } }
+      if (k == 'stamp') { const use = S.share <= 0 ? 0 : Math.max(0, Math.min(S.r.scrap - c.caps.scrap*0.5, acts*hm)); S.r.scrap -= use; const good = use*(1 - mp); addSpoons(S, good*c.yield); S.mind.temp.twitch = (S.mind.temp.twitch||0) + acts*(1-mp)/dt; learnMis(acts*mp*0.01);
+        D.acc += acts*mp; if (D.acc > 25) { D.acc = 0; if (rand() < 0.15) { S.r.whimsy += 1; dutyNote(S,k,who() + ' has stamped a spork. It is being kept, for study. +1 whimsy.',online); } else dutyNote(S,k,pick([who() + ' stamped a spoon inside out.', who() + ' stamped the same spoon nine times.', who() + ' stamped a bowl with no handle and called it a cup.', who() + ' got a leg caught in the die. Everyone is fine. The spoon is not.']), online); } }
       else { const got = acts*Math.max(hm, c.scrapIn*0.5)*(1 - mp)*(T.some(t => t.t == 'sharp') ? 1.1 : 1); add(S,'scrap',got,c); learnMis(acts*mp*0.01);
-        D.acc += acts*mp; if (D.acc > 25) { D.acc = 0; if (Math.random() < 0.2) { const g = 30 + S._sp*20; addSpoons(S,g); dutyNote(S,k,who() + ' pried open a sealed drawer full of spoons. +' + fmt(g) + '.',online); } else dutyNote(S,k,pick([who() + ' pried off a panel that turned out to be holding the air in. Put back.', who() + ' brought back a very large rivet and nothing else.', who() + ' fell off the hull and walked back round.']), online); } }
+        D.acc += acts*mp; if (D.acc > 25) { D.acc = 0; if (rand() < 0.2) { const g = 30 + S._sp*20; addSpoons(S,g); dutyNote(S,k,who() + ' pried open a sealed drawer full of spoons. +' + fmt(g) + '.',online); } else dutyNote(S,k,pick([who() + ' pried off a panel that turned out to be holding the air in. Put back.', who() + ' brought back a very large rivet and nothing else.', who() + ' fell off the hull and walked back round.']), online); } }
     }
     if (k == 'craft') { D.acc2 = (D.acc2||0) + 0.09*Math.pow(T.length,0.75)*dt; let n = 0;
-      while (D.acc2 >= 1 && n++ < 60) { D.acc2--; const want = Object.keys(S.keep).filter(r => CRAFT[r] && CRAFT[r].req(S) && S.r[r] < S.keep[r] && canPay(S, CRAFT[r].c));
+      while (D.acc2 >= 1 && n++ < 60) { D.acc2--; const roomy = cc => Object.keys(cc).every(q => !isFinite(c.caps[q] == null ? Infinity : c.caps[q]) || S.r[q] - cc[q] >= c.caps[q]*0.5); /* like smelters and the rota, the crew leave the bottom half of a store alone */
+      const want = Object.keys(S.keep).filter(r => CRAFT[r] && CRAFT[r].req(S) && S.r[r] < S.keep[r] && canPay(S, CRAFT[r].c) && roomy(CRAFT[r].c));
         if (!want.length) { D.acc2 = Math.min(D.acc2, 1); break; } const r = pick(want); pay(S, CRAFT[r].c);
-        if (Math.random() < mp) { learnMis(1); if (Math.random() < 0.06) { add(S,'notions',c.caps.notions*0.1,c); dutyNote(S,k,who() + ' ruined some ' + CRAFT[r].n.toLowerCase() + ' and discovered something by accident. Notions gained.',online); } else if (Math.random() < 0.3) dutyNote(S,k,who() + ' made ' + CRAFT[r].n.toLowerCase() + ' that does not work. It has been framed.',online); }
+        if (rand() < mp) { learnMis(1); if (rand() < 0.06) { add(S,'notions',c.caps.notions*0.1,c); dutyNote(S,k,who() + ' ruined some ' + CRAFT[r].n.toLowerCase() + ' and discovered something by accident. Notions gained.',online); } else if (rand() < 0.3) dutyNote(S,k,who() + ' made ' + CRAFT[r].n.toLowerCase() + ' that does not work. It has been framed.',online); }
         else S.r[r] += craftYield(S,c); } }
     if (k == 'watch' && S.comet > 0 && S.comet < 11 && !S.duty.watch.tried) { S.duty.watch.tried = 1; const sharp = T.some(t => t.t == 'sharp') ? 0.1 : 0;
-      if (Math.random() < 1 - mp + sharp) { observe(S, 'watch'); } else { learnMis(1); dutyNote(S,k,who() + ' carefully observed a rock for the whole of the comet.',online); } }
+      if (rand() < 1 - mp + sharp) { observe(S, 'watch'); } else { learnMis(1); dutyNote(S,k,who() + ' carefully observed a rock for the whole of the comet.',online); } }
     if (k == 'mind') mindCrew(S, dt, c, T, D, online);
   }
   if (S.comet <= 0 && S.duty.watch) S.duty.watch.tried = 0;
@@ -564,19 +570,19 @@ function mindCrew(S, dt, c, T, D, online){
   const N = S.mind.nodes; if (N.length < 3) return; D.ct = (D.ct||0) + dt*Math.sqrt(T.length);
   const per = 45; let n = 0; const who = pick(T).n, mp = misP(S,'mind',T);
   if (D.trial && S.age - D.trial.t > 40) { const now = mindScore(S), t = D.trial, worse = now < t.s;
-    if (worse && Math.random() > mp) { rewire(S, t.i, t.from, true); dutyNote(S,'mind',t.who + ' tried moving the ' + MT[N[t.i].k].n + '. It was worse. They put it back.',online); }
+    if (worse && rand() > mp) { rewire(S, t.i, t.from, true); dutyNote(S,'mind',t.who + ' tried moving the ' + MT[N[t.i].k].n + '. It was worse. They put it back.',online); }
     else if (worse) { D.mis++; D.c = Math.min(100, D.c + 0.5); dutyNote(S,'mind',t.who + ' moved the ' + MT[N[t.i].k].n + ' and is sure it is better. It is not.',online); }
     else { D.ok++; dutyNote(S,'mind',t.who + ' moved the ' + MT[N[t.i].k].n + ' next to the ' + MT[N[N[t.i].p].k].n + '. Thought +' + Math.round(100*(now/t.s - 1)) + '%. They are insufferable about it.',online); }
     D.trial = null; }
   while (D.ct >= per && n++ < 40) { D.ct -= per;
     const worn = N.map((x,i) => [x,i]).filter(([x]) => x.cond < 0.75).sort((a,b) => a[0].cond - b[0].cond);
     if (worn.length && canPay(S, serviceCost(worn[0][0]))) { const [x,i] = worn[0]; pay(S, serviceCost(x));
-      if (Math.random() < mp) { x.cond = Math.max(0, x.cond - 0.1); D.mis++; D.c = Math.min(100, D.c + 0.3); dutyNote(S,'mind',who + ' serviced the ' + MT[x.k].n + ' and has a part left over. It runs worse.',online); }
-      else { x.cond = 1; if (Math.random() < 0.08) dutyNote(S,'mind',who + ' serviced the ' + MT[x.k].n + '.',online); } continue; }
+      if (rand() < mp) { x.cond = Math.max(0, x.cond - 0.1); D.mis++; D.c = Math.min(100, D.c + 0.3); dutyNote(S,'mind',who + ' serviced the ' + MT[x.k].n + ' and has a part left over. It runs worse.',online); }
+      else { x.cond = 1; if (rand() < 0.08) dutyNote(S,'mind',who + ' serviced the ' + MT[x.k].n + '.',online); } continue; }
     const mc = c.mind;
     if (S.done.hydraulics && mc.heat > mc.hcap) { let hot = -1, hh = 0; N.forEach((x,i) => { const h = (MT[x.k].h||0)*x.lv*x.v; if (h > hh) { hh = h; hot = i; } }); if (hot >= 0) { N[hot].v = Math.max(0, N[hot].v - 0.5); dutyNote(S,'mind',who + ' turned down the ' + MT[N[hot].k].n + ' before it boiled.',online); } continue; }
     if (S.done.hydraulics && mc.heat < mc.hcap*0.6) { const sh = N.find(x => x.v < 1); if (sh) { sh.v = Math.min(1, sh.v + 0.5); continue; } }
-    if (D.c >= 25 && !D.trial && Math.random() < 0.5) { const i = 1 + Math.floor(Math.random()*(N.length-1)), opts = N.map((_,j) => j).filter(j => canWire(N,i,j));
+    if (D.c >= 25 && !D.trial && rand() < 0.5) { const i = 1 + Math.floor(rand()*(N.length-1)), opts = N.map((_,j) => j).filter(j => canWire(N,i,j));
       if (opts.length) { D.trial = {i, from:N[i].p, s:mindScore(S), t:S.age, who}; rewire(S, i, pick(opts), true); } }
   }
 }
@@ -684,13 +690,13 @@ function tick(S, dt, online){
   if (S.hails < c.capHails) S.hails = Math.min(c.capHails, S.hails + dt/90*S.m.hail*(q.hail||1));
   const si = cal(S).i;
   if (si != si0) {
-    S.weather = Math.random() < 0.3 ? 0.15 : Math.random() < 0.43 ? -0.1 : 0;
+    S.weather = rand() < 0.3 ? 0.15 : rand() < 0.43 ? -0.1 : 0;
     if (si0 == 2) { if (!S.coldTun && pop >= 5) ach('warm'); S.coldTun = 0; }
     if (si == 2) S.seen.aph = 1;
     log(S, SEASONS[si].n + ' begins' + (si==2?'. The lichen slows to a quarter, and the huts get cold. Mind the stores.':si==0?'. Warm light on the hull. The lichen races.':'.'), si==2?'bad':'');
   }
   if (online) {
-    if (S.comet > 0) { S.comet -= dt; if (S.comet <= 0 && Math.random() < 0.15*nb(S,'obs')*S.m.obs) observe(S, 'obs'); }
+    if (S.comet > 0) { S.comet -= dt; if (S.comet <= 0 && rand() < 0.15*nb(S,'obs')*S.m.obs) observe(S, 'obs'); }
     else if (pop >= 1 && (S.cometT -= dt*(S.mind.fc ? 1.3 : 1)) <= 0) { S.comet = 22; S.cometT = rnd(200,380)*(q.comet||1); log(S,'A comet is crossing the sky. Tap Observe.','big'); hook('unlock'); }
     storyTick(S, dt);
     if (nb(S,'antenna') >= 1) {
@@ -720,9 +726,9 @@ function observe(S, by){
   log(S, (by == 'obs' ? 'The observatory caught the comet' : by == 'watch' ? 'The sky-watch observed the comet' : 'You watch the comet with the scholars') + '. +' + Math.round(g) + ' notions and some ice.','good'); if (!by) hook('buy');
   if (S.comets >= 10) ach('comets'); if (S.comets >= 5) marg('m1');
 }
-function nameSession(S){ if (S.r.cycles < 500) return hook('fail'); S.r.cycles -= 500; S.cand = [0,1,2].sort(() => Math.random()-0.5).map(t => shipName(t)); hook('buy'); }
+function nameSession(S){ if (S.r.cycles < 500) return hook('fail'); S.r.cycles -= 500; S.cand = [0,1,2].sort(() => rand()-0.5).map(t => shipName(t)); hook('buy'); }
 function nameChoose(S, i){
-  const nm = S.cand[i]; if (!nm) return; const hit = nm.t == S.taste, g = (hit ? 20 : 5)*(1 + S.mind.nodes.length/10);
+  if (!S.cand) return; const nm = S.cand[i]; if (!nm) return; const hit = nm.t == S.taste, g = (hit ? 20 : 5)*(1 + S.mind.nodes.length/10);
   S.r.whimsy += g; S.cand = null; S.fleet.unshift(nm.n); S.fleet.length = Math.min(S.fleet.length, 8); S.seen.named = 1;
   if (hit) { S.goodNames++; if (S.goodNames >= 10) ach('patron'); }
   log(S, '“' + nm.n + '”. ' + (hit ? 'The crew ripple with approval.' : 'The crew are polite about it.') + ' +' + Math.round(g) + ' whimsy.', hit?'good':''); hook('buy');
@@ -792,7 +798,7 @@ const CHAIN_BY = {}; CHAINS.forEach(ch => CHAIN_BY[ch.id] = ch);
 const PET = [
  {t:'The grazers ask for one idle day each season.',a:['Grant it','Accord +4, grazing −10% for half an hour',S=>{tmpMul(S,'graze',0.9,1800);S.accMod+=4;},'Granted.'],b:['Refuse','Accord −3',S=>{S.accMod-=3;},'Refused.']},
  {t:'A scholar proposes naming the stars after soups.',a:['Approve','Whimsy',S=>{S.r.whimsy+=10;},'Welcome, Lesser Bisque.'],b:['Use numbers','Notions +20%',S=>{const c=calc(S);add(S,'notions',c.caps.notions*0.2,c);},'Numbers it is.']},
- {t:'Scavengers found a sealed room. It is ticking.',a:['Open it','A gamble on scrap',S=>{if(Math.random()<0.6){const c=calc(S);add(S,'scrap',c.caps.scrap*0.6,c);S.st.last.push('lucky');}else S.accMod-=2;},'It was a clock, and behind the clock, perhaps, something useful.'],b:['Leave it','Cycles +30%',S=>{const c=calc(S);add(S,'cycles',c.caps.cycles*0.3,c);},'You think about the room instead.']},
+ {t:'Scavengers found a sealed room. It is ticking.',a:['Open it','A gamble on scrap',S=>{if(rand()<0.6){const c=calc(S);add(S,'scrap',c.caps.scrap*0.6,c);S.st.last.push('lucky');}else S.accMod-=2;},'It was a clock, and behind the clock, perhaps, something useful.'],b:['Leave it','Cycles +30%',S=>{const c=calc(S);add(S,'cycles',c.caps.cycles*0.3,c);},'You think about the room instead.']},
  {t:'The crew want spoons of their own. They have no mouths to speak of.',a:['Hand out a tenth','Spoons −10%, accord +5',S=>{S.r.spoons*=0.9;S.accMod+=5;},'A tenth of the drawer, given away.'],b:['Refuse','Accord −2',S=>{S.accMod-=2;},'The spoons are for the universe.']},
  {t:'A tardigrade has written an opera about you. It is not flattering.',a:['Attend','Cycles −50%, accord +4',S=>{S.r.cycles*=0.5;S.accMod+=4;},'It runs long.'],b:['Be busy','Mandate +1, accord −4',S=>{S.accMod-=4;S.mp+=1;},'You file a report instead. The Bureau approves.']},
  {t:'Request: a monument. A very large spoon.',a:['Build it','Scrap −50%, accord +5',S=>{S.r.scrap*=0.5;S.accMod+=5;},'One enormous spoon, in the corridor, in the way.'],b:['Decline','Accord −1',S=>{S.accMod-=1;},'No monument.']},
@@ -816,7 +822,7 @@ function storyTick(S, dt){
   if (!S.done.philosophy && S.pop < 4) return;
   if (st.vintageDue == null && st.flags.vintage && S.age - st.flags.vintage > 4*seasonLen(S)) { st.vintageDue = 1; S.r.whimsy += 40; log(S,'The vintage is ready. It tastes of moss and patience. +40 whimsy.','good'); }
   if ((st.nextT -= dt) > 0) return;
-  const w = S.crew.length ? Math.floor(Math.random()*S.crew.length) : -1;
+  const w = S.crew.length ? Math.floor(rand()*S.crew.length) : -1;
   for (const id in st.wait) if (S.age >= st.wait[id]) { st.cur = {ch:id, s:st.step[id], w, age:0}; delete st.wait[id]; return storyOpen(S); }
   const ch = CHAINS.find(x => !st.done[x.id] && st.step[x.id] == null && x.trig(S));
   if (ch) { st.step[ch.id] = 0; st.cur = {ch:ch.id, s:0, w, age:0}; return storyOpen(S); }
@@ -834,7 +840,7 @@ function storyChoose(S, ch, by){
 }
 function committeeDecide(S){ const T = team(S,'cttee'), D = dutyOf('cttee')(S), mp = misP(S,'cttee',T), step = storyStep(S);
   const score = o => { const h = o[1]; let s = 0; const m = h.match(/Accord ([+−])(\d+)/); if (m) s += (m[1] == '+' ? 1 : -1)*+m[2]; if (/\+/.test(h)) s += 1; if (/−/.test(h) && !m) s -= 1; return s; };
-  let ch = score(step.b) > score(step.a) ? 1 : 0; if (Math.random() < mp) { ch = Math.random() < 0.5 ? 0 : 1; D.mis++; D.c = Math.min(100, D.c + 1); } else D.ok++;
+  let ch = score(step.b) > score(step.a) ? 1 : 0; if (rand() < mp) { ch = rand() < 0.5 ? 0 : 1; D.mis++; D.c = Math.min(100, D.c + 1); } else D.ok++;
   D.c = Math.min(100, D.c + 1.5); storyChoose(S, ch, 1); }
 
 /* ---------- discoveries (Science) and projects (Mind) ---------- */
@@ -977,6 +983,38 @@ const BIG = ['','thousand','million','billion','trillion','quadrillion','quintil
 function fmtLong(x){ if (x < 1e9) return Math.floor(x).toLocaleString('en-GB'); const e = Math.min(9, Math.floor(Math.log10(x)/3)); return (x/Math.pow(1000,e)).toFixed(2) + ' ' + BIG[e]; }
 function fmtTime(s){ s = Math.floor(s); const d = Math.floor(s/86400), h = Math.floor(s%86400/3600), m = Math.floor(s%3600/60); return d ? d + 'd ' + h + 'h' : h ? h + 'h ' + m + 'm' : m ? m + 'm ' + (s%60) + 's' : s + 's'; }
 function simulate(S, el){ const steps = Math.min(4000, Math.ceil(el/0.5)), dt = el/steps; for (let i = 0; i < steps; i++) tick(S, dt, false); checks(S); }
+
+/* ---------- every legal move, for the test harness ---------- */
+function actions(S){
+  const L = [], A = (id, kind, cost, run, can) => L.push({id, kind, cost: cost || {}, run, can: can == null ? canPay(S, cost || {}) : can});
+  A('stamp','hand',{scrap:1},() => stamp(S)); A('pry','hand',null,() => pry(S)); A('scrape','hand',null,() => scrape(S));
+  for (const k in BLD) if (BLD[k].req(S)) A('b:'+k,'build',buy1cost(S,k),() => buy(S,k,1));
+  for (const k in CRAFT) if (CRAFT[k].req(S)) A('c:'+k,'craft',CRAFT[k].c,() => craft(S,k,1));
+  for (const u of upgOpen(S)) A('u:'+u.id,'upgrade',u.c,() => upgrade(S,u.id));
+  for (const tab of ['sci','mind']) for (const p of prjOpen(S,tab)) A('p:'+p.id, p.id == 'stay' ? 'ending' : tab == 'sci' ? 'research' : 'project', prjCost(S,p), () => research(S,p.id));
+  const graz = S.crew.filter(t => !t.d && t.j == 'grazer').length;
+  for (const j in JOBS) if (j != 'grazer' && JOBS[j].req(S)) { A('j+:'+j,'job',null,() => setJob(S,j,1), graz > 0); A('j-:'+j,'job',null,() => setJob(S,j,-1), S.crew.some(t => !t.d && t.j == j)); }
+  for (const k in DUTY) if (DUTY[k].unl(S)) { A('d+:'+k,'duty',null,() => setDuty(S,k,1), graz > 0); A('d-:'+k,'duty',null,() => setDuty(S,k,-1), team(S,k).length > 0); }
+  const md = S.mind;
+  if (md.offer) md.offer.forEach(k => A('m:take:'+k,'mind',null,() => mindTake(S,k),true));
+  else A('m:draft','mind',null,() => mindDraft(S), S.mp >= 1);
+  md.nodes.forEach((n,i) => { const gate = (n.lv >= 2 && !S.done.wiredraw) || (n.lv >= 4 && !S.done.gears);
+    if (!gate) A('m:up:'+i,'mind',nodeUpCost(n),() => nodeUp(S,i));
+    if (n.cond < 0.99) A('m:svc:'+i,'mind',serviceCost(n),() => service(S,i));
+    if (S.done.hydraulics) A('m:valve:'+i,'mind',null,() => valve(S,i),true); });
+  if (md.nodes.length > 2) A('m:wire','mind',null,() => { const N = md.nodes, i = 1 + Math.floor(rand()*(N.length-1)), o = N.map((_,j) => j).filter(j => canWire(N,i,j)); if (o.length) rewire(S,i,pick(o)); }, true);
+  if (S.done.sparework) for (const t in TASKS) A('m:task:'+t,'mind',null,() => setTask(S,t, t == 'coach' ? (Object.keys(S.duty).find(k => team(S,k).length) || '') : null), md.task != t);
+  if (S.st.cur) { A('s:0','story',null,() => storyChoose(S,0),true); A('s:1','story',null,() => storyChoose(S,1),true); }
+  for (const id in PART) if (nb(S,'antenna') >= PART[id].ant) A('t:'+id,'trade',PART[id].cost(S),() => trade(S,id), S.hails >= 1 && canPay(S, PART[id].cost(S)));
+  if (S.pedlar > 0) { for (const [r,n,w] of PED) A('ped:'+r,'trade',{whimsy:w},() => pedlarBuy(S,r)); if (!M.guide.m3) A('ped:antique','trade',{spoons:1000},() => pedlarBuy(S,'antique')); }
+  if (S.done.brewing) A('fest','crew',festCost(S),() => festival(S), S.fest <= 0 && canPay(S, festCost(S)));
+  if (S.comet > 0) A('obs','sky',null,() => observe(S),true);
+  if (nb(S,'press')) A('share','setting',null,() => cycleShare(S),true);
+  if (S.done.naming) { if (S.cand) S.cand.forEach((_,i) => A('name:'+i,'name',null,() => nameChoose(S,i),true)); else A('name','name',{cycles:500},() => nameSession(S)); }
+  A('rename','cosmetic',null,() => rename(S),true);
+  return L;
+}
+const BASE = ['lichen','scrap','spoons','ice','notions','cycles','whimsy','tea','plate','wire'];
 
 
 /* ===== the window: one fragment shader draws the sky, the hull, the belt and the fleet ===== */
@@ -1193,7 +1231,7 @@ R.hull = el => {
   for (const id in BLD) { const d = BLD[id]; if (!d.req(S)) continue;
     const fit = fittedOn(id);
     el.append(item('b_'+id, {title:() => d.n + ' (' + nb(S,id) + ')', sub: fit.length ? () => 'Upgraded: ' + fit.join(', ') : null, act:() => buy(S,id,qn()), cost:() => buy1cost(S,id), desc:d.d,
-      more:dd => { const e = h('p','eff'); U(() => setT(e, 'Each: ' + effText(id) + '.')); dd.insertBefore(e, dd.children[1] || null); const pn = h('p','note'); U(() => { const raw = bcost(S,id,1,true); setT(pn, raw.scrap && raw.scrap > buy1cost(S,id).scrap + 1 ? 'You cannot store ' + fmt(raw.scrap) + ' scrap, so the part over 90% of your store is asked in plate instead, 50 scrap to a plate.' : ''); }); dd.append(pn); }})); }
+      more:dd => { const e = h('p','eff'); U(() => setT(e, 'Each: ' + effText(id) + '.')); dd.insertBefore(e, dd.children[1] || null); const pn = h('p','note'); U(() => { const raw = bcost(S,id,1,true); setT(pn, raw.scrap && raw.scrap > buy1cost(S,id).scrap + 1 ? 'You cannot store ' + fmt(raw.scrap) + ' scrap, so the part over 40% of your store is asked in plate instead, 50 scrap to a plate. (Smelters take everything above half.)' : ''); }); dd.append(pn); }})); }
 };
 
 /* ---------- Workshop ---------- */
@@ -1561,7 +1599,7 @@ function save(cloud){
   S.t = Date.now(); const json = JSON.stringify({S, M}); LS.set(SAVE_KEY, json);
   if (cloud && cloudDoc && !cloudBusy && cloudActs !== (S.acts||0) + S.ended) { cloudBusy = true; cloudActs = (S.acts||0) + S.ended; cloudDoc.set({json, t:S.t}).catch(() => {}).then(() => { cloudBusy = false; }); }
 }
-function adopt(o){ M = Object.assign(newMeta(), o.M); const base = newState(o.S.quirk); S = Object.assign(base, o.S); S.m = Object.assign(newState('').m, o.S.m); S.st = Object.assign(base.st, o.S.st); S.mind = Object.assign(newState('').mind, o.S.mind); welcomeBack(); sig = tabSig = ''; logSeen = null; cur = 'hull'; frameUI(); save(false); }
+function adopt(o){ M = Object.assign(newMeta(), o.M); const base = newState(o.S.quirk); S = Object.assign(base, o.S); S.m = Object.assign(newState('').m, o.S.m); S.st = Object.assign(base.st, o.S.st); S.mind = Object.assign(newState('').mind, o.S.mind); if (S.frozen) { S.frozen = 0; S.t = Date.now(); log(S,'Loaded a test save. Time away was not counted.',''); } welcomeBack(); sig = tabSig = ''; logSeen = null; cur = 'hull'; frameUI(); save(false); }
 function welcomeBack(){
   const el = Math.max(0, (Date.now() - S.t)/1000); if (el < 15) return;
   S.bank = Math.min(10800, S.bank + el/3);
