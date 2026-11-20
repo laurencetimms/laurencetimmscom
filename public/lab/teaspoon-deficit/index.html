@@ -1333,13 +1333,13 @@ const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e
 const btn = (cls, txt, fn) => { const b = h('button', cls, txt); b.type = 'button'; if (fn) b.onclick = fn; return b; };
 let S, C, cur = 'hull', ups = [], fixed = [], sig = '', tabSig = '', buyQ = 1, jobQ = 1, openK = {}, showDone = false, pulseV = 0, needEnd = false, logSeen = null;
 let opt = {sound:0, calm:0}, main, loadedT = 0, mindCv = null;
-const SAVE_KEY = 'tsd2.save', VERSION = '1.6', BUILD = 'Stage one \u00b7 version ' + VERSION + ' \u00b7 19 Nov 2026';
+const SAVE_KEY = 'tsd2.save', VERSION = '1.6.1', BUILD = 'Stage one \u00b7 version ' + VERSION + ' \u00b7 19 Nov 2026';
 const U = fn => { ups.push(fn); fn(); };
 const setT = (el, t) => { if (el._t !== t) { el._t = t; el.textContent = t; } };
 const setD = (el, k, v) => { if (el.dataset[k] !== v) el.dataset[k] = v; };
 const fmt3 = x => { if (!isFinite(x)) return '∞'; if (x < 0) return '−' + fmt3(-x); if (x < 1000) return x >= 100 || x % 1 === 0 ? String(Math.floor(x)) : x >= 10 ? x.toFixed(1) : x.toFixed(2); const e = Math.min(8, Math.floor(Math.log10(x)/3)), v = x/Math.pow(1000,e); return (v >= 1000 ? v.toExponential(1) : v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + UNITS[e]; };
 const qn = () => buyQ == 'max' ? 500 : buyQ;
-const act = fn => () => { if (S.paused) { toast('Paused. Tap Resume to carry on.'); return; } S.here = S.age; fn(); S.acts = (S.acts||0) + 1; checks(S); frameUI(); };
+const act = fn => e => { if (S.paused) { toast('Paused. Tap Resume to carry on.'); return; } S.here = S.age; const j0 = JR ? jSig() : null; fn(); S.acts = (S.acts||0) + 1; checks(S); if (j0) jTap(jLabel(e), j0); frameUI(); };
 const RNAME = {lichen:'lichen', scrap:'scrap', spoons:'spoons', ice:'ice', notions:'notions', cycles:'thought', whimsy:'whimsy', plate:'plate', wire:'wire', spring:'springs', duct:'ducting', gear:'gears', lens:'lenses', ledger:'ledgers', tea:'tea', grit:'grit', spores:'spores', footnotes:'footnotes'};
 
 function costState(c){ let st = ''; for (const r in c) if ((S.r[r]||0) < c[r] - 1e-9) { if (c[r] > capOf(S,C,r)) return 'cap'; st = 'no'; } return st; }
@@ -1701,6 +1701,61 @@ function drawShip(){
   const over = sp.scrollWidth - b.clientWidth, on = over > 2 && !opt.calm;
   b.classList.toggle('pan', on); if (on) { b.style.setProperty('--pan', -(over + 8) + 'px'); b.style.setProperty('--dur', (5 + (over + 8)/14).toFixed(1) + 's'); }
 }
+/* ---------- play journal ----------
+   A record of how lives are played, for analysis: what each tap did, sessions and time away, tabs and sheets,
+   notable log lines, and a snapshot of the ship every two minutes of game time. Game data only. Kept apart from
+   the save, capped in size, and only leaves the device if the player downloads or copies it from the menu. */
+const JKEY = 'tsd2.journal', JMAX = 1500000;
+let JR = null, jDirty = false, jSnapA = -1e9, jFlushT = 0, jLogA = -1;
+function jLoad(){ try { JR = JSON.parse(LS.get(JKEY) || 'null'); } catch (e) { JR = null; } if (!JR || JR.v != 1) JR = {v:1, began:Date.now(), ev:[]}; }
+function J(k, d){ if (!JR || !S) return; JR.ev.push([k, Math.round((Date.now() - JR.began)/1000), Math.round(S.age), d]); jDirty = true; }
+function jFlush(force){ if (!JR || (!jDirty && !force)) return; jDirty = false; let s = JSON.stringify(JR);
+  if (s.length > JMAX) { let k = 0; JR.ev = JR.ev.filter((e, i) => e[0] != 'snap' || i > JR.ev.length*0.6 || (k++ % 2 == 0)); JR.thinned = (JR.thinned||0) + 1; s = JSON.stringify(JR); }
+  LS.set(JKEY, s); }
+const jCount = key => { const o = {}; for (const t of S.crew) { const k = t[key]; if (k) o[k] = (o[k]||0) + 1; } return o; };
+function jSig(){ return {b:Object.assign({}, S.b), done:Object.assign({}, S.done), up:Object.assign({}, S.up), r:Object.assign({}, S.r), j:jCount('j'), d:jCount('d'),
+  n:S.mind.nodes.length, nl:S.mind.nodes.reduce((a,n) => a + n.lv, 0), tr:S.trial && S.trial.id, route:S.arc && S.arc.route, task:S.mind.task, ship:S.ship.n, share:S.share, story:S.st.cur && S.st.cur.id, hails:S.hails, fleet:(S.fleet||[]).length}; }
+function jDiff(a, b){
+  const d = {}, del = (x, y) => { const o = {}; for (const k of new Set([...Object.keys(x), ...Object.keys(y)])) { const v = (y[k]||0) - (x[k]||0); if (Math.abs(v) > 1e-9) o[k] = +v.toFixed(2); } return Object.keys(o).length ? o : null; };
+  const bb = del(a.b, b.b); if (bb) d.build = bb;
+  const nd = Object.keys(b.done).filter(k => !a.done[k]); if (nd.length) d.done = nd;
+  const nu = Object.keys(b.up).filter(k => !a.up[k]); if (nu.length) d.up = nu;
+  if (b.tr != a.tr && b.tr) d.trial = b.tr;
+  const jj = del(a.j, b.j); if (jj) d.jobs = jj; const dd = del(a.d, b.d); if (dd) d.duty = dd;
+  if (b.n != a.n || b.nl != a.nl) d.mind = [b.n - a.n, b.nl - a.nl];
+  for (const k of ['route','task','ship','share','fleet']) if (b[k] !== a[k]) d[k] = b[k];
+  if (a.story && b.story != a.story) d.story = a.story; if (b.hails < a.hails) d.hail = 1;
+  const rr = del(a.r, b.r); if (rr) { const sp = {}, gn = {}; for (const k in rr) (rr[k] < 0 ? sp : gn)[k] = rr[k]; if (Object.keys(sp).length) d.spent = sp; if (Object.keys(gn).length) d.got = gn; }
+  return d;
+}
+function jTap(label, a){
+  const d = jDiff(a, jSig()), only = Object.keys(d).every(k => k == 'spent' || k == 'got'), L = JR && JR.ev[JR.ev.length - 1];
+  if (only && L && L[0] == 'tap' && L[3].b == label && Math.round((Date.now() - JR.began)/1000) - L[1] < 60 && L[3].n) {   /* repeated taps of the same button: one line a minute */
+    L[3].n++; for (const k of ['spent','got']) if (d[k]) { L[3][k] = L[3][k] || {}; for (const r in d[k]) L[3][k][r] = +((L[3][k][r]||0) + d[k][r]).toFixed(2); } jDirty = true; return; }
+  J('tap', Object.assign({b:label, n:1}, d));
+}
+function jLabel(e){ const t = e && e.currentTarget; if (!t || !t.textContent) return '?'; const f = t.querySelector && t.querySelector('b, .ht'), fc = t.firstChild; return ((f && f.textContent) || (fc && fc.nodeType == 3 && fc.data) || t.textContent).trim().replace(/\s+/g,' ').slice(0, 48); }
+function jTick(online){
+  if (!JR || !S) return;
+  for (const l of S.log) if (l.a > jLogA) { if (l.k == 'big' || l.k == 'bad' || l.k == 'good') J('log', {m:l.m.slice(0, 160), k:l.k}); }
+  if (S.log.length) jLogA = S.log[S.log.length - 1].a;
+  if (online && !document.hidden && S.age - jSnapA >= 120) { jSnapA = S.age; const c = C || calc(S), a = S.arc || {};
+    J('snap', [Math.round(S.made), S.pop, S.tun, Math.round(S.accord), ...['scrap','plate','wire','notions','cycles','lichen','ice','tea','whimsy','spring','gear','lens'].map(k => Math.round(S.r[k]||0)),
+      +c.mind.heat.toFixed(1), +c.mind.hcap.toFixed(1), Math.round(a.strain||0), a.ph||0, S.mp||0, Math.round(S._sp||0), cur]); }
+  const now = Date.now(); if (now - jFlushT > 30000) { jFlushT = now; jFlush(); }
+}
+function showJournal(){
+  sheet((el, close) => {
+    jFlush(true); const n = JR.ev.length, kb = Math.round(JSON.stringify(JR).length/1024);
+    el.append(h('h2','','Play journal'), h('p','note','A record of how you have played, kept on this device: what each tap did, when you came and went, and how the ship was doing. It is only game data. Download it or copy it to share it. ' + n + ' entries, ' + kb + ' KB, since ' + new Date(JR.began).toLocaleString() + '.'));
+    const name = 'teaspoon-journal-' + new Date().toISOString().slice(0,16).replace(/[:T]/g,'-') + '.json', body = () => JSON.stringify(Object.assign({version:VERSION, saved:Date.now(), runs:M.runs}, JR));
+    el.append(btn('chip wide','Download the journal', () => { const u = URL.createObjectURL(new Blob([body()], {type:'application/json'})), a = document.createElement('a'); a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); toast('Downloading ' + name); }));
+    el.append(btn('chip wide','Copy it', () => { const t = body(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('Copied ' + kb + ' KB.'), () => { const ta = h('textarea'); ta.value = t; el.append(ta); ta.select(); toast('Select all and copy.'); }); }));
+    let armed = 0; const cb = btn('chip wide','Clear the journal', () => { if (!armed) { armed = 1; cb.textContent = 'Tap again to clear it'; cb.classList.add('danger'); return; } JR = {v:1, began:Date.now(), ev:[]}; J('life', {run:M.runs, version:VERSION, quirk:S.quirk, cleared:1}); jFlush(true); close(); toast('Journal cleared.'); });
+    el.append(cb, btn('chip wide','Close', close));
+  });
+}
+
 /* ---------- fixed chrome ---------- */
 const ALLRES = ['lichen','scrap','spoons','ice','notions','cycles','whimsy','plate','wire','spring','duct','gear','lens','ledger','tea','grit','spores','footnotes'];
 const TABRES = {hull:['lichen','scrap','spoons','ice','plate'], shop:['scrap','plate','wire','spring','duct','gear','lens','ledger','tea'], crew:['lichen','tea','spoons','whimsy'],
@@ -1762,7 +1817,7 @@ function buildChrome(){
 }
 function drawTabs(){
   const nav = $('tabs'); nav.replaceChildren();
-  TABS.filter(t => t.show()).forEach(t => { const b = btn(t.id == cur ? 'on' : '', t.n, () => { cur = t.id; S.seen['v_'+t.id] = 1; tabSig = ''; frameUI(); main.scrollTop = 0; }); if (t.badge() || (!S.seen['v_'+t.id] && t.id != 'hull')) b.append(h('i','dot')); b.id = 'tab-' + t.id; nav.append(b); });
+  TABS.filter(t => t.show()).forEach(t => { const b = btn(t.id == cur ? 'on' : '', t.n, () => { if (cur != t.id) J('tab', {id:t.id}); cur = t.id; S.seen['v_'+t.id] = 1; tabSig = ''; frameUI(); main.scrollTop = 0; }); if (t.badge() || (!S.seen['v_'+t.id] && t.id != 'hull')) b.append(h('i','dot')); b.id = 'tab-' + t.id; nav.append(b); });
 }
 function drawTop(){
   const sh = resShown(); for (const f of fixed) f(sh);
@@ -1807,6 +1862,7 @@ hook = (k, x) => {
 };
 function sheet(build, lock){
   const back = h('div','back'), box = h('div','sheet'); back.append(box); const close = () => back.remove();
+  setTimeout(() => { const t = box.querySelector('h2'); J('sheet', {t:t ? t.textContent.slice(0, 60) : '?'}); }, 0);
   if (!lock) back.onclick = e => { if (e.target == back) close(); };
   build(box, close); document.body.append(back); const f = box.querySelector('button'); if (f) f.focus(); return close;
 }
@@ -1819,6 +1875,7 @@ function showMenu(){
     const sb = row('', () => { opt.sound = opt.sound ? 0 : 1; saveOpt(); sb.textContent = 'Sound: ' + (opt.sound ? 'on' : 'off'); beep(660, 0.1, 0.04); }); sb.textContent = 'Sound: ' + (opt.sound ? 'on' : 'off');
     const cb = row('', () => { opt.calm = opt.calm ? 0 : 1; saveOpt(); cb.textContent = 'Window: ' + (opt.calm ? 'still' : 'moving'); }); cb.textContent = 'Window: ' + (opt.calm ? 'still' : 'moving');
     row('Copy or load a save code', () => { close(); showCode(); });
+    row('Play journal' + (JR ? ' (' + JR.ev.length + ' entries)' : ''), () => { close(); showJournal(); });
     if (S.ended) row('Begin a new life', () => { close(); beginAgain(); });
     let armed = 0; const wb = row('Erase everything and start over', () => { if (!armed) { armed = 1; wb.textContent = 'Tap again to erase every life and record'; wb.classList.add('danger'); return; } M = newMeta(); S = null; newRun(''); close(); });
     row('Close', close);
@@ -1873,11 +1930,11 @@ function welcomeBack(){
   const el = Math.max(0, (Date.now() - S.t)/1000); if (el < 15) return;
   S.bank = Math.min(10800, S.bank + el/3);
   if (S.paused || S.ended) { log(S,'You were away for ' + fmtTime(el) + ', paused. Time has been banked.',''); return; }
-  const m0 = S.made, p0 = S.pop; simulate(S, Math.min(el, 12*3600));
+  const m0 = S.made, p0 = S.pop; simulate(S, Math.min(el, 12*3600)); J('away', {s:Math.round(el), made:Math.round(S.made - m0), pop:S.crew.length - p0});
   const msg = 'You were away for ' + fmtTime(el) + (el > 12*3600 ? ' (the hull only works twelve hours unattended)' : '') + '. The hull made ' + fmtLong(S.made - m0) + ' spoons' + (S.crew.length > p0 ? ' and woke ' + (S.crew.length - p0) + ' tardigrades' : '') + '.';
   log(S, msg, 'big'); toast(msg);
 }
-function newRun(q){ if (S && (S.ended || S.made > 0)) M.runs++; S = newState(q); log(S,'You are awake. You are a ship. Your instructions are one word long: spoons.','big'); if (M.runs) log(S,'This is not the first time you have woken up here. Your heirlooms are aboard.',''); sig = tabSig = ''; logSeen = null; cur = 'hull'; openK = {}; frameUI(); save(true); }
+function newRun(q){ if (S && (S.ended || S.made > 0)) M.runs++; S = newState(q); J('life', {run:M.runs, version:VERSION, quirk:q}); log(S,'You are awake. You are a ship. Your instructions are one word long: spoons.','big'); if (M.runs) log(S,'This is not the first time you have woken up here. Your heirlooms are aboard.',''); sig = tabSig = ''; logSeen = null; cur = 'hull'; openK = {}; frameUI(); save(true); }
 function setPause(p){ S.paused = p ? 1 : 0; log(S, p ? 'Paused. Time will bank while you are gone.' : 'Resumed.', ''); save(true); frameUI(); }
 async function cloudInit(){
   try {
@@ -1894,10 +1951,11 @@ let lastT = performance.now(), accT = 0, secT = 0, saveT = 0, cloudT = 0, rafN =
 function step(){
   const now = performance.now(); let dt = (now - lastT)/1000; lastT = now; if (dt <= 0) return;
   if (S.paused) { S.bank = Math.min(10800, S.bank + dt/3); }
-  else if (dt > 5) { const m0 = S.made; simulate(S, Math.min(dt, 12*3600)); S.bank = Math.min(10800, S.bank + dt/3); if (dt > 60) toast('Away ' + fmtTime(dt) + ': +' + fmtLong(S.made - m0) + ' spoons.'); }
+  else if (dt > 5) { const m0 = S.made; simulate(S, Math.min(dt, 12*3600)); J('away', {s:Math.round(dt), made:Math.round(S.made - m0), live:1}); S.bank = Math.min(10800, S.bank + dt/3); if (dt > 60) toast('Away ' + fmtTime(dt) + ': +' + fmtLong(S.made - m0) + ' spoons.'); }
   else { let sp = 1; if (S.flux) { if (S.bank > 0) { sp = 4; S.bank = Math.max(0, S.bank - dt*3); } else { S.flux = 0; log(S,'The banked time has run out.',''); } }
     accT += dt*sp; let n = 0; while (accT >= 0.2 && n++ < 200) { tick(S, 0.2, true); accT -= 0.2; } }
   secT += dt; if (secT >= 1) { secT = 0; checks(S); }
+  jTick(!S.paused);
   saveT += dt; if (saveT >= 10) { saveT = 0; save(false); }
   cloudT += dt; if (cloudT >= 180) { cloudT = 0; save(true); }
   frameUI();
@@ -1920,11 +1978,13 @@ function start(hot){
   let o = hot && hot.S && hot.S.v == 2 ? hot : null;
   if (!o) { try { o = JSON.parse(LS.get(SAVE_KEY) || 'null'); } catch (e) { o = null; } }
   Sky.init($('sky')); buildChrome();
+  jLoad();
   if (o && o.S && o.S.r && o.M && o.S.v == 2) { loadedT = o.S.t || 0; adopt(o); } else { S = null; newRun(''); }
+  J('open', {version:VERSION, run:M.runs, w:innerWidth, h:innerHeight, made:Math.round(S.made)}); if (S.log.length) jLogA = S.log[S.log.length - 1].a;
   setInterval(step, 200); requestAnimationFrame(paint);
   window.addEventListener('resize', () => { if (mindCv) mindCv._w = 0; });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) save(true); else step(); });
-  window.addEventListener('pagehide', () => save(false));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { J('hide', {}); jFlush(true); save(true); } else { J('show', {}); step(); } });
+  window.addEventListener('pagehide', () => { J('hide', {page:1}); jFlush(true); save(false); });
   cloudInit();
   try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => JSON.parse(JSON.stringify({S, M}))); } catch (e) {}
 }
