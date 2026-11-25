@@ -42,7 +42,7 @@ const jsonLd = {
 <Layout title={entry.data.title} path={path} description={entry.data.description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <header class="sky-title" slot="sky">
+  <div class="sky-title" slot="sky">
     <p class="eyebrow">
       <span class={`maturity maturity--${entry.data.maturity}`}>{entry.data.maturity}</span>
     </p>
@@ -51,7 +51,7 @@ const jsonLd = {
       Published {dateFormat.format(entry.data.published)}
       {entry.data.updated && <> · updated {dateFormat.format(entry.data.updated)}</>}
     </p>
-  </header>
+  </div>
 
   <article class="article">
     <p class="maturity-note"><em>{maturityNote[entry.data.maturity]}</em></p>

@@ -40,7 +40,7 @@ proximal/distal, concrete/abstract, conscious/unconscious, and a dozen more. Whe
 I was going to surface them all in this article, but in all honesty sixteen is too many to hold in your head at once. So I've picked out the five I think will
 help the most when you - or your client, if you're coaching - need to get to grips with your goals.
 
-### 1. Is this goal actually mine?
+## 1. Is this goal actually mine?
 
 Make a distinction between goals chosen freely by you in pursuit of an ambition that's actually yours, versus goals you've adopted because someone else wants you to do them. We're always more motivated by goals that have come from within.
 
@@ -51,7 +51,7 @@ and you check in on it once a week with the boss, it'll quickly begin to feel li
 This is the question I'd ask first, because if the answer is no, the other
 four don't matter much. There 
 
-### 2. Am I moving toward something, or away from something?
+## 2. Am I moving toward something, or away from something?
 
 Approach goals name a state you want to reach. Avoidance goals name a state
 you want to escape.
@@ -64,7 +64,7 @@ thing you're trying to get away from.
 If you find yourself expressing goals in terms of escape or avoidance, try to invert them and
 express them instead in terms of what you want to move towards.
 
-### 3. Am I trying to perform, or trying to learn?
+## 3. Am I trying to perform, or trying to learn?
 
 Performance goals are about executing well. Learning goals are about getting
 better at something you don't know how to do yet.
@@ -82,7 +82,7 @@ Ask yourself a simple question: am I trying to get good at this, or just show
 that I've accomplished it? If it's the first, it's learning. If it's the
 second, it's performance. Both are legit, they're just not the same goal. That means you have to treat them differently.
 
-### 4. Can I actually influence this?
+## 4. Can I actually influence this?
 
 Some goals depend on other people's behaviour or actions. *Get my manager to trust me
 with more scope* is only partly your goal for this reason. Whether your manager decides to increase
@@ -94,7 +94,7 @@ what questions you ask, what support you request, and build the goal around thos
 be aware, a goal whose achievement is substantively decided by someone else
 will feel like failure even when you've kept your end of the bargain.
 
-### 5. Does the small thing serve the big thing?
+## 5. Does the small thing serve the big thing?
 
 Goals stack. There's usually an ambition or an abstract goal somewhere at the top, which is
 the big hand-wavy reason that it matters to you, and then a pyramid of smaller ones below

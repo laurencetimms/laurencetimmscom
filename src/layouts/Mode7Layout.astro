@@ -64,17 +64,17 @@ const fastext = [
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
 
     <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+    <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="m7">
-      <div class="m7-top">
-        <span>{pageNo}</span>
-        <span class="y">LT-FAX</span>
-        <span id="m7-clock">{clock}</span>
-      </div>
-
       <header class="m7-head">
+        <div class="m7-top">
+          <span>{pageNo}</span>
+          <span class="y">LT-FAX</span>
+          <span id="m7-clock">{clock}</span>
+        </div>
         <div class="m7-band">
           <h1>{glitchHeading ? <span class="gl" data-glitch="blue">{heading}</span> : heading}</h1>
           <span class="m7-name">LAURENCE TIMMS</span>

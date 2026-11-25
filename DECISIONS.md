@@ -113,9 +113,15 @@ well, with this site as the canonical source. Public GitHub repos count here:
 they're already trusted, crawlable domains.
 
 Machine-readable layer:
-- `public/llms.txt` — site summary in the llms.txt convention. Adoption by
-  major providers is not yet guaranteed; it's cheap and low-risk, not a
-  strategy on its own.
+- `/llms.txt` — site summary in the llms.txt convention, **generated at build**
+  by `src/pages/llms.txt.ts` (`prerender = true`) from the `writing` and
+  `projects` collections, so adding a markdown file updates it. (It replaced
+  the hand-written `public/llms.txt`, which had linked a draft article that
+  doesn't exist publicly.) Adoption by major providers is not yet guaranteed;
+  it's cheap and low-risk, not a strategy on its own.
+- Per-project JSON-LD on `/p100/<slug>/`: `VideoGame` for games (3xx),
+  `SoftwareApplication` for tools (4xx), with `dateModified` from the GitHub
+  enrichment when known. No `aggregateRating`, same rule as `/walk/`.
 - `schema.org/Person` JSON-LD, site-wide, in `src/layouts/Layout.astro`.
 - Sitemap generated at build time.
 
@@ -289,6 +295,27 @@ the deploy-hook feature and dashboard path above are from memory. Check them
 at developers.cloudflare.com/workers/ci-cd/builds/. If deploy hooks aren't
 available, fall back to a scheduled Action that runs `npm ci && npm run build
 && npx wrangler deploy` with a scoped `CLOUDFLARE_API_TOKEN` secret.
+
+### Accessibility verification (Nov 2026)
+
+- The contrast table above was recomputed from the hex values in the code; every
+  figure reproduces. Also checked: chalk on evening sky 7.95; all seven sky
+  bands' drifting phrases ≥4.58; Mode 7 cyan on black 16.75, magenta on black
+  6.70, white on blue band 8.59, black on green 15.30. Hidden mine cells
+  (blue on black) are only 2.44:1, hence the white grid lines.
+- axe-core (WCAG 2.0/2.1/2.2 A+AA and best-practice) run against `/`,
+  `/writing/`, an article, `/claus/`, `/ai/`, `/walk/`, `404`, `/p100/` (also
+  mid-game, flag mode on) and a project page, at 1280px and 375px; the Horizon
+  home and writing index in **each of the seven sky bands**. Zero violations.
+  Re-run after design changes: load `axe-core` in Playwright against
+  `wrangler dev`/`astro preview` (the fixes it found: landmarks around the sky
+  header and band, heading order in one article, two sub-44px targets).
+- Keyboard-only: every page tabs in a logical order with a visible focus ring;
+  the contact form is reachable and submits with Enter; `/p100/`'s minesweeper
+  is playable and winnable with Tab, arrows, Home/End, Enter/Space.
+- 375px: no horizontal overflow on any page; interactive targets ≥44px (inline
+  links in running prose excepted). Minefield cells are exactly 44px at 375px;
+  a narrower viewport scrolls the board horizontally rather than shrinking cells.
 
 ### Routes and redirects
 

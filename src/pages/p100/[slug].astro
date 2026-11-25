@@ -15,6 +15,22 @@ const { entry, touched } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
 const name = d.title.toUpperCase();
+
+// Games (3xx) are VideoGame, tools (4xx) SoftwareApplication. No invented
+// ratings (same rule as /walk/). dateModified only when GitHub gave us one.
+const url = `https://laurencetimms.com/p100/${entry.id}/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': d.page < 400 ? 'VideoGame' : 'SoftwareApplication',
+  name: d.title,
+  description: d.summary,
+  url,
+  genre: d.kind,
+  ...(d.page >= 400 ? { applicationCategory: 'UtilitiesApplication' } : {}),
+  ...(d.repo ? { codeRepository: `https://github.com/${d.repo}` } : {}),
+  ...(touched.last ? { dateModified: touched.last.toISOString() } : {}),
+  author: { '@type': 'Person', name: 'Laurence Timms', url: 'https://laurencetimms.com' },
+};
 ---
 <Mode7Layout
   title={`${d.title} (P${d.page})`}
@@ -23,6 +39,7 @@ const name = d.title.toUpperCase();
   heading={`P${d.page} ${name}`}
   description={d.summary}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
   <dl class="m7-facts">
     <dt>STATUS</dt><dd class={`st-${d.status}`}>{STATUS_LABEL[d.status]}</dd>
     <dt>KIND</dt><dd>{d.kind}</dd>

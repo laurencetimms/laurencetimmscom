@@ -38,7 +38,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--y); outline-off
 
 .skip-link {
   position: absolute; left: 8px; top: -4rem; z-index: 10;
-  background: var(--y); color: var(--k); padding: 0.4em 0.8em;
+  background: var(--y); color: var(--k); padding: 0.4em 0.8em; min-height: 44px; display: flex; align-items: center;
 }
 .skip-link:focus { top: 8px; }
 
@@ -63,6 +63,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--y); outline-off
 .m7-top { display: flex; justify-content: space-between; gap: 1ch; }
 
 .m7-head { display: flex; flex-direction: column; }
+.m7-top { margin-bottom: 14px; }
 .m7-band {
   background: var(--b);
   padding: 8px 12px;

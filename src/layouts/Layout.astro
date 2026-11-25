@@ -110,7 +110,7 @@ const nav = [
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <div class={hero ? 'sky sky--hero' : 'sky'}>
+    <header class={hero ? 'sky sky--hero' : 'sky'}>
       <div class="wrap sky-inner">
         <nav class="site-nav" aria-label="Primary">
           <a class="wordmark" href="/">Laurence Timms</a>
@@ -127,7 +127,7 @@ const nav = [
         </nav>
         <slot name="sky" />
       </div>
-    </div>
+    </header>
     <div class="horizon-line"></div>
     <slot name="band" />
     <main id="main" class={surface === 'ground' ? 'ground' : 'chalk'}>

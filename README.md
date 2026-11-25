@@ -20,7 +20,7 @@ designed the way it is — read that before making structural changes.
     (see below)
 - `/p100/` — the workshop (Mode 7 teletext look): index, plus `/p100/<slug>/` per project, from the `projects` collection
 - `/ai/` — how AI is used in building and writing this site, linked from the footer
-- `public/llms.txt` — machine-readable site summary
+- `/llms.txt` — machine-readable site summary, generated at build from the `writing` and `projects` collections (`src/pages/llms.txt.ts`)
 - `public/robots.txt`
 
 Design tokens (Horizon colours, sky bands, type) live in `src/styles/global.css`. Shared
