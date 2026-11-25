@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workshop: Mode 7 page with easter eggs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=VT323&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#00ffff}a:hover{color:#ffffff}
+button:focus-visible,a:focus-visible{outline:3px solid #ffff00;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1200px; height: 900px; box-sizing: border-box; background: #000000; font-family: VT323, monospace; color: #ffffff; padding: 32px 40px; display: flex; flex-direction: column; gap: 14px; font-size: 28px; line-height: 1.15">
+<div style="display: flex; justify-content: space-between"><span>P100</span><span style="color: #ffff00">LT-FAX</span><span>{{clock}}</span></div>
+<div style="display: flex; flex-direction: column">
+<div style="background: #0000ff; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 84px; line-height: 1; color: #ffff00; white-space: pre"><sc-for list="{{head}}" as="ch" hint-placeholder-count="8"><span>{{ch.c}}</span></sc-for></span>
+<span style="font-size: 32px">LAURENCE TIMMS</span>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 14px"><span style="background: #ff0000"></span><span style="background: #ff0000"></span><span style="background: #ffff00"></span><span style="background: #ffff00"></span><span style="background: #00ff00"></span><span style="background: #00ff00"></span><span style="background: #00ffff"></span><span style="background: #00ffff"></span><span style="background: #ff00ff"></span><span style="background: #ff00ff"></span><span style="background: #ffffff"></span><span style="background: #ffffff"></span></div>
+</div>
+<div style="display: flex; gap: 40px; align-items: flex-start">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{intro}}" as="line" hint-placeholder-count="2">
+<div style="color: #00ffff; white-space: pre"><sc-for list="{{line.chars}}" as="ch"><span>{{ch.c}}</span></sc-for></div>
+</sc-for>
+<div style="height: 14px"></div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+<div style="display: flex; gap: 16px">
+<span style="width: 52px">{{r.p}}</span>
+<span style="flex: 1; white-space: pre"><sc-for list="{{r.chars}}" as="ch"><span>{{ch.c}}</span></sc-for></span>
+<span style="{{r.statusStyle}}">{{r.status}}</span>
+</div>
+</sc-for>
+<div style="margin-top: 10px; background: #ff0000; color: #000000; padding: 2px 12px; align-self: flex-start">Statuses are placeholders until GitHub feeds them</div>
+</div>
+<div style="width: 398px; flex-shrink: 0; border: 2px solid #ffffff; padding: 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between"><span style="color: #ffff00">P888 MINES</span><span style="{{minesStyle}}" aria-live="polite">{{minesMsg}}</span></div>
+<div role="group" aria-label="Minefield, 8 by 8" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 2px; background: #ffffff; padding: 2px">
+<sc-for list="{{cells}}" as="cell" hint-placeholder-count="64">
+<button type="button" style="{{cell.style}}" onClick="{{cell.click}}" aria-label="{{cell.label}}">{{cell.txt}}</button>
+</sc-for>
+</div>
+<div style="display: flex; gap: 10px">
+<button type="button" onClick="{{newGame}}" style="flex: 1; height: 44px; border: none; background: #00ff00; color: #000000; font-family: VT323, monospace; font-size: 26px; cursor: pointer">NEW</button>
+<button type="button" onClick="{{toggleFlag}}" style="{{flagBtnStyle}}" aria-pressed="{{flagPressed}}">{{flagBtnText}}</button>
+</div>
+</div>
+</div>
+<div style="margin-top: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0">
+<a href="#" style="color: #ff0000; text-decoration: none">Coaching 200</a>
+<a href="#" style="color: #00ff00; text-decoration: none">Games 300</a>
+<a href="#" style="color: #ffff00; text-decoration: none">Tools 400</a>
+<a href="#" style="color: #00ffff; text-decoration: none">Contact 500</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":900}}'>
+var GLYPHS = ['%', '$', '*', '!', '#', '@', '&', '?', '+', '='];
+var PROJECTS = [
+  { p: '301', name: 'UNDERGLAZE', kind: 'daily tiles', status: 'PLAYABLE', col: '#00ff00' },
+  { p: '302', name: 'TEASPOON DEFICIT', kind: 'idle', status: 'IN PROGRESS', col: '#ffff00' },
+  { p: '303', name: 'ONE UP', kind: 'arcade', status: 'IN PROGRESS', col: '#ffff00' },
+  { p: '304', name: 'RIPPLE', kind: 'stones', status: 'SKETCH', col: '#00ffff' },
+  { p: '305', name: 'MUSE/80', kind: '1983 AI', status: 'SKETCH', col: '#00ffff' },
+  { p: '306', name: 'SHIPSHAP.EXE', kind: 'text', status: 'PARKED', col: '#ff00ff' },
+  { p: '401', name: 'CLAUS', kind: 'team dynamics', status: 'IN PROGRESS', col: '#ffff00' }
+];
+var INTRO = ['Things I build with Claude: games, tools,', 'experiments. Updated overnight from GitHub.'];
+var W = 8, H = 8, M = 10;
+var NUMCOL = ['', '#00ffff', '#00ff00', '#ffff00', '#ff00ff', '#ff0000', '#ff0000', '#ff0000', '#ff0000'];
+var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function rowText(pr) {
+  var total = 30;
+  var dots = total - pr.name.length - pr.kind.length;
+  if (dots < 2) dots = 2;
+  return pr.name + new Array(dots + 1).join('.') + pr.kind;
+}
+function emptyBoard() {
+  var b = [];
+  for (var i = 0; i < W * H; i++) b.push({ mine: false, adj: 0, open: false, flag: false });
+  return b;
+}
+function neighbours(i) {
+  var x = i % W, y = Math.floor(i / W), out = [];
+  for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+    if (!dx && !dy) continue;
+    var nx = x + dx, ny = y + dy;
+    if (nx >= 0 && ny >= 0 && nx < W && ny < H) out.push(ny * W + nx);
+  }
+  return out;
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { now: new Date(), glitch: null, board: emptyBoard(), status: 'ready', flagMode: false };
+  }
+  componentDidMount() {
+    var self = this;
+    this.clockTimer = setInterval(function () { self.setState({ now: new Date() }); }, 1000);
+    this.scheduleGlitch();
+  }
+  componentWillUnmount() {
+    clearInterval(this.clockTimer);
+    clearTimeout(this.glitchWait);
+    clearInterval(this.glitchTick);
+  }
+  glitchLines() {
+    var lines = [{ id: 'head', text: 'WORKSHOP' }];
+    INTRO.forEach(function (t, i) { lines.push({ id: 'intro' + i, text: t }); });
+    PROJECTS.forEach(function (pr, i) { lines.push({ id: 'row' + i, text: rowText(pr) }); });
+    return lines;
+  }
+  scheduleGlitch() {
+    var self = this;
+    this.glitchWait = setTimeout(function () { self.runGlitch(); }, 1500 + Math.random() * 3500);
+  }
+  runGlitch() {
+    var self = this;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var lines = this.glitchLines();
+    var line = lines[Math.floor(Math.random() * lines.length)];
+    var idx = 0, tries = 0;
+    do { idx = Math.floor(Math.random() * line.text.length); tries++; }
+    while ((line.text[idx] === ' ' || line.text[idx] === '.') && tries < 20);
+    var frames = 6 + Math.floor(Math.random() * 7), n = 0;
+    this.glitchTick = setInterval(function () {
+      n++;
+      if (n > frames) {
+        clearInterval(self.glitchTick);
+        self.setState({ glitch: null });
+        self.scheduleGlitch();
+        return;
+      }
+      self.setState({ glitch: { id: line.id, i: idx, ch: GLYPHS[Math.floor(Math.random() * GLYPHS.length)] } });
+    }, 55);
+  }
+  chars(id, text) {
+    var g = this.state.glitch;
+    return text.split('').map(function (c, i) {
+      return { c: (g && g.id === id && g.i === i) ? g.ch : c };
+    });
+  }
+  placeMines(board, first) {
+    var banned = {};
+    banned[first] = true;
+    neighbours(first).forEach(function (n) { banned[n] = true; });
+    var placed = 0;
+    while (placed < M) {
+      var r = Math.floor(Math.random() * W * H);
+      if (banned[r] || board[r].mine) continue;
+      board[r].mine = true;
+      placed++;
+    }
+    for (var i = 0; i < W * H; i++) {
+      board[i].adj = neighbours(i).filter(function (n) { return board[n].mine; }).length;
+    }
+  }
+  reveal(i) {
+    var st = this.state;
+    if (st.status === 'won' || st.status === 'lost') return;
+    var board = st.board.map(function (c) { return Object.assign({}, c); });
+    var status = st.status;
+    if (st.flagMode) {
+      if (!board[i].open && status !== 'ready') board[i].flag = !board[i].flag;
+      this.setState({ board: board, status: this.isWon(board) ? 'won' : status });
+      return;
+    }
+    if (board[i].flag || board[i].open) return;
+    if (status === 'ready') { this.placeMines(board, i); status = 'play'; }
+    if (board[i].mine) {
+      board.forEach(function (c) { if (c.mine) c.open = true; });
+      this.setState({ board: board, status: 'lost' });
+      return;
+    }
+    var stack = [i];
+    while (stack.length) {
+      var k = stack.pop();
+      if (board[k].open || board[k].flag) continue;
+      board[k].open = true;
+      if (board[k].adj === 0) neighbours(k).forEach(function (n) { if (!board[n].open) stack.push(n); });
+    }
+    if (this.isWon(board)) status = 'won';
+    this.setState({ board: board, status: status });
+  }
+  allClear(board) {
+    return board.filter(function (c) { return c.open && !c.mine; }).length === W * H - M;
+  }
+  isWon(board) {
+    if (!this.allClear(board)) return false;
+    return board.every(function (c) { return c.mine ? c.flag : !c.flag; });
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var d = st.now;
+    var clock = DAYS[d.getDay()] + ' ' + pad2(d.getDate()) + ' ' + MONS[d.getMonth()] + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + '/' + pad2(d.getSeconds());
+    var rows = PROJECTS.map(function (pr, i) {
+      return { p: pr.p, chars: self.chars('row' + i, rowText(pr)), status: pr.status, statusStyle: 'width: 180px; color: ' + pr.col };
+    });
+    var intro = INTRO.map(function (t, i) { return { chars: self.chars('intro' + i, t) }; });
+    var flags = st.board.filter(function (c) { return c.flag; }).length;
+    var cells = st.board.map(function (c, i) {
+      var bg = '#0000ff', fg = '#ffffff', txt = '', label = 'Hidden square';
+      if (c.open) {
+        bg = '#000000';
+        if (c.mine) { bg = '#ff0000'; txt = '*'; label = 'Mine'; }
+        else if (c.adj) { txt = String(c.adj); fg = NUMCOL[c.adj]; label = c.adj + ' mines nearby'; }
+        else { label = 'Clear'; }
+      } else if (c.flag) { bg = '#ff00ff'; fg = '#000000'; txt = 'F'; label = 'Flagged square'; }
+      return {
+        txt: txt,
+        label: 'Row ' + (Math.floor(i / W) + 1) + ', column ' + (i % W + 1) + ': ' + label,
+        style: 'width: 100%; height: 44px; padding: 0; border: none; cursor: pointer; font-family: VT323, monospace; font-size: 30px; line-height: 1; background: ' + bg + '; color: ' + fg,
+        click: function () { self.reveal(i); }
+      };
+    });
+    var msg = 'CLICK A SQUARE', msgCol = '#ffffff';
+    if (st.status === 'play') { msg = 'MINES ' + M + ' FLAGS ' + flags; }
+    if (st.status === 'play' && this.allClear(st.board)) { msg = 'NOW FLAG ' + (M - flags); msgCol = '#ffff00'; }
+    if (st.status === 'won') { msg = 'CLEARED!'; msgCol = '#00ff00'; }
+    if (st.status === 'lost') { msg = 'BOOM'; msgCol = '#ff0000'; }
+    return {
+      clock: clock,
+      head: this.chars('head', 'WORKSHOP'),
+      intro: intro,
+      rows: rows,
+      cells: cells,
+      minesMsg: msg,
+      minesStyle: 'color: ' + msgCol,
+      newGame: function () { self.setState({ board: emptyBoard(), status: 'ready', flagMode: false }); },
+      toggleFlag: function () { self.setState({ flagMode: !self.state.flagMode }); },
+      flagPressed: st.flagMode ? 'true' : 'false',
+      flagBtnText: st.flagMode ? 'FLAG: ON' : 'FLAG: OFF',
+      flagBtnStyle: 'flex: 1; height: 44px; border: none; cursor: pointer; font-family: VT323, monospace; font-size: 26px; ' + (st.flagMode ? 'background: #ff00ff; color: #ffffff' : 'background: #ffffff; color: #000000')
+    };
+  }
+}
+</script>
+</body>
+</html>

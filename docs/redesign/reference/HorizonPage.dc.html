@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laurence Timms: Coaching</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@200;300;400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2b2924}a:hover{color:#000000}
+@keyframes drift{0%{transform:translateX(0)}50%{transform:translateX(18px)}100%{transform:translateX(0)}}
+.drift{animation:drift 14s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.drift{animation:none}}
+a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+</style>
+</helmet>
+<div style="font-family: 'Libre Franklin', sans-serif; color: #2b2924; background: #2b2924">
+
+<div style="{{skyStyle}}">
+<div style="max-width: 1120px; margin: 0 auto; padding: 36px 56px 72px; box-sizing: border-box; display: flex; flex-direction: column; gap: 0; min-height: 760px">
+<nav style="display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: baseline; font-size: 15px; letter-spacing: 0.03em">
+<a href="#" style="{{navStrong}}">Laurence Timms</a>
+<span style="display: flex; flex-wrap: wrap; gap: 28px">
+<a href="#work" style="{{navLink}}">What we work on</a>
+<a href="#how" style="{{navLink}}">How it works</a>
+<a href="#about" style="{{navLink}}">About</a>
+<a href="#writing" style="{{navLink}}">Writing</a>
+</span>
+</nav>
+
+<div style="margin-top: 96px; display: flex; flex-wrap: wrap; gap: 28px 56px; max-width: 900px">
+<sc-for list="{{weather}}" as="w" hint-placeholder-count="7">
+<span class="drift" style="{{w.style}}">{{w.text}}</span>
+</sc-for>
+</div>
+
+<h1 style="{{headStyle}}">Plain talk<br>about hard<br>change.</h1>
+<p style="{{ledeStyle}}">One-to-one coaching for people leading teams through change they didn’t choose. No frameworks for their own sake. Room to think, and then something to do.</p>
+</div>
+</div>
+
+<div style="height: 3px; background: #2b2924"></div>
+
+<div style="background: #d4a72c">
+<div style="max-width: 1120px; margin: 0 auto; padding: 18px 56px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; align-items: center">
+<a href="#contact" style="font-weight: 800; font-size: 18px; text-decoration: none; color: #2b2924; min-height: 44px; display: flex; align-items: center">Book a first conversation →</a>
+<span style="font-size: 15px">Cambridgeshire, on foot or in a room · and online</span>
+</div>
+</div>
+
+<div style="background: #2b2924; color: #efeae0">
+<div style="max-width: 1120px; margin: 0 auto; padding: 88px 56px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 104px">
+
+<section id="work" style="display: flex; flex-wrap: wrap; gap: 32px 64px">
+<h2 style="flex: 1 1 220px; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #d4a72c">What we work on</h2>
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 28px">
+<p style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.25">Leading a team through a restructure, a new strategy or a new boss.</p>
+<p style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.25">A decision you keep circling and not making.</p>
+<p style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.25">Moving from doing the work to leading the people who do it.</p>
+<p style="margin: 0; font-size: 30px; font-weight: 700; line-height: 1.25">Getting back a way of working that feels like yours.</p>
+</div>
+</section>
+
+<section id="how" style="display: flex; flex-wrap: wrap; gap: 32px 64px">
+<h2 style="flex: 1 1 220px; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #d4a72c">How it works</h2>
+<div style="flex: 999 1 560px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 10px; border-top: 3px solid #efeae0; padding-top: 18px">
+<span style="font-size: 44px; font-weight: 800; line-height: 1">1</span>
+<span style="font-size: 20px; font-weight: 700">A first conversation</span>
+<span style="font-size: 16px; line-height: 1.6">[LENGTH] minutes, [FREE OR FEE]. We find out whether I’m the right person, and whether now is the right time.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; border-top: 3px solid #efeae0; padding-top: 18px">
+<span style="font-size: 44px; font-weight: 800; line-height: 1">2</span>
+<span style="font-size: 20px; font-weight: 700">Sessions</span>
+<span style="font-size: 16px; line-height: 1.6">[NUMBER] sessions of [LENGTH], every [INTERVAL]. Indoors, online, or walking. Some things are easier to say side by side.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; border-top: 3px solid #efeae0; padding-top: 18px">
+<span style="font-size: 44px; font-weight: 800; line-height: 1">3</span>
+<span style="font-size: 20px; font-weight: 700">Something to do</span>
+<span style="font-size: 16px; line-height: 1.6">Each session ends with a next step that is genuinely yours to take. That’s the measure of whether it’s working.</span>
+</div>
+</div>
+</section>
+
+<section id="about" style="display: flex; flex-wrap: wrap; gap: 32px 64px">
+<h2 style="flex: 1 1 220px; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #d4a72c">About</h2>
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px; font-size: 19px; line-height: 1.65">
+<p style="margin: 0">I’ve worked in software since I was fifteen: first as an engineer, then running development teams, including as Head of Application Development and Support at the RSPB. For the last several years I’ve worked as an agile and systems coach, helping organisations and the people in them through change.</p>
+<p style="margin: 0">So I know what it’s like to be the person in the middle: the one carrying a decision made elsewhere to a team who didn’t ask for it.</p>
+<p style="margin: 0; font-size: 15px; letter-spacing: 0.04em; color: #c9c3b6">PSM II · KMP II · ICAgile Systems Coaching · [COACHING QUALIFICATION, WHEN DONE]</p>
+</div>
+</section>
+
+<section id="writing" style="display: flex; flex-wrap: wrap; gap: 32px 64px">
+<h2 style="flex: 1 1 220px; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #d4a72c">Writing</h2>
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column">
+<a href="#" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding: 18px 0; border-top: 1px solid #6b665c; color: #efeae0; text-decoration: none; font-size: 20px"><span>[Latest essay title]</span><span style="font-size: 15px; color: #c9c3b6">[date]</span></a>
+<a href="#" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding: 18px 0; border-top: 1px solid #6b665c; color: #efeae0; text-decoration: none; font-size: 20px"><span>[Essay title]</span><span style="font-size: 15px; color: #c9c3b6">[date]</span></a>
+<a href="#" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding: 18px 0; border-top: 1px solid #6b665c; border-bottom: 1px solid #6b665c; color: #efeae0; text-decoration: none; font-size: 20px"><span>[Essay title]</span><span style="font-size: 15px; color: #c9c3b6">[date]</span></a>
+</div>
+</section>
+
+<section id="contact" style="display: flex; flex-wrap: wrap; gap: 32px 64px">
+<h2 style="flex: 1 1 220px; margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #d4a72c">Begin</h2>
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<p style="margin: 0; font-size: 40px; font-weight: 800; line-height: 1.15">Tell me what’s going on. A few lines is plenty.</p>
+<a href="mailto:[EMAIL]" style="align-self: flex-start; padding: 14px 24px; min-height: 44px; box-sizing: border-box; background: #d4a72c; color: #2b2924; font-weight: 800; font-size: 18px; text-decoration: none">[EMAIL] →</a>
+</div>
+</section>
+
+<footer style="display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; padding-top: 24px; border-top: 1px solid #6b665c; font-size: 14px; color: #c9c3b6">
+<span>© Laurence Timms</span>
+<a href="#" style="color: #c9c3b6">Also: the workshop, things I build with Claude →</a>
+</footer>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;sky&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;night&quot;,&quot;dawn&quot;,&quot;morning&quot;,&quot;midday&quot;,&quot;afternoon&quot;,&quot;dusk&quot;,&quot;evening&quot;],&quot;default&quot;:&quot;auto&quot;},&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:2600}}">
+var SKIES = {
+  night:     { bg: '#1c2430', fg: '#efeae0', soft: '#aab4bf' },
+  dawn:      { bg: '#e6c7ae', fg: '#2b2924', soft: '#5e4c40' },
+  morning:   { bg: '#d4dfe5', fg: '#2b2924', soft: '#55626a' },
+  midday:    { bg: '#d9e0e2', fg: '#2b2924', soft: '#5b6266' },
+  afternoon: { bg: '#e0dfcf', fg: '#2b2924', soft: '#5f5c4c' },
+  dusk:      { bg: '#c99b84', fg: '#2b2924', soft: '#47372f' },
+  evening:   { bg: '#3b4658', fg: '#efeae0', soft: '#c3cbd6' }
+};
+var WEATHER = [
+  { text: 'the restructure', size: 22, top: 0, delay: 0 },
+  { text: 'what the board decides', size: 19, top: 24, delay: 3 },
+  { text: 'the market', size: 26, top: 8, delay: 6 },
+  { text: 'AI', size: 30, top: 30, delay: 1 },
+  { text: 'last quarter’s numbers', size: 19, top: 4, delay: 8 },
+  { text: 'other people’s opinions', size: 20, top: 20, delay: 4 },
+  { text: 'the new strategy', size: 24, top: 12, delay: 10 }
+];
+function bandFor(h) {
+  if (h < 5) return 'night';
+  if (h < 8) return 'dawn';
+  if (h < 11) return 'morning';
+  if (h < 15) return 'midday';
+  if (h < 17) return 'afternoon';
+  if (h < 20) return 'dusk';
+  return 'evening';
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { hour: new Date().getHours() };
+  }
+  componentDidMount() {
+    var self = this;
+    this.timer = setInterval(function () { self.setState({ hour: new Date().getHours() }); }, 60000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    var pick = this.props.sky ?? 'auto';
+    var band = pick === 'auto' ? bandFor(this.state.hour) : pick;
+    var s = SKIES[band] || SKIES.midday;
+    return {
+      skyStyle: 'background: ' + s.bg + '; color: ' + s.fg + '; transition: background 4s ease, color 4s ease',
+      navStrong: 'font-weight: 700; text-decoration: none; display: inline-block; padding: 12px 0; color: ' + s.fg,
+      navLink: 'text-decoration: none; display: inline-block; padding: 12px 0; color: ' + s.fg,
+      headStyle: 'margin: 72px 0 0; font-size: clamp(56px, 9vw, 112px); font-weight: 200; line-height: 0.98; letter-spacing: -0.02em; color: ' + s.fg,
+      ledeStyle: 'margin: 32px 0 0; font-size: 19px; line-height: 1.6; max-width: 480px; font-weight: 300; color: ' + s.fg,
+      weather: WEATHER.map(function (w) {
+        return {
+          text: w.text,
+          style: 'font-size: ' + w.size + 'px; font-weight: 300; margin-top: ' + w.top + 'px; color: ' + s.soft + '; animation-delay: -' + w.delay + 's'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
