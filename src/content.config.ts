@@ -17,4 +17,22 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { writing };
+// The workshop (/p100/). One markdown file per project; filename = slug.
+// Page numbers are permanent once assigned: 3xx games, 4xx tools.
+// `status: TODO` means Laurence hasn't confirmed it yet (shown as TODO).
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  schema: z.object({
+    title: z.string(),
+    page: z.number().int().min(300).max(499),
+    kind: z.string(),
+    status: z.enum(['playable', 'in-progress', 'sketch', 'parked', 'TODO']),
+    summary: z.string(),
+    play: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+    repo: z.string().optional(),
+    deployedPath: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { writing, projects };

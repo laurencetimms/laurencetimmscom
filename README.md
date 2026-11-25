@@ -18,6 +18,7 @@ designed the way it is — read that before making structural changes.
     `workshop.html` is the same game built with the tile harness's texture pack
   - `/lab/tile-harness/` — the Python tile harness running in the browser via Pyodide
     (see below)
+- `/p100/` — the workshop (Mode 7 teletext look): index, plus `/p100/<slug>/` per project, from the `projects` collection
 - `/ai/` — how AI is used in building and writing this site, linked from the footer
 - `public/llms.txt` — machine-readable site summary
 - `public/robots.txt`
@@ -66,6 +67,16 @@ Plain static files in `public/lab/tile-harness/`, outside Astro:
 `public/lab/pavement/workshop.html` is a prebuilt copy of the harness output; to
 refresh it, run "Pack and build the game" on the harness page, then download
 `out/pavement-workshop.html` from the Files tab and replace it.
+
+## Adding a project (workshop)
+
+Drop a markdown file in `src/content/projects/` (filename = slug) with
+frontmatter matching `src/content.config.ts`: `title`, `page` (teletext
+number, 300–499: 3xx games, 4xx tools; **never reuse one**), `kind`, `status`
+(`playable`, `in-progress`, `sketch`, `parked`, or `TODO`), `summary`
+(one line), optionally `play` (label/href list), `repo` (`owner/name`),
+`deployedPath` and `draft`. The body is the project page's notes, especially
+how it was built with Claude. The index row and page are automatic.
 
 ## Adding a writing piece
 

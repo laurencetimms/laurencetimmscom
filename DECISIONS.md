@@ -136,7 +136,7 @@ the footer's "Also: the workshop →").
 | Room | Route | Look | Audience |
 |---|---|---|---|
 | Coaching | `/`, writing, CLAUS, AI page | **Horizon** | Potential coaching clients |
-| Workshop | `/p100/` (Phase 2) | **Mode 7** (teletext) | People who like the games; possible AI collaborators |
+| Workshop | `/p100/`, `/p100/<slug>/` | **Mode 7** (teletext) | People who like the games; possible AI collaborators |
 
 LoadedZone (`/loadedzone/`) keeps its own identity and layout.
 
@@ -190,12 +190,37 @@ Font: **Libre Franklin** only (200, 300, 400, 700, 800). Light mode only.
 | dusk | 17–19 | `#C99B84` | `#2B2924` | `#47372F` |
 | evening | 20–23 | `#3B4658` | `#EFEAE0` | `#C3CBD6` |
 
-### Mode 7 (specified; built in Phase 2)
+### Mode 7
 
 Teletext: exactly eight colours (`#000000 #FF0000 #00FF00 #FFFF00 #0000FF
 #FF00FF #00FFFF #FFFFFF`), VT323, page numbers, Fastext links, a live clock.
 Blue is a background only. Status always carries a text label
-(PLAYABLE green, IN PROGRESS yellow, SKETCH cyan, PARKED magenta).
+(PLAYABLE green, IN PROGRESS yellow, SKETCH cyan, PARKED magenta; `TODO`,
+white, means not yet confirmed by Laurence).
+
+Own shell (`src/layouts/Mode7Layout.astro`) and stylesheet
+(`src/styles/mode7.css`); does not use the Horizon `<Layout>`. Type sizes step
+by breakpoint (22 / 26 / 28px), not `vw`, to keep the character-grid feel. A
+`VT323 Fallback` `@font-face` (a local monospace shrunk with `size-adjust`)
+keeps the grid from overflowing before the web font loads.
+
+**Projects collection.** `src/content/projects/<slug>.md` (schema in
+`src/content.config.ts`); adding a project is adding one file. Index rows and
+pages are generated from it, sorted by `page`. Page numbers are permanent
+(3xx games, 4xx tools). Helpers live in `src/lib/projects.ts`.
+
+**Glitch easter egg, accessibly.** `src/scripts/glitch.ts`. The real text is
+always in the HTML and never modified. Each glitchable element holds one text
+node; the glitch is a single-character `aria-hidden` overlay positioned over
+it (via a DOM `Range`, so wrapped lines work), then removed. Screen readers and
+crawlers never read a glitched character. No glitching under
+`prefers-reduced-motion`. Dot leaders in index rows are `aria-hidden`.
+
+**P888 MINES.** `src/scripts/mines.ts`, a vanilla-JS island loaded on `/p100/`
+only; the panel is `hidden` until it runs. Cells are real `<button>`s with a
+roving tabindex and arrow-key navigation (one Tab stop for the grid). The FLAG
+toggle is `aria-pressed` with a constant accessible name. Win requires every
+safe cell open, every mine flagged and no wrong flags.
 
 ### Contrast (WCAG 2.x, calculated)
 

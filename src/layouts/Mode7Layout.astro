@@ -1,0 +1,110 @@
+---
+// Mode 7: the workshop room (/p100/). Own shell, own stylesheet, own font;
+// does not use the Horizon <Layout>. See DECISIONS.md → Design.
+import '../styles/mode7.css';
+import { personJsonLd } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  /** Teletext page number shown top-left, e.g. "P100". */
+  pageNo: string;
+  /** Text of the <h1> in the blue band (already uppercase). */
+  heading: string;
+  /** Wrap the heading in the glitch target (index page only). */
+  glitchHeading?: boolean;
+}
+
+const { title, description, path, pageNo, heading, glitchHeading = false } = Astro.props;
+const fullTitle = `${title} — Laurence Timms`;
+const url = `https://laurencetimms.com${path}`;
+const image = 'https://laurencetimms.com/images/laurence-timms-og.jpg';
+
+// Server-rendered clock = build time (London). The client script ticks it.
+const parts = Object.fromEntries(
+  new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London', weekday: 'short', day: '2-digit', month: 'short',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+  }).formatToParts(new Date()).map((p) => [p.type, p.value]),
+);
+const clock = `${parts.weekday} ${parts.day} ${parts.month} ${parts.hour}:${parts.minute}/${parts.second}`;
+
+const strip = ['r', 'r', 'y', 'y', 'g', 'g', 'c', 'c', 'm', 'm', 'w', 'w'];
+const fastext = [
+  { cls: 'r', label: 'Coaching', href: '/' },
+  { cls: 'g', label: 'Games', href: '/p100/#games' },
+  { cls: 'y', label: 'Tools', href: '/p100/#tools' },
+  { cls: 'c', label: 'Contact', href: '/#begin' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Laurence Timms" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="m7">
+      <div class="m7-top">
+        <span>{pageNo}</span>
+        <span class="y">LT-FAX</span>
+        <span id="m7-clock">{clock}</span>
+      </div>
+
+      <header class="m7-head">
+        <div class="m7-band">
+          <h1>{glitchHeading ? <span class="gl" data-glitch="blue">{heading}</span> : heading}</h1>
+          <span class="m7-name">LAURENCE TIMMS</span>
+        </div>
+        <div class="m7-strip" aria-hidden="true">
+          {strip.map((c) => <span class={`bg-${c}`}></span>)}
+        </div>
+      </header>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <nav class="m7-fastext" aria-label="Fastext">
+        {fastext.map((f) => <a class={f.cls} href={f.href}>{f.label}</a>)}
+      </nav>
+    </div>
+
+    <script>
+      // Live clock, local time (the server renders the build time).
+      const el = document.getElementById('m7-clock');
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      function tick() {
+        const d = new Date();
+        if (el) el.textContent = `${DAYS[d.getDay()]} ${pad(d.getDate())} ${MONS[d.getMonth()]} ${pad(d.getHours())}:${pad(d.getMinutes())}/${pad(d.getSeconds())}`;
+      }
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
+</html>

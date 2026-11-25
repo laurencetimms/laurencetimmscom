@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { personJsonLd } from '../lib/site';
 
 interface Props {
   title: string;
@@ -105,24 +106,7 @@ const nav = [
 
     <!-- schema.org: Person, site-wide. Keeps a single canonical machine-readable
          identity statement on every page, per the AI-visibility plan. -->
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: 'Laurence Timms',
-      url: 'https://laurencetimms.com',
-      image: 'https://laurencetimms.com/images/laurence-timms.webp',
-      description:
-        'Coach working with leaders and teams through organisational change, software delivery improvement, and AI-augmented coaching practice. Building CLAUS, an AI-augmented team dynamics tool for team leaders and team coaches.',
-      knowsAbout: [
-        'Organisational change',
-        'Agile coaching',
-        'Executive coaching',
-        'DORA metrics',
-        'Software delivery lifecycle',
-        'Team dynamics',
-      ],
-      sameAs: [],
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

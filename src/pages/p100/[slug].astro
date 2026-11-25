@@ -1,0 +1,39 @@
+---
+import Mode7Layout from '../../layouts/Mode7Layout.astro';
+import { render } from 'astro:content';
+import { getProjects, STATUS_LABEL } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  return (await getProjects()).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const name = d.title.toUpperCase();
+---
+<Mode7Layout
+  title={`${d.title} (P${d.page})`}
+  path={`/p100/${entry.id}/`}
+  pageNo={`P${d.page}`}
+  heading={`P${d.page} ${name}`}
+  description={d.summary}
+>
+  <dl class="m7-facts">
+    <dt>STATUS</dt><dd class={`st-${d.status}`}>{STATUS_LABEL[d.status]}</dd>
+    <dt>KIND</dt><dd>{d.kind}</dd>
+    {d.repo && (<><dt>SOURCE</dt><dd><a href={`https://github.com/${d.repo}`}>github.com/{d.repo}</a></dd></>)}
+  </dl>
+
+  <p class="y">{d.summary}</p>
+
+  {d.play.length > 0 && (
+    <ul class="m7-play">
+      {d.play.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+    </ul>
+  )}
+
+  <div class="m7-body"><Content /></div>
+
+  <p><a href="/p100/">&larr; P100 index</a></p>
+</Mode7Layout>
