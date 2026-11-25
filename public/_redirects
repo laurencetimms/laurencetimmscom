@@ -1,0 +1,9 @@
+# Real 301s, served by Workers static assets. Both slash forms listed because
+# html_handling is auto-trailing-slash. Only the /lab/ INDEX redirects; every
+# game under /lab/<game>/ is a normal static file and must keep working.
+/coaching   /#begin  301
+/coaching/  /#begin  301
+/lab        /p100/   301
+/lab/       /p100/   301
+/projects   /p100/   301
+/projects/  /p100/   301

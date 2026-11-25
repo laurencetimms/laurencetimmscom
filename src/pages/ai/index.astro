@@ -21,7 +21,9 @@ const jsonLd = {
 <Layout title="How AI is used on this site" path="/ai/" description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <h1>How AI is used on this site</h1>
+  <div class="sky-title" slot="sky">
+    <h1>How AI is used on this site</h1>
+  </div>
   <div class="prose">
     <p>
       I use AI frequently in my professional life. This page expresses clearly

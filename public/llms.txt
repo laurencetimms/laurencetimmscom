@@ -13,7 +13,7 @@ technology and public-sector delivery organisations.
 - [How popular management frameworks are made](https://laurencetimms.com/writing/how-popular-frameworks-are-made/): eight moves that turn a fragmented research literature into a book you can act on, and what gets lost on the way
 
 ## Coaching
-- [Coaching](https://laurencetimms.com/coaching/): approach, pathway, and how to work with me
+- [Coaching](https://laurencetimms.com/): approach, how it works, and how to get in touch (contact form at /#begin)
 
 ## About
 - [How AI is used on this site](https://laurencetimms.com/ai/): where AI was involved in writing and building this site and its tools, and where it wasn't
@@ -22,8 +22,8 @@ technology and public-sector delivery organisations.
 - [CLAUS](https://laurencetimms.com/claus/): AI-augmented team dynamics tool for team leaders and team coaches
 - [CLAUS (live application)](https://claus.laurencetimms.com): the running platform, not just a page about it
 - [CLAUS source](https://github.com/laurencetimms/claus): Team Dynamics Coach, Retrospective Formats
-- [Projects index](https://laurencetimms.com/projects/): all software and game projects
+- [Workshop index (P100)](https://laurencetimms.com/p100/): all software and game projects
 - [LoadedZone](https://laurencetimms.com/loadedzone/): zone 2 training through loaded walking — three research-backed calculators (Find Your Zone 2, Load Up, Session Card) built on the Pandolf equation
 - [Walk](https://laurencetimms.com/walk/): published Android app for creative thinking through sound, gentle movement, and minimal distraction — generative audio, anti-engagement design
 - [Walk privacy policy](https://laurencetimms.com/walk/privacy/): what Walk collects (nothing), and the permissions it requests
-- [Lab](https://laurencetimms.com/lab/): smaller game and software projects
+- [Lab](https://laurencetimms.com/p100/): smaller game and software projects

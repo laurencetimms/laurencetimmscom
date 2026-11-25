@@ -7,14 +7,13 @@ designed the way it is — read that before making structural changes.
 
 ## Structure
 
-- `/` — homepage
+- `/` — Horizon coaching page (sky / horizon / ground), including the contact form at `#begin`
 - `/writing/` — frameworks & essays
-- `/coaching/` — coaching practice
+- `/coaching/`, `/lab/`, `/projects/` — 301 redirects (`public/_redirects`); only the `/lab/` index redirects, games under `/lab/<game>/` are live files
 - `/claus/` — CLAUS project page
 - `/loadedzone/` — LoadedZone sub-brand
-- `/projects/` — projects hub (linked from nav)
 - `/walk/` — Walk sub-brand
-- `/lab/` — smaller game/software projects
+- `/lab/<game>/` — smaller game/software projects (static files in `public/lab/`)
   - `/lab/pavement/` — Pavement, a standalone HTML game (`public/lab/pavement/index.html`);
     `workshop.html` is the same game built with the tile harness's texture pack
   - `/lab/tile-harness/` — the Python tile harness running in the browser via Pyodide
@@ -23,7 +22,7 @@ designed the way it is — read that before making structural changes.
 - `public/llms.txt` — machine-readable site summary
 - `public/robots.txt`
 
-Design tokens (colour, type) live in `src/styles/global.css`. Shared
+Design tokens (Horizon colours, sky bands, type) live in `src/styles/global.css`. Shared
 layout, nav, and the site-wide `Person` schema.org JSON-LD live in
 `src/layouts/Layout.astro`.
 
