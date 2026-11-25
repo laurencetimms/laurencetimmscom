@@ -4,7 +4,7 @@ Why this site is built the way it is. Written so that anyone picking the
 project up later — including me, and including an AI agent working in this
 repo — has the reasoning, not just the code.
 
-Last updated: August 2026.
+Last updated: November 2026.
 
 ---
 
@@ -113,9 +113,15 @@ well, with this site as the canonical source. Public GitHub repos count here:
 they're already trusted, crawlable domains.
 
 Machine-readable layer:
-- `public/llms.txt` — site summary in the llms.txt convention. Adoption by
-  major providers is not yet guaranteed; it's cheap and low-risk, not a
-  strategy on its own.
+- `/llms.txt` — site summary in the llms.txt convention, **generated at build**
+  by `src/pages/llms.txt.ts` (`prerender = true`) from the `writing` and
+  `projects` collections, so adding a markdown file updates it. (It replaced
+  the hand-written `public/llms.txt`, which had linked a draft article that
+  doesn't exist publicly.) Adoption by major providers is not yet guaranteed;
+  it's cheap and low-risk, not a strategy on its own.
+- Per-project JSON-LD on `/p100/<slug>/`: `VideoGame` for games (3xx),
+  `SoftwareApplication` for tools (4xx), with `dateModified` from the GitHub
+  enrichment when known. No `aggregateRating`, same rule as `/walk/`.
 - `schema.org/Person` JSON-LD, site-wide, in `src/layouts/Layout.astro`.
 - Sitemap generated at build time.
 
@@ -127,33 +133,202 @@ practice.
 
 ## Design
 
-Light mode only, by choice. No `prefers-color-scheme: dark` handling. The
-flax-paper aesthetic is the point; someone with dark mode set system-wide
-gets the paper anyway. Revisit only if it becomes a real complaint.
+*(Replaces the flax-paper design, August 2026. Redesign brief of 25 Nov 2026.)*
 
-Palette and type live in `src/styles/global.css`. Flax paper, bracken ink,
-a green accent, heather for sub-brand badges — drawn from a British pastoral
-sensibility rather than the default template look.
+**Two rooms, deliberately different.** There is no shared motif beyond a
+consistent way to get between them (the nav's "Workshop (P100)" link, and
+the footer's "Also: the workshop →").
 
-Accessibility, verified by calculating WCAG contrast ratios rather than
-eyeballing:
+| Room | Route | Look | Audience |
+|---|---|---|---|
+| Coaching | `/`, writing, CLAUS, AI page | **Horizon** | Potential coaching clients |
+| Workshop | `/p100/`, `/p100/<slug>/` | **Mode 7** (teletext) | People who like the games; possible AI collaborators |
+
+LoadedZone (`/loadedzone/`) keeps its own identity and layout.
+
+Standing rule: nothing that looks like the generic AI-startup or
+generic-coach template: no gradient washes, glass cards, sparkle icons, pill
+buttons, three-icon feature rows, "unlock / empower / supercharge" copy.
+
+### Horizon
+
+The structure carries a Stoic idea **without ever stating it**:
+
+- **Sky** (top): what is not in your control. Huge, light, changing; its
+  colour follows the visitor's local time of day. Headline, lede and the
+  drifting "weather" phrases (the restructure, the market, AI…) live here.
+- **Horizon** (a 3px peat line and a rapeseed band): the coaching. The one
+  call to action lives in the band.
+- **Ground** (below): what *is* in your control. Dark, solid, heavier type;
+  everything actionable (what we work on, how it works, about, writing, begin).
+
+It is never spelled out in copy: no Epictetus, no "dichotomy of control"
+section. Naming it would turn a felt structure into a slogan, and the site's
+content rule (see "Content approach") is plain, non-promotional writing.
+
+Every other page uses a short sky header (title in light weight, same
+time-of-day band), the horizon line, then a **chalk** reading surface with
+peat text. Long reads never sit on the dark ground.
+
+Sky is server-rendered as *midday* (crawlers and no-JS visitors get a sensible
+page). A tiny inline script in `<head>` sets `data-sky` on `<html>` from the
+local hour before first paint and re-checks every minute; a 4s background
+transition is enabled only after load. `prefers-reduced-motion` removes the
+transition and the drift (global rule in `global.css`).
+
+Font: **Libre Franklin** only (200, 300, 400, 700, 800). Light mode only.
+
+| Token | Hex | Use |
+|---|---|---|
+| `--ink` / peat | `#2B2924` | Text on light skies, the ground, the horizon line |
+| `--chalk` | `#EFEAE0` | Text on the ground; article reading surface |
+| `--band` / rapeseed | `#D4A72C` | The band; section labels on the ground |
+| `--muted-on-ground` | `#C9C3B6` | Secondary text on the ground |
+| `--rule-on-ground` | `#6B665C` | Hairline dividers (decorative only) |
+
+| Band | Hours | bg | fg | soft (phrases) |
+|---|---|---|---|---|
+| night | 0–4 | `#1C2430` | `#EFEAE0` | `#AAB4BF` |
+| dawn | 5–7 | `#E6C7AE` | `#2B2924` | `#5E4C40` |
+| morning | 8–10 | `#D4DFE5` | `#2B2924` | `#55626A` |
+| midday | 11–14 | `#D9E0E2` | `#2B2924` | `#5B6266` |
+| afternoon | 15–16 | `#E0DFCF` | `#2B2924` | `#5F5C4C` |
+| dusk | 17–19 | `#C99B84` | `#2B2924` | `#47372F` |
+| evening | 20–23 | `#3B4658` | `#EFEAE0` | `#C3CBD6` |
+
+### Mode 7
+
+Teletext: exactly eight colours (`#000000 #FF0000 #00FF00 #FFFF00 #0000FF
+#FF00FF #00FFFF #FFFFFF`), VT323, page numbers, Fastext links, a live clock.
+Blue is a background only. Status always carries a text label
+(PLAYABLE green, IN PROGRESS yellow, SKETCH cyan, PARKED magenta; `TODO`,
+white, means not yet confirmed by Laurence).
+
+Own shell (`src/layouts/Mode7Layout.astro`) and stylesheet
+(`src/styles/mode7.css`); does not use the Horizon `<Layout>`. Type sizes step
+by breakpoint (22 / 26 / 28px), not `vw`, to keep the character-grid feel. A
+`VT323 Fallback` `@font-face` (a local monospace shrunk with `size-adjust`)
+keeps the grid from overflowing before the web font loads.
+
+**Projects collection.** `src/content/projects/<slug>.md` (schema in
+`src/content.config.ts`); adding a project is adding one file. Index rows and
+pages are generated from it, sorted by `page`. Page numbers are permanent
+(3xx games, 4xx tools). Helpers live in `src/lib/projects.ts`.
+
+**Glitch easter egg, accessibly.** `src/scripts/glitch.ts`. The real text is
+always in the HTML and never modified. Each glitchable element holds one text
+node; the glitch is a single-character `aria-hidden` overlay positioned over
+it (via a DOM `Range`, so wrapped lines work), then removed. Screen readers and
+crawlers never read a glitched character. No glitching under
+`prefers-reduced-motion`. Dot leaders in index rows are `aria-hidden`.
+
+**P888 MINES.** `src/scripts/mines.ts`, a vanilla-JS island loaded on `/p100/`
+only; the panel is `hidden` until it runs. Cells are real `<button>`s with a
+roving tabindex and arrow-key navigation (one Tab stop for the grid). The FLAG
+toggle is `aria-pressed` with a constant accessible name. Win requires every
+safe cell open, every mine flagged and no wrong flags.
+
+### Contrast (WCAG 2.x, calculated)
 
 | Pair | Ratio |
 |---|---|
-| Body ink on paper | 12.01 (AAA) |
-| Body ink on card | 13.14 (AAA) |
-| Muted text on paper | 6.82 (AA) |
-| Muted text on card | 7.46 (AAA) |
-| Green accent on paper | 5.68 (AA) |
-| Green accent on card | 6.21 (AA) |
+| Peat on midday sky (headline/body) | 10.9 |
+| Peat on dusk sky (lowest light-sky case) | 5.9 |
+| Chalk on night sky | 13.0 |
+| Drifting phrases, lowest (dusk / morning / midday) | 4.6 |
+| Peat on rapeseed band | 6.5 |
+| Chalk on ground | 12.1 |
+| Rapeseed labels on ground | 6.5 |
+| Muted `#C9C3B6` on ground | 8.3 |
+| Mode 7 red on black (lowest text colour) | 5.25 |
+| Mode 7 yellow on blue band | 8.0 |
+| Black on red flag bar | 5.25 |
+| Black "F" on magenta | 6.7 |
 
-Known constraints to respect when extending:
-- Fraunces has high stroke contrast — don't use it below ~18px.
-- The mono nav sits at 11px, close to the legibility floor. Don't go smaller.
-- Hairline borders are 1.44 against paper. Fine as decoration, but a border
-  must never be the *only* thing marking an interactive element. Relevant
-  when forms get added.
-- The focus ring is 2px solid green with a 3px offset — not colour alone.
+Constraints to respect when extending:
+- Drifting phrases only just clear 4.5:1: weight ≥300, size ≥19px. Never
+  weight 200 below ~40px.
+- `--rule-on-ground` is 2.55:1: decorative only, never the only marker of an
+  interactive element. Form fields are filled chalk, not outlined.
+- Focus ring: `2px solid currentColor`, 3px offset.
+- Touch targets ≥44px (nav links, band link, buttons, footer links).
+
+### The workshop updates itself (GitHub enrichment + nightly rebuild)
+
+At build, `src/lib/github.ts` calls the GitHub REST API once per project (cached
+per build) from `src/lib/projects.ts`:
+
+- `repo` set → latest commit date on that repo's default branch = **last touched**.
+- `deployedPath` set → latest commit touching that path **in this repo**
+  (`commits?path=…&per_page=1`). The API is used rather than `git log` because
+  the build checkout may be shallow.
+- Both set and the source is newer than the in-repo copy → a black-on-red
+  `COPY BEHIND SOURCE` flag on the index row and project page. The in-repo
+  games are unsynced copies of their own repos; this is an honest status and a
+  nudge to re-sync.
+
+Shown as `3d ago` with the ISO date in a `<time datetime>`. **It fails soft**:
+HTTP errors, rate limits, timeouts (8s) or no network just omit the date/flag
+and log a `[github]` warning. After one network-level failure the rest of that
+build's calls are skipped, so an offline local build isn't slowed by timeouts.
+A rejected token (401) is retried unauthenticated.
+
+Auth: an optional `GITHUB_TOKEN` build variable, fine-grained, read-only,
+public repositories only, set in Workers Builds settings. Never committed, and
+it never goes through an agent. Unauthenticated works too but is limited to
+60 requests/hour per IP, which a shared build IP can exhaust.
+
+**Nightly rebuild.** `.github/workflows/nightly-rebuild.yml` (02:17 UTC,
+≈03:17 BST / 02:17 GMT) POSTs to a Workers Builds **deploy hook**. One-time
+setup (Laurence does this; secrets never go through an agent):
+
+1. Cloudflare dashboard → Workers & Pages → this Worker → Settings → Builds →
+   **Deploy Hooks** → create one for branch `main`. Copy its URL.
+2. GitHub → this repo → Settings → Secrets and variables → Actions → new
+   repository secret `CLOUDFLARE_DEPLOY_HOOK_URL` = that URL.
+3. (Optional, recommended) Same Builds settings page → build variables: add
+   `GITHUB_TOKEN` (fine-grained PAT, public repos read-only).
+4. Run the workflow once via Actions → Nightly rebuild → Run workflow.
+
+*Unverified:* the Cloudflare docs were unreachable when this was written, so
+the deploy-hook feature and dashboard path above are from memory. Check them
+at developers.cloudflare.com/workers/ci-cd/builds/. If deploy hooks aren't
+available, fall back to a scheduled Action that runs `npm ci && npm run build
+&& npx wrangler deploy` with a scoped `CLOUDFLARE_API_TOKEN` secret.
+
+### Accessibility verification (Nov 2026)
+
+- The contrast table above was recomputed from the hex values in the code; every
+  figure reproduces. Also checked: chalk on evening sky 7.95; all seven sky
+  bands' drifting phrases ≥4.58; Mode 7 cyan on black 16.75, magenta on black
+  6.70, white on blue band 8.59, black on green 15.30. Hidden mine cells
+  (blue on black) are only 2.44:1, hence the white grid lines.
+- axe-core (WCAG 2.0/2.1/2.2 A+AA and best-practice) run against `/`,
+  `/writing/`, an article, `/claus/`, `/ai/`, `/walk/`, `404`, `/p100/` (also
+  mid-game, flag mode on) and a project page, at 1280px and 375px; the Horizon
+  home and writing index in **each of the seven sky bands**. Zero violations.
+  Re-run after design changes: load `axe-core` in Playwright against
+  `wrangler dev`/`astro preview` (the fixes it found: landmarks around the sky
+  header and band, heading order in one article, two sub-44px targets).
+- Keyboard-only: every page tabs in a logical order with a visible focus ring;
+  the contact form is reachable and submits with Enter; `/p100/`'s minesweeper
+  is playable and winnable with Tab, arrows, Home/End, Enter/Space.
+- 375px: no horizontal overflow on any page; interactive targets ≥44px (inline
+  links in running prose excepted). Minefield cells are exactly 44px at 375px;
+  a narrower viewport scrolls the board horizontally rather than shrinking cells.
+
+### Routes and redirects
+
+`/coaching/` is absorbed into `/` (contact form at `/#begin`). 301s live in
+`public/_redirects` (Workers static assets supports it; Astro's own
+`redirects` config only emits meta-refresh pages on a static build):
+`/coaching/ → /#begin`, `/lab/ → /p100/`, `/projects/ → /p100/`. Only the
+`/lab/` *index* redirects; games under `/lab/<game>/` are untouched. Until
+Phase 2 ships, `/lab/` and `/projects/` redirect to a not-yet-existing `/p100/`.
+
+**Must not move:** `/walk/privacy/`, `/underglaze/privacy`, `/underglaze/terms`,
+`/patchbay/privacy/`, `/beyondtheheadlines/privacy/`, `/loadedzone/…`, and
+every game file under `/lab/<game>/`.
 
 ---
 
@@ -175,7 +350,7 @@ namespace binding for a feature we don't use.
 
 ---
 
-## The contact form (`/coaching/`)
+## The contact form (`/#begin`)
 
 **This is the site's first server-side route.** `src/pages/api/contact.ts`
 carries `export const prerender = false;`; every other page is still built
@@ -203,7 +378,7 @@ any binding change in `wrangler.jsonc`).
 field (`website`, silently discarded if filled) catches unsophisticated
 bots for free. Turnstile — widget created via Cloudflare's Turnstile Spin
 existing-widget flow, site key `0x4AAAAAAEbe4DMS05estZy0` — sits behind
-it: the widget renders inside the form (`src/pages/coaching/index.astro`),
+it: the widget renders inside the form (`src/pages/index.astro`),
 its token travels with the rest of the payload, and `/api/contact.ts`
 verifies it against Cloudflare's `siteverify` endpoint before any other
 validation runs. A submission with no token, or a token that fails
@@ -232,7 +407,7 @@ required step after this ships, not an optional one.
 
 ## The portrait
 
-Appears on `/coaching/` and the homepage only — deliberately not on
+Appears on the homepage only — deliberately not on
 `/writing/` article pages. A byline photo on an essay reads as content
 marketing; the writing is meant to stand on its own, named source material
 and all, without a headshot doing persuasion work next to it.

@@ -1,0 +1,69 @@
+---
+import Mode7Layout from '../../layouts/Mode7Layout.astro';
+import { render } from 'astro:content';
+import { getProjects, STATUS_LABEL } from '../../lib/projects';
+import { ago } from '../../lib/github';
+
+export async function getStaticPaths() {
+  return (await getProjects()).map(({ entry, touched }) => ({
+    params: { slug: entry.id },
+    props: { entry, touched: { ...touched } },
+  }));
+}
+
+const { entry, touched } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const name = d.title.toUpperCase();
+
+// Games (3xx) are VideoGame, tools (4xx) SoftwareApplication. No invented
+// ratings (same rule as /walk/). dateModified only when GitHub gave us one.
+const url = `https://laurencetimms.com/p100/${entry.id}/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': d.page < 400 ? 'VideoGame' : 'SoftwareApplication',
+  name: d.title,
+  description: d.summary,
+  url,
+  genre: d.kind,
+  ...(d.page >= 400 ? { applicationCategory: 'UtilitiesApplication' } : {}),
+  ...(d.repo ? { codeRepository: `https://github.com/${d.repo}` } : {}),
+  ...(touched.last ? { dateModified: touched.last.toISOString() } : {}),
+  author: { '@type': 'Person', name: 'Laurence Timms', url: 'https://laurencetimms.com' },
+};
+---
+<Mode7Layout
+  title={`${d.title} (P${d.page})`}
+  path={`/p100/${entry.id}/`}
+  pageNo={`P${d.page}`}
+  heading={`P${d.page} ${name}`}
+  description={d.summary}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
+  <dl class="m7-facts">
+    <dt>STATUS</dt><dd class={`st-${d.status}`}>{STATUS_LABEL[d.status]}</dd>
+    <dt>KIND</dt><dd>{d.kind}</dd>
+    {touched.last && (
+      <>
+        <dt>TOUCHED</dt>
+        <dd>
+          last touched {ago(touched.last)} (<time datetime={touched.last.toISOString()}>{touched.last.toISOString().slice(0, 10)}</time>)
+          {touched.behind && <> <span class="flag-behind">COPY BEHIND SOURCE</span></>}
+        </dd>
+      </>
+    )}
+    {d.repo && (<><dt>SOURCE</dt><dd><a href={`https://github.com/${d.repo}`}>github.com/{d.repo}</a></dd></>)}
+  </dl>
+
+  <p class="y">{d.summary}</p>
+
+  {d.play.length > 0 && (
+    <ul class="m7-play">
+      {d.play.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+    </ul>
+  )}
+
+  <div class="m7-body"><Content /></div>
+
+  <p><a href="/p100/">&larr; P100 index</a></p>
+</Mode7Layout>

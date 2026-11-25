@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { personJsonLd } from '../lib/site';
 
 interface Props {
   title: string;
@@ -12,6 +13,10 @@ interface Props {
   imageHeight?: number;
   /** Use as the full <title>, without the site-name suffix. */
   exactTitle?: string;
+  /** Tall sky with the weather phrases and big headline (home page only). */
+  hero?: boolean;
+  /** 'chalk' (default) = reading surface; 'ground' = dark ground (home). */
+  surface?: 'chalk' | 'ground';
 }
 
 const {
@@ -23,20 +28,18 @@ const {
   imageWidth = 1200,
   imageHeight = 630,
   exactTitle,
+  hero = false,
+  surface = 'chalk',
 } = Astro.props;
 const siteName = 'Laurence Timms';
 const fullTitle = exactTitle ?? (path === '/' ? `${siteName} — Coaching, systems change, and CLAUS` : `${title} — ${siteName}`);
 
 const nav = [
-  { href: '/writing/', label: 'Writing' },
-  { href: '/coaching/', label: 'Coaching' },
-  { href: '/claus/', label: 'CLAUS' },
-  { href: '/projects/', label: 'Projects' },
+  { href: '/writing/', label: 'Writing', prefixes: ['/writing/'] },
+  { href: '/#about', label: 'About', prefixes: [] as string[] },
+  { href: '/p100/', label: 'Workshop (P100)', prefixes: ['/p100/'] },
+  { href: '/#begin', label: 'Begin', prefixes: [] as string[] },
 ];
-
-// Sub-brand and lab pages live under /projects/ but keep their own
-// top-level paths; highlight "Projects" when the visitor is on any of them.
-const projectPaths = ['/projects/', '/loadedzone/', '/walk/', '/lab/'];
 ---
 
 <!doctype html>
@@ -67,56 +70,78 @@ const projectPaths = ['/projects/', '/loadedzone/', '/walk/', '/lab/'];
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@200;300;400;700;800&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Sky colour follows the visitor's local hour. Runs in <head> so the
+         first paint is already the right band (no flash); the server-rendered
+         default is midday for crawlers and no-JS visitors. Bands are defined
+         in global.css as [data-sky] custom properties. -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        function band(h) {
+          if (h < 5) return 'night';
+          if (h < 8) return 'dawn';
+          if (h < 11) return 'morning';
+          if (h < 15) return 'midday';
+          if (h < 17) return 'afternoon';
+          if (h < 20) return 'dusk';
+          return 'evening';
+        }
+        function apply() {
+          var b = band(new Date().getHours());
+          if (root.getAttribute('data-sky') !== b) root.setAttribute('data-sky', b);
+        }
+        apply();
+        setInterval(apply, 60000);
+        // Enable the slow transition only after first paint, so the initial
+        // band doesn't animate in from midday.
+        window.addEventListener('load', function () {
+          requestAnimationFrame(function () { root.classList.add('sky-ready'); });
+        });
+      })();
+    </script>
+
     <!-- schema.org: Person, site-wide. Keeps a single canonical machine-readable
          identity statement on every page, per the AI-visibility plan. -->
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: 'Laurence Timms',
-      url: 'https://laurencetimms.com',
-      image: 'https://laurencetimms.com/images/laurence-timms.webp',
-      description:
-        'Coach working with leaders and teams through organisational change, software delivery improvement, and AI-augmented coaching practice. Building CLAUS, an AI-augmented team dynamics tool for team leaders and team coaches.',
-      knowsAbout: [
-        'Organisational change',
-        'Agile coaching',
-        'Executive coaching',
-        'DORA metrics',
-        'Software delivery lifecycle',
-        'Team dynamics',
-      ],
-      sameAs: [],
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
   </head>
   <body>
-    <div class="site-shell">
-      <header class="site-header">
-        <a class="wordmark" href="/">Laurence Timms</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class={hero ? 'sky sky--hero' : 'sky'}>
+      <div class="wrap sky-inner">
         <nav class="site-nav" aria-label="Primary">
-          {nav.map((item) => {
-            const active =
-              item.href === '/projects/'
-                ? projectPaths.some((p) => path.startsWith(p))
-                : path.startsWith(item.href);
-            return (
-              <a href={item.href} aria-current={active ? 'page' : undefined}>
+          <a class="wordmark" href="/">Laurence Timms</a>
+          <span class="links">
+            {nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={item.prefixes.some((p) => path.startsWith(p)) ? 'page' : undefined}
+              >
                 {item.label}
               </a>
-            );
-          })}
+            ))}
+          </span>
         </nav>
-      </header>
-      <main>
+        <slot name="sky" />
+      </div>
+    </header>
+    <div class="horizon-line"></div>
+    <slot name="band" />
+    <main id="main" class={surface === 'ground' ? 'ground' : 'chalk'}>
+      <div class={surface === 'ground' ? 'wrap ground-inner' : 'wrap chalk-inner'}>
         <slot />
-      </main>
-      <footer class="site-footer">
-        <span>&copy; {new Date().getFullYear()} Laurence Timms · <a href="/ai/">How AI is used on this site</a></span>
-        <span>Built as a static site on Cloudflare Workers</span>
-      </footer>
-    </div>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="foot">
+          <span>&copy; {new Date().getFullYear()} Laurence Timms · <a href="/ai/">How AI is used on this site</a></span>
+          <a href="/p100/">Also: the workshop &rarr;</a>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

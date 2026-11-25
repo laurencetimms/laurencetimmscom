@@ -1,50 +1,269 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 
-const sections = [
-  { href: '/writing/', title: 'Writing', desc: 'Frameworks, essays, and models drawn from live organisational work.' },
-  { href: '/coaching/', title: 'Coaching', desc: 'Executive and organisational coaching — approach, and how to work with me.' },
-  { href: '/claus/', title: 'CLAUS', desc: 'An AI-augmented team dynamics tool for team leaders and team coaches.' },
-  { href: '/projects/', title: 'Projects', desc: 'LoadedZone and Walk.' },
+// Nested under the site-wide Person (same identity as Layout.astro's
+// site-wide block), pointed at the contact form on this page rather than a
+// raw inbox address, since the form is the intended channel.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Laurence Timms',
+  url: 'https://laurencetimms.com',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'Coaching enquiries',
+    url: 'https://laurencetimms.com/#begin',
+    availableLanguage: 'English',
+  },
+};
+
+// The "weather": things clients worry about but don't control.
+const weather = [
+  { text: 'the restructure', size: 22, top: 0, delay: 0 },
+  { text: 'what the board decides', size: 19, top: 24, delay: 3 },
+  { text: 'the market', size: 26, top: 8, delay: 6 },
+  { text: 'AI', size: 30, top: 30, delay: 1 },
+  { text: 'last quarter’s numbers', size: 19, top: 4, delay: 8 },
+  { text: 'other people’s opinions', size: 20, top: 20, delay: 4 },
+  { text: 'the new strategy', size: 24, top: 12, delay: 10 },
 ];
----
 
+const recent = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
+  .slice(0, 3);
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+---
 <Layout
   title="Home"
   path="/"
+  surface="ground"
+  hero
   description="Laurence Timms — coach working with leaders and teams through organisational change, software delivery improvement, and AI-augmented coaching practice."
 >
-  <h1>Unlock your potential</h1>
-  <div class="intro-with-portrait intro-with-portrait--small">
-    <img
-      class="portrait portrait--small"
-      src="/images/laurence-timms-400.webp"
-      width="130"
-      height="130"
-      alt="Laurence Timms"
-      loading="eager"
-    />
-    <div class="prose">
-      <p>
-        I'm a coach. I work with people who want to take charge of the changes
-        in their lives and help them to reveal their goals and identify the
-        actions they can take to achieve them.
-      </p>
-      <p>
-        I have over forty years' experience across private, public, and
-        charity sectors, in both mature organisations and startups. If I have
-        learned one thing, it is that the better we understand our goals, the
-        more motivated we are to pursue them.
-      </p>
-    </div>
-  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <div class="card-grid">
-    {sections.map((s) => (
-      <a class="card" href={s.href}>
-        <h3>{s.title}</h3>
-        <p>{s.desc}</p>
-      </a>
-    ))}
-  </div>
+  <Fragment slot="sky">
+    <div class="weather" aria-hidden="true">
+      {weather.map((w) => (
+        <span
+          style={`font-size: ${w.size}px; margin-top: ${w.top}px; animation-delay: -${w.delay}s`}
+        >{w.text}</span>
+      ))}
+    </div>
+
+    <!-- DRAFT COPY -->
+    <h1 class="hero-title">Plain talk<br />about hard<br />change.</h1>
+    <!-- DRAFT COPY -->
+    <p class="hero-lede">
+      One-to-one coaching for people leading teams through change they didn’t
+      choose. No frameworks for their own sake. Room to think, and then
+      something to do.
+    </p>
+  </Fragment>
+
+  <section class="band" slot="band" aria-label="Book a first conversation">
+    <div class="wrap band-inner">
+      <a href="#begin">Book a first conversation →</a>
+      <span>Cambridgeshire, on foot or in a room · and online</span>
+    </div>
+  </section>
+
+  <section class="row" id="work">
+    <h2>What we work on</h2>
+    <!-- DRAFT COPY -->
+    <div class="row-body">
+      <p class="statement">Leading a team through a restructure, a new strategy or a new boss.</p>
+      <p class="statement">A decision you keep circling and not making.</p>
+      <p class="statement">Moving from doing the work to leading the people who do it.</p>
+      <p class="statement">Getting back a way of working that feels like yours.</p>
+    </div>
+  </section>
+
+  <section class="row" id="how">
+    <h2>How it works</h2>
+    <!-- DRAFT COPY -->
+    <div class="row-body">
+      <ol class="steps">
+        <li>
+          <span class="step-n" aria-hidden="true">1</span>
+          <span class="step-t">A first conversation</span>
+          <span class="step-d">
+            <span class="placeholder">[LENGTH]</span> minutes, <span class="placeholder">[FREE OR FEE]</span>.
+            We find out whether I’m the right person, and whether now is the right time.
+          </span>
+        </li>
+        <li>
+          <span class="step-n" aria-hidden="true">2</span>
+          <span class="step-t">Sessions</span>
+          <span class="step-d">
+            <span class="placeholder">[NUMBER]</span> sessions of <span class="placeholder">[LENGTH]</span>,
+            every <span class="placeholder">[INTERVAL]</span>. Indoors, online, or walking. Some
+            things are easier to say side by side.
+          </span>
+        </li>
+        <li>
+          <span class="step-n" aria-hidden="true">3</span>
+          <span class="step-t">Something to do</span>
+          <span class="step-d">
+            Each session ends with a next step that is genuinely yours to take. That’s the
+            measure of whether it’s working.
+          </span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="row" id="about">
+    <h2>About</h2>
+    <div class="row-body">
+      <div class="about-grid">
+        <img
+          class="portrait"
+          src="/images/laurence-timms.webp"
+          srcset="/images/laurence-timms-400.webp 400w, /images/laurence-timms.webp 800w"
+          sizes="200px"
+          width="200"
+          height="200"
+          alt="Laurence Timms"
+          loading="lazy"
+        />
+        <!-- DRAFT COPY -->
+        <div class="about-body">
+          <p>
+            I’ve worked in software since I was fifteen, including as Head of
+            Application Development and Support at the RSPB. I now work as an
+            agile and systems coach, helping organisations and the people in
+            them through change.
+          </p>
+          <p>
+            So I know what it’s like to be the person in the middle: the one
+            carrying a decision made elsewhere to a team who didn’t ask for it.
+          </p>
+          <p class="credentials">
+            PSM II · KMP II · ICAgile Systems Coaching ·
+            <span class="placeholder">[COACHING QUALIFICATION, WHEN DONE]</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row" id="writing">
+    <h2>Writing</h2>
+    <div class="row-body">
+      <ul class="write-list">
+        {recent.map((entry) => (
+          <li>
+            <a href={`/writing/${entry.id}/`}>
+              <span class="write-title">{entry.data.title}</span>
+              <span class="write-meta">
+                <span class={`maturity maturity--${entry.data.maturity}`}>{entry.data.maturity}</span>
+                <time datetime={entry.data.published.toISOString().slice(0, 10)}>
+                  {dateFormat.format(entry.data.published)}
+                </time>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <a class="more-link" href="/writing/">All writing →</a>
+    </div>
+  </section>
+
+  <section class="row" id="begin">
+    <h2>Begin</h2>
+    <div class="row-body">
+      <!-- DRAFT COPY -->
+      <p class="begin-lead">Tell me what’s going on. A few lines is plenty.</p>
+
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="field">
+          <label for="contact-name">Name</label>
+          <input type="text" id="contact-name" name="name" autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <label for="contact-email">Email</label>
+          <input type="email" id="contact-email" name="email" autocomplete="email" required />
+        </div>
+
+        <div class="field">
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" name="message" rows="6" required></textarea>
+        </div>
+
+        <div class="field hp-field" aria-hidden="true">
+          <label for="contact-website">Website</label>
+          <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div
+          class="cf-turnstile"
+          data-sitekey="0x4AAAAAAEbe4DMS05estZy0"
+          data-action="contact"
+          data-theme="dark"
+        ></div>
+
+        <button type="submit" class="contact-submit" id="contact-submit">Send message</button>
+
+        <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <script>
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const status = document.getElementById('contact-status') as HTMLParagraphElement;
+    const submitButton = document.getElementById('contact-submit') as HTMLButtonElement;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      status.textContent = '';
+      status.classList.remove('form-status--success', 'form-status--error');
+
+      const data = new FormData(form);
+      const payload = {
+        name: data.get('name'),
+        email: data.get('email'),
+        message: data.get('message'),
+        website: data.get('website'),
+        token: data.get('cf-turnstile-response'),
+      };
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending…';
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.ok) {
+          status.textContent = "Thanks — your message is on its way. I'll reply by email.";
+          status.classList.add('form-status--success');
+          form.reset();
+        } else {
+          status.textContent = result.error || 'Something went wrong. Please try again.';
+          status.classList.add('form-status--error');
+        }
+      } catch {
+        status.textContent = 'Something went wrong sending your message. Check your connection and try again.';
+        status.classList.add('form-status--error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Send message';
+        // Turnstile tokens are single-use — reset so a retry (or a second
+        // enquiry) gets a fresh one, whether this attempt succeeded or not.
+        window.turnstile?.reset();
+      }
+    });
+  </script>
 </Layout>

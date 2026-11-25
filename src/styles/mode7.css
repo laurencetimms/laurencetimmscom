@@ -1,0 +1,226 @@
+/* ===========================================================
+   Mode 7 (workshop, /p100/): teletext.
+   Exactly eight colours, one blocky font. Blue is a BACKGROUND ONLY
+   (blue text on black fails contrast). Sizes step by breakpoint, not vw,
+   to keep the character-grid feel. See DECISIONS.md → Design.
+   =========================================================== */
+
+/* VT323 is ~0.4em wide, ordinary monospaces ~0.6em. If the web font is slow
+   or blocked, shrink a local monospace so the character grid still fits. */
+@font-face {
+  font-family: 'VT323 Fallback';
+  src: local('DejaVu Sans Mono'), local('Liberation Mono'), local('Courier New'), local('Menlo'), local('Consolas');
+  size-adjust: 67%;
+}
+
+:root {
+  --k: #000000; --r: #FF0000; --g: #00FF00; --y: #FFFF00;
+  --b: #0000FF; --m: #FF00FF; --c: #00FFFF; --w: #FFFFFF;
+}
+
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+
+body {
+  margin: 0;
+  background: var(--k);
+  color: var(--w);
+  font-family: 'VT323', 'VT323 Fallback', ui-monospace, monospace;
+  font-size: 22px;
+  line-height: 1.15;
+}
+@media (min-width: 640px) { body { font-size: 26px; } }
+@media (min-width: 1024px) { body { font-size: 28px; } }
+
+a { color: var(--c); }
+a:hover { color: var(--w); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--y); outline-offset: 2px; }
+
+.skip-link {
+  position: absolute; left: 8px; top: -4rem; z-index: 10;
+  background: var(--y); color: var(--k); padding: 0.4em 0.8em; min-height: 44px; display: flex; align-items: center;
+}
+.skip-link:focus { top: 8px; }
+
+.y { color: var(--y); } .c { color: var(--c); } .g { color: var(--g); }
+.r { color: var(--r); } .m { color: var(--m); }
+.bg-r { background: var(--r); } .bg-y { background: var(--y); } .bg-g { background: var(--g); }
+.bg-c { background: var(--c); } .bg-m { background: var(--m); } .bg-w { background: var(--w); }
+
+.m7 {
+  position: relative;               /* glitch overlays position against this */
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+@media (min-width: 640px) { .m7 { padding: 24px 16px; } }
+@media (min-width: 1024px) { .m7 { padding: 32px 40px; } }
+
+.m7-top { display: flex; justify-content: space-between; gap: 1ch; }
+
+.m7-head { display: flex; flex-direction: column; }
+.m7-top { margin-bottom: 14px; }
+.m7-band {
+  background: var(--b);
+  padding: 8px 12px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 4px 16px;
+}
+.m7-band h1 {
+  margin: 0; font-weight: 400; line-height: 1; color: var(--y);
+  font-size: 44px;
+}
+@media (min-width: 640px) { .m7-band h1 { font-size: 64px; } }
+@media (min-width: 1024px) { .m7-band h1 { font-size: 84px; } }
+.m7-name { font-size: 1.15em; }
+
+.m7-strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 14px; }
+
+main { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.m7-intro { margin: 0; color: var(--c); }
+
+/* ---------- Index ---------- */
+
+.m7-cols { display: flex; flex-direction: column; gap: 24px; }
+@media (min-width: 1024px) {
+  .m7-cols { flex-direction: row; gap: 40px; align-items: flex-start; }
+  .m7-index { flex: 1; min-width: 0; }
+}
+
+.m7-index h2 {
+  margin: 14px 0 6px; font-weight: 400; font-size: 1em; color: var(--y);
+}
+.m7-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.m7-row {
+  display: grid;
+  grid-template-columns: 4ch auto;
+  column-gap: 1ch;
+  row-gap: 0;
+  color: var(--w);
+  text-decoration: none;
+  padding: 4px 0;
+  min-height: 44px;
+  align-items: center;
+}
+.m7-row .pg { color: var(--c); }
+.m7-row .txt { white-space: pre; }
+.m7-row .st { grid-column: 2; }
+.m7-row:hover .nm, .m7-row:focus-visible .nm { text-decoration: underline; }
+@media (min-width: 640px) {
+  .m7-row { grid-template-columns: 4ch auto 1fr; column-gap: 2ch; }
+  .m7-row .st { grid-column: auto; }
+}
+
+/* Status: the text label is always shown; colour is reinforcement. */
+.st-playable { color: var(--g); }
+.st-in-progress { color: var(--y); }
+.st-sketch { color: var(--c); }
+.st-parked { color: var(--m); }
+.st-TODO { color: var(--w); }
+
+/* Last touched (GitHub, build time) + sync flag. Flag: black on red, 5.25:1. */
+.tch { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0 1.5ch; color: var(--w); }
+.flag-behind { background: var(--r); color: var(--k); padding: 0 0.6ch; }
+@media (min-width: 640px) { .tch { grid-column: 2 / -1; } }
+
+/* ---------- Project page ---------- */
+
+.m7-facts { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 4px 2ch; }
+.m7-facts dt { color: var(--c); }
+.m7-facts dd { margin: 0; }
+.m7-play { list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.m7-play a {
+  display: inline-block; min-height: 44px; padding: 8px 0;
+  color: var(--c); font-size: 1.2em; text-decoration: underline;
+}
+.m7-play a::before { content: '> '; }
+.m7-play a:hover { color: var(--w); }
+
+.m7-body { max-width: 44rem; }
+.m7-body p { margin: 0 0 1em; }
+.m7-body h2, .m7-body h3 { color: var(--c); font-weight: 400; margin: 1.2em 0 0.4em; }
+.m7-body a { color: var(--y); }
+.m7-body a:hover { color: var(--w); }
+.m7-body ul, .m7-body ol { margin: 0 0 1em; padding-left: 2ch; }
+.m7-body code { color: var(--g); }
+
+/* ---------- Glitch overlay (aria-hidden; the real text never changes) ---------- */
+
+.gl-ov {
+  position: absolute; pointer-events: none; text-align: center;
+  white-space: pre; overflow: hidden;
+}
+.gl-ov--blue { background: var(--b); }
+.gl-ov--black { background: var(--k); }
+
+/* ---------- Minesweeper (P888) ---------- */
+
+.mines {
+  flex: 0 0 auto;
+  border: 2px solid var(--w);
+  padding: 10px;
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-x: auto;
+}
+@media (max-width: 639px) { .mines { border: 0; padding: 0; } }
+@media (min-width: 1024px) { .mines { width: 436px; } }
+
+.mines-head { display: flex; justify-content: space-between; gap: 1ch; flex-wrap: wrap; }
+.mines-title { color: var(--y); margin: 0; font-weight: 400; font-size: 1em; }
+
+/* White grid lines: blue vs black is only 2.4:1, so the lines carry the edge. */
+.mines-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(44px, 1fr));
+  gap: 1px;
+  background: var(--w);
+  border: 1px solid var(--w);
+}
+.mines-cell {
+  min-width: 44px; min-height: 44px; aspect-ratio: 1;
+  padding: 0; border: 0; border-radius: 0; cursor: pointer;
+  font-family: inherit; font-size: 30px; line-height: 1;
+  background: var(--b); color: var(--w);
+  position: relative;
+}
+.mines-cell:focus-visible { z-index: 1; }
+.mines-cell.is-open { background: var(--k); cursor: default; }
+.mines-cell.is-mine { background: var(--r); color: var(--k); }
+.mines-cell.is-flag { background: var(--m); color: var(--k); }
+.mines-cell.n1 { color: var(--c); } .mines-cell.n2 { color: var(--g); }
+.mines-cell.n3 { color: var(--y); } .mines-cell.n4 { color: var(--m); }
+.mines-cell.n5, .mines-cell.n6, .mines-cell.n7, .mines-cell.n8 { color: var(--r); }
+
+.mines-actions { display: flex; gap: 10px; }
+.mines-btn {
+  flex: 1; min-height: 44px; border: 0; border-radius: 0; cursor: pointer;
+  font-family: inherit; font-size: 26px;
+}
+.mines-new { background: var(--g); color: var(--k); }
+.mines-flag { background: var(--w); color: var(--k); }
+.mines-flag[aria-pressed="true"] { background: var(--m); color: var(--k); }
+
+/* ---------- Fastext ---------- */
+
+.m7-fastext {
+  margin-top: auto;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0;
+}
+@media (min-width: 640px) { .m7-fastext { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.m7-fastext a {
+  text-decoration: none; display: flex; align-items: center; min-height: 44px;
+}
+.m7-fastext a:hover { text-decoration: underline; }
+.m7-fastext a.r { color: var(--r); } .m7-fastext a.g { color: var(--g); }
+.m7-fastext a.y { color: var(--y); } .m7-fastext a.c { color: var(--c); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+.mines[hidden] { display: none; }

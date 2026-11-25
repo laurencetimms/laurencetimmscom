@@ -7,23 +7,23 @@ designed the way it is — read that before making structural changes.
 
 ## Structure
 
-- `/` — homepage
+- `/` — Horizon coaching page (sky / horizon / ground), including the contact form at `#begin`
 - `/writing/` — frameworks & essays
-- `/coaching/` — coaching practice
+- `/coaching/`, `/lab/`, `/projects/` — 301 redirects (`public/_redirects`); only the `/lab/` index redirects, games under `/lab/<game>/` are live files
 - `/claus/` — CLAUS project page
 - `/loadedzone/` — LoadedZone sub-brand
-- `/projects/` — projects hub (linked from nav)
 - `/walk/` — Walk sub-brand
-- `/lab/` — smaller game/software projects
+- `/lab/<game>/` — smaller game/software projects (static files in `public/lab/`)
   - `/lab/pavement/` — Pavement, a standalone HTML game (`public/lab/pavement/index.html`);
     `workshop.html` is the same game built with the tile harness's texture pack
   - `/lab/tile-harness/` — the Python tile harness running in the browser via Pyodide
     (see below)
+- `/p100/` — the workshop (Mode 7 teletext look): index, plus `/p100/<slug>/` per project, from the `projects` collection
 - `/ai/` — how AI is used in building and writing this site, linked from the footer
-- `public/llms.txt` — machine-readable site summary
+- `/llms.txt` — machine-readable site summary, generated at build from the `writing` and `projects` collections (`src/pages/llms.txt.ts`)
 - `public/robots.txt`
 
-Design tokens (colour, type) live in `src/styles/global.css`. Shared
+Design tokens (Horizon colours, sky bands, type) live in `src/styles/global.css`. Shared
 layout, nav, and the site-wide `Person` schema.org JSON-LD live in
 `src/layouts/Layout.astro`.
 
@@ -67,6 +67,20 @@ Plain static files in `public/lab/tile-harness/`, outside Astro:
 `public/lab/pavement/workshop.html` is a prebuilt copy of the harness output; to
 refresh it, run "Pack and build the game" on the harness page, then download
 `out/pavement-workshop.html` from the Files tab and replace it.
+
+## Adding a project (workshop)
+
+Drop a markdown file in `src/content/projects/` (filename = slug) with
+frontmatter matching `src/content.config.ts`: `title`, `page` (teletext
+number, 300–499: 3xx games, 4xx tools; **never reuse one**), `kind`, `status`
+(`playable`, `in-progress`, `sketch`, `parked`, or `TODO`), `summary`
+(one line), optionally `play` (label/href list), `repo` (`owner/name`),
+`deployedPath` and `draft`. The body is the project page's notes, especially
+how it was built with Claude. The index row and page are automatic.
+
+`/p100/` shows each project's **last touched** date from the GitHub API at
+build time (fails soft), rebuilt nightly by `.github/workflows/nightly-rebuild.yml`.
+See DECISIONS.md → "The workshop updates itself" for setup.
 
 ## Adding a writing piece
 
