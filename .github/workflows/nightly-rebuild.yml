@@ -1,0 +1,27 @@
+# Nightly rebuild so /p100/ "last touched" dates pick up commits to the
+# projects' own repos (which don't trigger Workers Builds). Pushes to main
+# still rebuild as normal. Setup steps: DECISIONS.md → "Nightly rebuild".
+name: Nightly rebuild
+
+on:
+  schedule:
+    # 02:17 UTC = 03:17 BST / 02:17 GMT (~03:00 UK; off the hour on purpose).
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Workers Builds deploy hook
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::CLOUDFLARE_DEPLOY_HOOK_URL secret is not set (see DECISIONS.md)"; exit 1
+          fi
+          # -f: fail on HTTP errors. The URL is a secret; never echo it.
+          curl -fsS -X POST "$HOOK" -o /dev/null
+          echo "Deploy hook triggered."

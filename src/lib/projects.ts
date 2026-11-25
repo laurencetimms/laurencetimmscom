@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { getTouched } from './github';
 
 export const STATUS_LABEL = {
   playable: 'PLAYABLE',
@@ -8,10 +9,16 @@ export const STATUS_LABEL = {
   TODO: 'TODO',
 } as const;
 
-/** Published projects, sorted by teletext page number. */
+/** Published projects, sorted by teletext page number, each with GitHub "touched" info. */
 export async function getProjects() {
-  return (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  const entries = (await getCollection('projects', ({ data }) => !data.draft)).sort(
     (a, b) => a.data.page - b.data.page,
+  );
+  return Promise.all(
+    entries.map(async (entry) => ({
+      entry,
+      touched: await getTouched({ repo: entry.data.repo, deployedPath: entry.data.deployedPath }),
+    })),
   );
 }
 

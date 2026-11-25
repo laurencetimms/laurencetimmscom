@@ -78,6 +78,10 @@ number, 300–499: 3xx games, 4xx tools; **never reuse one**), `kind`, `status`
 `deployedPath` and `draft`. The body is the project page's notes, especially
 how it was built with Claude. The index row and page are automatic.
 
+`/p100/` shows each project's **last touched** date from the GitHub API at
+build time (fails soft), rebuilt nightly by `.github/workflows/nightly-rebuild.yml`.
+See DECISIONS.md → "The workshop updates itself" for setup.
+
 ## Adding a writing piece
 
 Drop a markdown file in `src/content/writing/` with frontmatter matching

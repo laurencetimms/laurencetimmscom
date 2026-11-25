@@ -247,6 +247,49 @@ Constraints to respect when extending:
 - Focus ring: `2px solid currentColor`, 3px offset.
 - Touch targets ≥44px (nav links, band link, buttons, footer links).
 
+### The workshop updates itself (GitHub enrichment + nightly rebuild)
+
+At build, `src/lib/github.ts` calls the GitHub REST API once per project (cached
+per build) from `src/lib/projects.ts`:
+
+- `repo` set → latest commit date on that repo's default branch = **last touched**.
+- `deployedPath` set → latest commit touching that path **in this repo**
+  (`commits?path=…&per_page=1`). The API is used rather than `git log` because
+  the build checkout may be shallow.
+- Both set and the source is newer than the in-repo copy → a black-on-red
+  `COPY BEHIND SOURCE` flag on the index row and project page. The in-repo
+  games are unsynced copies of their own repos; this is an honest status and a
+  nudge to re-sync.
+
+Shown as `3d ago` with the ISO date in a `<time datetime>`. **It fails soft**:
+HTTP errors, rate limits, timeouts (8s) or no network just omit the date/flag
+and log a `[github]` warning. After one network-level failure the rest of that
+build's calls are skipped, so an offline local build isn't slowed by timeouts.
+A rejected token (401) is retried unauthenticated.
+
+Auth: an optional `GITHUB_TOKEN` build variable, fine-grained, read-only,
+public repositories only, set in Workers Builds settings. Never committed, and
+it never goes through an agent. Unauthenticated works too but is limited to
+60 requests/hour per IP, which a shared build IP can exhaust.
+
+**Nightly rebuild.** `.github/workflows/nightly-rebuild.yml` (02:17 UTC,
+≈03:17 BST / 02:17 GMT) POSTs to a Workers Builds **deploy hook**. One-time
+setup (Laurence does this; secrets never go through an agent):
+
+1. Cloudflare dashboard → Workers & Pages → this Worker → Settings → Builds →
+   **Deploy Hooks** → create one for branch `main`. Copy its URL.
+2. GitHub → this repo → Settings → Secrets and variables → Actions → new
+   repository secret `CLOUDFLARE_DEPLOY_HOOK_URL` = that URL.
+3. (Optional, recommended) Same Builds settings page → build variables: add
+   `GITHUB_TOKEN` (fine-grained PAT, public repos read-only).
+4. Run the workflow once via Actions → Nightly rebuild → Run workflow.
+
+*Unverified:* the Cloudflare docs were unreachable when this was written, so
+the deploy-hook feature and dashboard path above are from memory. Check them
+at developers.cloudflare.com/workers/ci-cd/builds/. If deploy hooks aren't
+available, fall back to a scheduled Action that runs `npm ci && npm run build
+&& npx wrangler deploy` with a scoped `CLOUDFLARE_API_TOKEN` secret.
+
 ### Routes and redirects
 
 `/coaching/` is absorbed into `/` (contact form at `/#begin`). 301s live in

@@ -1,10 +1,11 @@
 ---
 import Mode7Layout from '../../layouts/Mode7Layout.astro';
 import { getProjects, STATUS_LABEL, leader } from '../../lib/projects';
+import { ago } from '../../lib/github';
 
 const projects = await getProjects();
-const games = projects.filter((p) => p.data.page < 400);
-const tools = projects.filter((p) => p.data.page >= 400);
+const games = projects.filter((p) => p.entry.data.page < 400);
+const tools = projects.filter((p) => p.entry.data.page >= 400);
 const groups = [
   { id: 'games', label: 'GAMES', items: games },
   { id: 'tools', label: 'TOOLS', items: tools },
@@ -18,7 +19,7 @@ const groups = [
   glitchHeading
   description="Things Laurence Timms builds with Claude: games, tools and experiments, each with a teletext page number."
 >
-  <p class="m7-intro"><span class="gl" data-glitch="black">Things I build with Claude: games, tools, experiments.</span></p>
+  <p class="m7-intro"><span class="gl" data-glitch="black">Things I build with Claude: games, tools, experiments. Updated overnight from GitHub.</span></p>
 
   <div class="m7-cols">
     <div class="m7-index">
@@ -26,7 +27,7 @@ const groups = [
         <section id={g.id} aria-labelledby={`${g.id}-h`}>
           <h2 id={`${g.id}-h`}>{g.label}</h2>
           <ul class="m7-list">
-            {g.items.map((p) => {
+            {g.items.map(({ entry: p, touched }) => {
               const name = p.data.title.toUpperCase();
               return (
                 <li>
@@ -36,6 +37,12 @@ const groups = [
                       <span class="nm gl" data-glitch="black">{name}</span><span aria-hidden="true">{leader(name, p.data.kind)}</span><span class="gl" data-glitch="black">{p.data.kind}</span>
                     </span>
                     <span class={`st st-${p.data.status}`}>{STATUS_LABEL[p.data.status]}</span>
+                    {(touched.last || touched.behind) && (
+                      <span class="tch">
+                        {touched.last && <time datetime={touched.last.toISOString()}>{ago(touched.last)}</time>}
+                        {touched.behind && <span class="flag-behind">COPY BEHIND SOURCE</span>}
+                      </span>
+                    )}
                   </a>
                 </li>
               );

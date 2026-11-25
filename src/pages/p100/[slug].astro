@@ -2,12 +2,16 @@
 import Mode7Layout from '../../layouts/Mode7Layout.astro';
 import { render } from 'astro:content';
 import { getProjects, STATUS_LABEL } from '../../lib/projects';
+import { ago } from '../../lib/github';
 
 export async function getStaticPaths() {
-  return (await getProjects()).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  return (await getProjects()).map(({ entry, touched }) => ({
+    params: { slug: entry.id },
+    props: { entry, touched: { ...touched } },
+  }));
 }
 
-const { entry } = Astro.props;
+const { entry, touched } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
 const name = d.title.toUpperCase();
@@ -22,6 +26,15 @@ const name = d.title.toUpperCase();
   <dl class="m7-facts">
     <dt>STATUS</dt><dd class={`st-${d.status}`}>{STATUS_LABEL[d.status]}</dd>
     <dt>KIND</dt><dd>{d.kind}</dd>
+    {touched.last && (
+      <>
+        <dt>TOUCHED</dt>
+        <dd>
+          last touched {ago(touched.last)} (<time datetime={touched.last.toISOString()}>{touched.last.toISOString().slice(0, 10)}</time>)
+          {touched.behind && <> <span class="flag-behind">COPY BEHIND SOURCE</span></>}
+        </dd>
+      </>
+    )}
     {d.repo && (<><dt>SOURCE</dt><dd><a href={`https://github.com/${d.repo}`}>github.com/{d.repo}</a></dd></>)}
   </dl>
 
