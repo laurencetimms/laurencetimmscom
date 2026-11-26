@@ -427,6 +427,27 @@ some chat apps) still handle WebP poorly or not at all for social cards.
 The portrait proper stays WebP since browsers rendering the actual page
 have no such problem.
 
+**The share card is generated, not hand-drawn.** `laurence-timms-og.jpg`
+(1200×630, matching the `og:image` width/height the layouts declare) is a
+static render of `docs/og-card/card.html`: the Horizon structure on the left
+(midday sky with the name in Libre Franklin 200, the 3px peat line, a rapeseed
+band, a peat ground with the tagline) and the portrait on the right. It is a
+fixed midday sky; it does not follow the time of day. To regenerate it (new
+photo, new tagline, new palette): edit `card.html`, make sure
+`public/images/laurence-timms.webp` is the portrait you want, then from the
+repo root run:
+
+```bash
+npm i --no-save @fontsource/libre-franklin playwright
+node docs/og-card/render.cjs
+```
+
+That needs ImageMagick's `convert` and writes `public/images/laurence-timms-og.jpg`
+(the intermediate `card.png` is gitignored). The script fails loudly if the font
+doesn't load, rather than silently rendering a fallback. Link scrapers (LinkedIn,
+Slack, Facebook) cache the old card per URL, so after deploying use their
+inspector tools (LinkedIn Post Inspector, Facebook Sharing Debugger) to refresh it.
+
 ---
 
 ## Walk's privacy policy (`/walk/privacy/`)
