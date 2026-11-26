@@ -26,7 +26,7 @@ const projects = defineCollection({
     title: z.string(),
     page: z.number().int().min(300).max(499),
     kind: z.string(),
-    status: z.enum(['playable', 'in-progress', 'sketch', 'parked', 'TODO']),
+    status: z.enum(['playable', 'in-progress', 'sketch', 'parked', 'usable', 'production', 'TODO']),
     summary: z.string(),
     play: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
     repo: z.string().optional(),

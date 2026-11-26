@@ -6,6 +6,8 @@ export const STATUS_LABEL = {
   'in-progress': 'IN PROGRESS',
   sketch: 'SKETCH',
   parked: 'PARKED',
+  usable: 'USABLE',
+  production: 'PRODUCTION',
   TODO: 'TODO',
 } as const;
 

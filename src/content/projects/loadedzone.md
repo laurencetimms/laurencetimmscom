@@ -2,7 +2,7 @@
 title: LoadedZone
 page: 402
 kind: training
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: usable
 summary: "Zone 2 training through loaded walking."
 play:
   - label: Open

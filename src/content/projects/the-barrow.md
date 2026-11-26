@@ -2,7 +2,7 @@
 title: The Barrow
 page: 305
 kind: text
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: sketch
 summary: "Text-based exploration in a warped, ancient Britain."
 # TODO(Laurence): repo (owner/name), once confirmed
 ---

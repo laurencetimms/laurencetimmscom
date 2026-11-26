@@ -2,7 +2,7 @@
 title: Walk
 page: 403
 kind: android app
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: production
 summary: "An Android app that supports creative thinking through sound, gentle movement, and minimal distraction."
 play:
   - label: About Walk

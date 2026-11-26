@@ -2,7 +2,7 @@
 title: CLAUS
 page: 401
 kind: team dynamics
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: parked
 summary: "An experimental team dynamics tool for team leaders and team coaches, built on Claude."
 play:
   - label: Project page

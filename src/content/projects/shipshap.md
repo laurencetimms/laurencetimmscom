@@ -2,7 +2,7 @@
 title: SHIPSHAP.EXE
 page: 304
 kind: text
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: sketch
 summary: "A sparse, text-based starship game built on a graph-based simulation."
 # TODO(Laurence): repo (owner/name), once confirmed
 ---

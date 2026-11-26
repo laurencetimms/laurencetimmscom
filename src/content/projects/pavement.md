@@ -2,7 +2,7 @@
 title: Pavement
 page: 301
 kind: daily puzzle
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: playable
 summary: "A daily puzzle: relay a medieval tile floor."
 play:
   - label: Play
@@ -15,8 +15,8 @@ play:
 deployedPath: public/lab/pavement
 ---
 
-<!-- TODO(Laurence): how should Underglaze (the Android app, built on this work) be shown on P100? Own page, or a note here? -->
-
 A daily puzzle: relay a medieval tile floor. Plus the Python tile harness that makes its designs and materials, running in the browser.
+
+The Android app [Underglaze](/p100/underglaze/) (P306) is built on this work.
 
 <!-- TODO(Laurence): how this was built with Claude — the part AI collaborators care about. -->

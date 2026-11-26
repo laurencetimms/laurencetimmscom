@@ -2,7 +2,7 @@
 title: The Teaspoon Deficit
 page: 302
 kind: idle
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: playable
 summary: "An idle game for small creatures and large mistakes."
 play:
   - label: Play stage one

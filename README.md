@@ -73,7 +73,7 @@ refresh it, run "Pack and build the game" on the harness page, then download
 Drop a markdown file in `src/content/projects/` (filename = slug) with
 frontmatter matching `src/content.config.ts`: `title`, `page` (teletext
 number, 300–499: 3xx games, 4xx tools; **never reuse one**), `kind`, `status`
-(`playable`, `in-progress`, `sketch`, `parked`, or `TODO`), `summary`
+(`playable`, `in-progress`, `sketch`, `parked`, `usable`, `production`, or `TODO`), `summary`
 (one line), optionally `play` (label/href list), `repo` (`owner/name`),
 `deployedPath` and `draft`. The body is the project page's notes, especially
 how it was built with Claude. The index row and page are automatic.

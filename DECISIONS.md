@@ -201,7 +201,8 @@ Font: **Libre Franklin** only (200, 300, 400, 700, 800). Light mode only.
 Teletext: exactly eight colours (`#000000 #FF0000 #00FF00 #FFFF00 #0000FF
 #FF00FF #00FFFF #FFFFFF`), VT323, page numbers, Fastext links, a live clock.
 Blue is a background only. Status always carries a text label
-(PLAYABLE green, IN PROGRESS yellow, SKETCH cyan, PARKED magenta; `TODO`,
+(PLAYABLE green, IN PROGRESS yellow, SKETCH cyan, PARKED magenta; USABLE and
+PRODUCTION, for tools and shipped apps, green; `TODO`,
 white, means not yet confirmed by Laurence).
 
 Own shell (`src/layouts/Mode7Layout.astro`) and stylesheet

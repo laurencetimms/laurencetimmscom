@@ -2,7 +2,7 @@
 title: One Up
 page: 303
 kind: arcade
-status: TODO # TODO(Laurence): playable | in-progress | sketch | parked
+status: playable
 summary: "A one-thumb arcade game: you are a number hopping up a page while the ink rises behind you."
 play:
   - label: Play
