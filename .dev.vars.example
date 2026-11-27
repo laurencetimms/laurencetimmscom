@@ -1,1 +1,5 @@
 TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+# Serial editor (/editor/): Cloudflare Access team domain and the editor
+# application's AUD tag. Only checked in production; `astro dev` skips it.
+ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+ACCESS_AUD=your-access-application-aud-tag

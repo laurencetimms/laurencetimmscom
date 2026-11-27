@@ -10,6 +10,18 @@
   "observability": {
     "enabled": true
   },
+  // The serial editor's text and marks (/editor/, /api/editor/*). Create the
+  // database once with `npx wrangler d1 create serial` and paste the id it
+  // prints here BEFORE merging — a placeholder id fails the deploy.
+  // See DECISIONS.md → "The serial editor".
+  "d1_databases": [
+    {
+      "binding": "SERIAL_DB",
+      "database_name": "serial",
+      "database_id": "PASTE-THE-ID-FROM-wrangler-d1-create-serial",
+      "migrations_dir": "migrations"
+    }
+  ],
   "send_email": [
     {
       "name": "EMAIL",

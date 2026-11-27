@@ -19,6 +19,7 @@ designed the way it is — read that before making structural changes.
   - `/lab/tile-harness/` — the Python tile harness running in the browser via Pyodide
     (see below)
 - `/p100/` — the workshop (Mode 7 teletext look): index, plus `/p100/<slug>/` per project, from the `projects` collection
+- `/editor/` — private serial editor for *Rule Zero* (Cloudflare Access + D1; text not in this repo). See DECISIONS.md → "The serial editor"
 - `/ai/` — how AI is used in building and writing this site, linked from the footer
 - `/llms.txt` — machine-readable site summary, generated at build from the `writing` and `projects` collections (`src/pages/llms.txt.ts`)
 - `public/robots.txt`

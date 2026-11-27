@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>The Editor's Copy — Rule Zero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Special+Elite&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: an editor's marked-up proof — quiet, period, practical.
+   IDEA: the author's own copy of the book, with pencil marks for where each weekly part begins.
+   PICTURE: the page itself, set as an old octavo, with marks in the margin.
+   COLOUR and TYPE: aged paper and ink; red pencil for breaks, blue for extras, green for type; period faces, sans for the tools.
+   LAYOUT: one centred column of text; a slim bar on top; drawers for weeks, marks and type. */
+:root{color-scheme:light dark;--bg:light-dark(#e9e2d0,#1b1915);--paper:light-dark(#f4eedf,#25221d);--ink:light-dark(#211d18,#e6ded0);--soft:light-dark(#6a6152,#a99f8e);--rule:light-dark(#cbbfa6,#3e3a33);--red:light-dark(#a8321f,#e07a63);--blue:light-dark(#2d5a8a,#8db4e0);--green:light-dark(#3f6b3a,#9ccb92);--pencil:light-dark(#585246,#b9b09f);--bar:light-dark(#2a2620,#0f0e0c);--barInk:#efe8da;--face:"Old Standard TT";--size:19px}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Source Sans 3",system-ui,sans-serif;overflow-x:clip}
+.bar{position:sticky;top:0;z-index:20;background:var(--bar);color:var(--barInk);display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px max(2vw,8px)}
+.bar .title{font:400 20px/1 "IM Fell English",Georgia,serif;margin-right:auto;padding:0 6px}
+.bar button,.bar select{min-height:44px;background:transparent;color:var(--barInk);border:1px solid #5b5446;border-radius:4px;padding:0 12px;font:600 15px "Source Sans 3",sans-serif;cursor:pointer}
+.bar select{appearance:auto}
+.bar button[aria-expanded=true]{background:var(--barInk);color:var(--bar)}
+.status{width:100%;font-size:13px;color:#bdb4a3;padding:0 6px 2px;display:flex;gap:12px;flex-wrap:wrap}
+.status b{color:var(--barInk);font-weight:600}
+.page{max-width:calc(34em * 1.0);margin:0 auto;background:var(--paper);padding:clamp(28px,6vw,64px) clamp(18px,6vw,72px) 120px;box-shadow:0 0 0 1px var(--rule),0 18px 40px rgba(0,0,0,.12);font-family:var(--face),Georgia,serif;font-size:var(--size);line-height:1.62;min-height:100vh}
+.page.just p.t{text-align:justify;hyphens:auto}
+.runhead{display:flex;justify-content:space-between;font:400 13px/1 "IM Fell English SC",Georgia,serif;letter-spacing:.14em;color:var(--soft);border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:28px}
+p.t{margin:0;text-indent:1.5em;position:relative;cursor:pointer;border-radius:2px;content-visibility:auto;contain-intrinsic-size:auto 3em}
+p.t.first{text-indent:0}
+p.t:hover{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+p.t.sel{background:color-mix(in srgb,var(--blue) 12%,transparent)}
+p.t.typed{box-shadow:-10px 0 0 -7px var(--green)}
+p.t .m{font-family:"Special Elite","Courier New",monospace;font-size:.88em}
+h2.sec{font:400 1.05em/1.3 "IM Fell English SC",Georgia,serif;letter-spacing:.18em;text-align:center;margin:2.2em 0 1.1em}
+.jump{text-align:center;margin:3.2em 0 2.4em;font-size:1.3em;letter-spacing:.8em;color:var(--ink);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.6em 0}
+.orn .ornbtn{background:none;border:0;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;min-width:44px;min-height:36px;border-radius:4px}
+.orn .ornbtn:hover{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.orn .ornx{display:none;margin-left:.6em;min-height:36px;padding:0 10px;border:1px solid var(--red);color:var(--red);background:transparent;border-radius:4px;font:600 13px "Source Sans 3",sans-serif;letter-spacing:0;cursor:pointer}
+.orn.arm .ornx{display:inline-block}
+.orn.gone{display:none}
+.orn{text-align:center;margin:.9em 0;font-family:"IM Fell English",serif;letter-spacing:.6em;color:var(--soft)}
+.week{margin:2.6em -.5em 1.6em;text-align:center;border-top:2px solid var(--red);padding-top:.9em;color:var(--red);font-family:"IM Fell English",Georgia,serif;scroll-margin-top:80px}
+.week .n{font:400 1.05em/1 "IM Fell English SC",serif;letter-spacing:.2em;display:block}
+.week .tt{font-style:italic;font-size:1.05em;display:block;margin-top:.3em;color:var(--ink)}
+.week .meta{font:13px/1.4 "Source Sans 3",sans-serif;color:var(--soft);display:block;margin-top:.4em}
+.week.ghost{border-top:2px dashed var(--red);opacity:.75}
+.week button,.wkbtn{min-height:40px;padding:0 12px;margin:0 4px;border-radius:4px;border:1px solid currentColor;background:transparent;color:var(--red);font:600 13px "Source Sans 3",sans-serif;cursor:pointer}
+.week button.primary{background:var(--red);color:var(--paper);border-color:var(--red)}
+.week.ghost button{margin-top:.5em}
+.ann{margin:.35em 0 .7em 1.5em;font:italic .78em/1.4 "IM Fell English",Georgia,serif;color:var(--pencil);border-left:2px solid currentColor;padding:.1em 0 .1em .7em}
+.ann.extra{color:var(--blue)}.ann.type{color:var(--green)}.ann b{font-style:normal;font-family:"Source Sans 3",sans-serif;font-size:.85em;letter-spacing:.06em;text-transform:uppercase;margin-right:.4em}
+.tools{margin:.5em 0 1em;padding:12px;border:1px solid var(--rule);border-radius:6px;background:color-mix(in srgb,var(--paper) 92%,var(--ink));font:15px/1.4 "Source Sans 3",sans-serif;text-indent:0}
+.tools .row{display:flex;flex-wrap:wrap;gap:8px}
+.tools button,.drawer button,.endnav button{min-height:44px;padding:0 12px;border-radius:4px;border:1px solid var(--rule);background:transparent;color:var(--ink);font:600 14px "Source Sans 3",sans-serif;cursor:pointer}
+.tools button.k-break{border-color:var(--red);color:var(--red)}.tools button.k-extra{border-color:var(--blue);color:var(--blue)}.tools button.k-type{border-color:var(--green);color:var(--green)}
+.tools button.primary,.drawer button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tools label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
+.tools input,.tools textarea,.drawer input,.drawer select{width:100%;font:16px/1.4 "Source Sans 3",sans-serif;padding:8px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink)}
+.tools textarea{min-height:70px}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,p.t:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.drawer{position:fixed;z-index:30;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--paper);color:var(--ink);box-shadow:-10px 0 30px rgba(0,0,0,.25);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .25s}
+.drawer.open{transform:none}
+.drawer header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--rule)}
+.drawer h3{margin:0;font:400 22px/1.2 "IM Fell English",Georgia,serif}
+.drawer .body{overflow:auto;padding:12px 14px 40px;flex:1}
+.drawer .hint{font-size:14px;color:var(--soft);margin:0 0 10px}
+.wk{display:grid;grid-template-columns:2.4em minmax(0,1fr) auto;gap:2px 10px;align-items:baseline;padding:8px 6px;border-bottom:1px solid var(--rule);cursor:pointer;border-radius:4px}
+.wk:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.wk .num{font:400 17px "IM Fell English SC",serif;color:var(--red)}
+.wk .first{font:italic 15px/1.3 var(--face),Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk .wc{font-size:13px;color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.wk .meter{grid-column:2/4;height:5px;background:color-mix(in srgb,var(--ink) 10%,transparent);border-radius:3px;overflow:hidden}
+.wk .meter span{display:block;height:100%;background:var(--ink)}
+.wk .meter span.long{background:var(--red)}.wk .meter span.short{background:var(--blue)}
+.mk{padding:8px 6px;border-bottom:1px solid var(--rule);cursor:pointer;border-radius:4px}
+.mk:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.mk .kind{font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.mk .kind.extra{color:var(--blue)}.mk .kind.type{color:var(--green)}.mk .kind.note{color:var(--pencil)}.mk .kind.break{color:var(--red)}
+.mk .q{font:italic 14px/1.35 var(--face),Georgia,serif;color:var(--soft)}
+.ctrl{margin:12px 0}
+.ctrl label{display:block;font-size:14px;color:var(--soft);margin-bottom:4px}
+.ctrl input[type=range]{width:100%;height:28px;accent-color:var(--ink)}
+.chk{display:flex;gap:10px;align-items:center;min-height:44px;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:var(--ink)}
+.endnav{display:flex;justify-content:space-between;gap:10px;margin-top:3em;border-top:1px solid var(--rule);padding-top:1em;font-family:"Source Sans 3",sans-serif}
+.tail{text-align:center;margin-top:2.4em;font-family:"IM Fell English",serif;font-style:italic;color:var(--soft)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:25;display:none}
+.scrim.on{display:block}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--bar);color:var(--barInk);padding:8px 14px;border-radius:6px;font-size:14px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.on{opacity:1}
+.hidden{display:none!important}
+@media(max-width:600px){.bar .title{width:100%;font-size:18px;padding:4px 6px}.page{padding-top:24px}}
+@media(prefers-reduced-motion:reduce){.drawer,#toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="bar" role="toolbar" aria-label="Reading tools">
+<span class="title">The Editor&#8217;s Copy</span>
+<button type="button" id="bWeeks" aria-expanded="false" aria-controls="dWeeks">Weeks</button>
+<button type="button" id="bMarks" aria-expanded="false" aria-controls="dMarks">Marks</button>
+<button type="button" id="bType" aria-expanded="false" aria-controls="dType">Type</button>
+<div class="status" aria-live="polite"><span id="stWeek"></span><span id="stSave"></span></div>
+</div>
+
+<main class="page just" id="page" aria-label="Book text">
+<div class="runhead"><span id="rhLeft">RULE ZERO</span><span id="rhRight"></span></div>
+<div id="book"><p style="font-style:italic;color:var(--soft)">Opening the book…</p></div>
+<div id="endnav" class="endnav hidden"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="dWeeks" aria-label="Weekly parts">
+<header><h3>Weekly Parts</h3><button type="button" data-close>Close</button></header>
+<div class="body">
+<p class="hint">Tap any paragraph in the book to mark where a week begins. Each bar shows that week&#8217;s length against your target.</p>
+<div class="ctrl"><label for="target">Target length: <b id="targetOut"></b> words</label><input type="range" id="target" min="1500" max="7000" step="250"></div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+<button type="button" id="suggest">Suggest breaks</button>
+<button type="button" id="acceptAll" class="hidden primary">Accept all suggestions</button>
+<button type="button" id="clearSug" class="hidden">Clear suggestions</button>
+</div>
+<div class="chk"><input type="checkbox" id="weekMode"><label for="weekMode">Read one week at a time</label></div>
+<div id="weekList"></div>
+</div>
+</aside>
+
+<aside class="drawer" id="dMarks" aria-label="All marks">
+<header><h3>Marks</h3><button type="button" data-close>Close</button></header>
+<div class="body">
+<p class="hint">Everything you&#8217;ve flagged in this book. Tap one to jump to it.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button type="button" id="copyMarks">Copy all marks as text</button></div>
+<div id="markList"></div>
+</div>
+</aside>
+
+<aside class="drawer" id="dType" aria-label="Type and page">
+<header><h3>Type &amp; Page</h3><button type="button" data-close>Close</button></header>
+<div class="body">
+<div class="ctrl"><label for="face">Typeface</label>
+<select id="face"><option value="Old Standard TT">Old Standard (Victorian modern)</option><option value="Libre Caslon Text">Caslon (Georgian old style)</option><option value="EB Garamond">Garamond (classic)</option><option value="IM Fell English">Fell (17th-century, rough)</option></select></div>
+<div class="ctrl"><label for="size">Type size: <b id="sizeOut"></b></label><input type="range" id="size" min="15" max="26" step="1"></div>
+<div class="ctrl"><label for="measure">Column width: <b id="measureOut"></b></label><input type="range" id="measure" min="24" max="44" step="1"></div>
+<div class="chk"><input type="checkbox" id="justify"><label for="justify">Justified, with hyphens</label></div>
+<div class="ctrl"><label for="theme">Paper</label><select id="theme"><option value="">Follow my device</option><option value="light">Day</option><option value="dark">Candlelight</option></select></div>
+</div>
+</aside>
+
+<div id="toast" role="status"></div>
+
+<script>
+{
+const $ = id => document.getElementById(id);
+const BOOKS = { serial: { title: 'Rule Zero' } };
+const API = '/api/editor';
+const KINDS = { break: 'Week starts here', extra: 'Extra', type: 'Type change', note: 'Note', hide: 'Ornament removed' };
+const TOOL_KINDS = ['break', 'extra', 'type', 'note'];
+const ROMAN = n => { const m = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]; let s = ''; for (const [v, r] of m) while (n >= v) { s += r; n -= v; } return s; };
+const store = { get(k, d) { try { const v = localStorage.getItem('edcopy-' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('edcopy-' + k, JSON.stringify(v)); } catch (e) {} } };
+
+let P = Object.assign({ face: 'Old Standard TT', size: 19, measure: 34, justify: true, theme: '', target: 3500, weekMode: false }, store.get('prefs', {}));
+let book = null, blocks = [], words = [], prefix = [], els = [], marks = new Map(), sugg = [], sel = -1, curWeek = 0;
+let ids = [], idIndex = new Map(), queue = [], flushing = false, online = true;
+const cacheBooks = {};
+
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 2200); }
+function savePrefs() { store.set('prefs', P); }
+function applyPrefs() {
+  const r = document.documentElement.style;
+  r.setProperty('--face', '"' + P.face + '"'); r.setProperty('--size', P.size + 'px');
+  $('page').style.maxWidth = 'calc(' + P.measure + 'em * ' + (P.size / 16).toFixed(3) + ' + 2 * clamp(18px, 6vw, 72px))';
+  $('page').classList.toggle('just', !!P.justify);
+  if (P.theme) document.documentElement.dataset.theme = P.theme; else delete document.documentElement.dataset.theme;
+  $('face').value = P.face; $('size').value = P.size; $('sizeOut').textContent = P.size + 'px';
+  $('measure').value = P.measure; $('measureOut').textContent = P.measure + ' ems';
+  $('justify').checked = !!P.justify; $('theme').value = P.theme; $('target').value = P.target; $('targetOut').textContent = P.target.toLocaleString();
+  $('weekMode').checked = !!P.weekMode;
+}
+
+// ---------- book ----------
+function isRule(b) { return b[0] === 'p' && b[1].length === 1 && typeof b[1][0] === 'string' && /^\s*[-\u2013\u2014*]{3,}\s*$/.test(b[1][0]); }
+function textOf(b) { return b[0] === 'p' ? b[1].map(r => typeof r === 'string' ? r : r[0]).join('') : b[0] === 'h' ? b[1] : ''; }
+// ---------- storage: IndexedDB for the text, localStorage for marks and the outbox ----------
+function idb() { return new Promise((res, rej) => { const r = indexedDB.open('serial-editor', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function idbGet(k) { try { const d = await idb(); return await new Promise((res, rej) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); } catch (e) { return undefined; } }
+async function idbSet(k, v) { try { const d = await idb(); await new Promise((res, rej) => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); } catch (e) {} }
+async function api(path, opts) {
+  const r = await fetch(API + path, Object.assign({ credentials: 'same-origin', headers: { 'content-type': 'application/json', 'x-serial-editor': '1' } }, opts || {}));
+  const type = r.headers.get('content-type') || '';
+  if (r.status === 401 || r.status === 403 || !type.includes('json')) { const e = new Error('auth'); e.auth = true; throw e; }
+  if (!r.ok) { const e = new Error('http ' + r.status); e.status = r.status; throw e; }
+  return r.json();
+}
+function setStatus(t) { $('stSave').textContent = t; }
+
+async function loadBook(id) {
+  $('book').innerHTML = '<p style="font-style:italic;color:var(--soft)">Opening the book…</p>';
+  let cached = await idbGet('text');
+  let data = null;
+  try {
+    const r = await api('/text' + (cached && cached.version ? '?have=' + encodeURIComponent(cached.version) : ''));
+    if (r.unchanged && cached) data = cached; else { data = { version: r.version, blocks: r.blocks }; idbSet('text', data); }
+  } catch (e) {
+    if (cached) { data = cached; setStatus(e.auth ? 'Signed out — reading your saved copy. Reload to sign in.' : 'Offline — reading your saved copy'); online = false; }
+    else { $('book').textContent = e.auth ? 'You’re signed out. Reload the page to sign in.' : 'The text couldn’t be fetched. Check your connection and reload.'; return; }
+  }
+  book = id;
+  ids = data.blocks.map(b => b[0]); idIndex = new Map(ids.map((x, i) => [x, i]));
+  blocks = data.blocks.map(b => b[1] === 'p' || b[1] === 'h' ? [b[1], b[2]] : [b[1]]);
+  words = blocks.map(b => b[0] === 'p' && !isRule(b) ? (textOf(b).match(/\S+/g) || []).length : 0);
+  prefix = [0]; for (const w of words) prefix.push(prefix[prefix.length - 1] + w);
+  $('rhLeft').textContent = BOOKS[id].title.toUpperCase();
+  renderBook(); sugg = [];
+  queue = store.get('outbox', []);
+  applyServerMarks(store.get('marks-cache', []));
+  decorate(); renderWeeks(); renderMarks(); restorePlace();
+  await refreshMarks(); flush();
+}
+function renderBook() {
+  const host = $('book'); host.textContent = ''; els = [];
+  const frag = document.createDocumentFragment();
+  let afterHead = true;
+  blocks.forEach((b, i) => {
+    let el;
+    if (b[0] === 'h') { el = document.createElement('h2'); el.className = 'sec'; el.textContent = b[1]; afterHead = true; }
+    else if (b[0] === 's' || isRule(b)) {
+      el = document.createElement('div'); el.className = 'orn';
+      const g = document.createElement('button'); g.type = 'button'; g.className = 'ornbtn'; g.textContent = '\u2042'; g.setAttribute('aria-label', 'Scene break ornament: tap to remove');
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'ornx'; x.textContent = 'Remove this ornament';
+      g.addEventListener('click', () => el.classList.toggle('arm'));
+      x.addEventListener('click', () => { el.classList.remove('arm'); writeMark({ i: +el.dataset.i, kind: 'hide', note: '', title: '' }); toast('Ornament removed. Restore it from Marks.'); });
+      el.append(g, x); afterHead = true;
+    }
+    else if (b[0] === 'j') { el = document.createElement('div'); el.className = 'jump'; el.setAttribute('role', 'separator'); el.textContent = '\u2042 \u2042 \u2042'; afterHead = true; }
+    else {
+      el = document.createElement('p'); el.className = 't' + (afterHead ? ' first' : ''); afterHead = false;
+      el.tabIndex = 0; el.dataset.i = i;
+      for (const r of b[1]) {
+        if (typeof r === 'string') el.appendChild(document.createTextNode(r));
+        else { const s = document.createElement(r[1] === 'i' ? 'i' : 'span'); if (r[1] === 'm') s.className = 'm'; s.textContent = r[0]; el.appendChild(s); }
+      }
+    }
+    el.dataset.i = i; els[i] = el; frag.appendChild(el);
+  });
+  host.appendChild(frag);
+}
+
+// ---------- marks ----------
+const markId = (i, kind) => book + '-' + i + '-' + kind;
+function marksAt(i) { const out = []; for (const k of Object.keys(KINDS)) { const m = marks.get(markId(i, k)); if (m) out.push(m); } return out; }
+function soft(b) { return !b || b[0] !== 'p' || isRule(b); }
+function startOf(i) { let j = i; while (j > 0 && blocks[j - 1] && soft(blocks[j - 1])) j--; return j; }
+function breaks() { const b = [0]; for (const m of marks.values()) if (m.kind === 'break' && m.i > 0) b.push(m.i); return [...new Set(b)].sort((a, c) => a - c); }
+function weeks() {
+  const b = breaks(); return b.map((bi, k) => { const s = k ? startOf(bi) : 0, e = k + 1 < b.length ? startOf(b[k + 1]) : blocks.length; const m = marks.get(markId(bi, 'break')); return { n: k + 1, s, e, bi, w: prefix[e] - prefix[s], title: m && m.title || '' }; });
+}
+function weekOf(i) { const w = weeks(); let r = w[0]; for (const x of w) if (x.s <= i) r = x; return r; }
+
+function clearDecor() { document.querySelectorAll('#book .week, #book .ann, #book .tools').forEach(n => n.remove()); document.querySelectorAll('#book p.typed').forEach(n => n.classList.remove('typed')); document.querySelectorAll('#book .orn.gone').forEach(n => n.classList.remove('gone')); }
+function decorate() {
+  if (!els.length) return;
+  clearDecor();
+  const W = weeks();
+  for (const wk of W) {
+    if (wk.bi === 0 && !marks.get(markId(0, 'break'))) continue;
+    const anchor = els[wk.s];
+    const d = document.createElement('div'); d.className = 'week'; d.id = 'wk-' + wk.n;
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = 'Week ' + wk.n + ' · Part the ' + ordinal(wk.n);
+    d.appendChild(n);
+    if (wk.title) { const t = document.createElement('span'); t.className = 'tt'; t.textContent = wk.title; d.appendChild(t); }
+    const meta = document.createElement('span'); meta.className = 'meta'; meta.textContent = wk.w.toLocaleString() + ' words in this part'; d.appendChild(meta);
+    if (wk.bi > 0) {
+      const row = document.createElement('div'); row.style.marginTop = '.5em';
+      const ed = document.createElement('button'); ed.type = 'button'; ed.textContent = 'Edit title'; ed.className = 'wkbtn';
+      ed.addEventListener('click', () => { openTools(wk.bi); const box = document.querySelector('#book .tools'); if (box) form(box, wk.bi, 'break'); });
+      const rm = document.createElement('button'); rm.type = 'button'; rm.textContent = 'Remove break'; rm.className = 'wkbtn';
+      rm.addEventListener('click', () => { removeMark(wk.bi, 'break'); toast('Break removed: Weeks ' + (wk.n - 1) + ' and ' + wk.n + ' joined'); });
+      row.append(ed, rm); d.appendChild(row);
+    }
+    anchor.before(d);
+  }
+  for (const s of sugg) {
+    const anchor = anchorFor(s.i);
+    const d = document.createElement('div'); d.className = 'week ghost';
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = 'Suggested break'; d.appendChild(n);
+    const meta = document.createElement('span'); meta.className = 'meta'; meta.textContent = s.why; d.appendChild(meta);
+    const row = document.createElement('div');
+    const a = document.createElement('button'); a.type = 'button'; a.textContent = 'Accept'; a.className = 'primary'; a.addEventListener('click', () => acceptSug(s));
+    const x = document.createElement('button'); x.type = 'button'; x.textContent = 'Dismiss'; x.style.marginLeft = '8px'; x.addEventListener('click', () => { sugg = sugg.filter(q => q !== s); decorate(); renderWeeks(); });
+    row.append(a, x); d.appendChild(row); anchor.before(d);
+  }
+  for (const m of marks.values()) {
+    if (m.kind === 'hide') { if (els[m.i]) els[m.i].classList.add('gone'); continue; }
+    if (m.kind === 'break' || !els[m.i]) continue;
+    if (m.kind === 'type') els[m.i].classList.add('typed');
+    const a = document.createElement('div'); a.className = 'ann ' + m.kind;
+    const b = document.createElement('b'); b.textContent = KINDS[m.kind]; a.appendChild(b);
+    a.appendChild(document.createTextNode(m.note || ''));
+    let after = els[m.i]; while (after.nextElementSibling && after.nextElementSibling.classList.contains('ann')) after = after.nextElementSibling;
+    after.after(a);
+  }
+  if (sel >= 0) openTools(sel, true);
+  applyWeekMode();
+}
+function anchorFor(i) { return els[startOf(i)] || els[i]; }
+function ordinal(n) { const w = ['', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth', 'Thirteenth', 'Fourteenth', 'Fifteenth', 'Sixteenth', 'Seventeenth', 'Eighteenth', 'Nineteenth', 'Twentieth']; return w[n] || ROMAN(n); }
+
+function applyServerMarks(list) {
+  const m = new Map();
+  for (const v of list) {
+    const i = idIndex.get(v.block_id);
+    if (i === undefined || !KINDS[v.kind]) continue;
+    m.set(markId(i, v.kind), { i, kind: v.kind, note: String(v.note || ''), title: String(v.title || '') });
+  }
+  // replay changes that haven't reached the server yet
+  for (const op of queue) {
+    const i = idIndex.get(op.block_id); if (i === undefined) continue;
+    if (op.t === 'put') m.set(markId(i, op.kind), { i, kind: op.kind, note: op.note, title: op.title });
+    else m.delete(markId(i, op.kind));
+  }
+  marks = m;
+}
+async function refreshMarks() {
+  try {
+    const r = await api('/marks');
+    store.set('marks-cache', r.marks); online = true;
+    applyServerMarks(r.marks); decorate(); renderWeeks(); renderMarks();
+    setStatus(queue.length ? 'Saving…' : 'All marks saved');
+  } catch (e) { online = false; setStatus(e.auth ? 'Signed out — changes are kept on this device. Reload to sign in.' : 'Offline — changes are kept on this device'); }
+}
+function enqueue(op) {
+  queue = queue.filter(q => !(q.block_id === op.block_id && q.kind === op.kind));
+  queue.push(op); store.set('outbox', queue); flush();
+}
+async function flush() {
+  if (flushing || !queue.length) { if (!queue.length && online) setStatus('All marks saved'); return; }
+  flushing = true; setStatus('Saving…');
+  while (queue.length) {
+    const op = queue[0];
+    try {
+      if (op.t === 'put') await api('/marks', { method: 'PUT', body: JSON.stringify({ block_id: op.block_id, kind: op.kind, note: op.note, title: op.title }) });
+      else await api('/marks?id=' + encodeURIComponent(op.block_id + ':' + op.kind), { method: 'DELETE' });
+      queue.shift(); store.set('outbox', queue); online = true;
+    } catch (e) {
+      if (e.status === 400 || e.status === 404) { queue.shift(); store.set('outbox', queue); continue; }
+      online = false;
+      setStatus((e.auth ? 'Signed out' : 'Offline') + ' — ' + queue.length + (queue.length === 1 ? ' change' : ' changes') + ' waiting on this device');
+      flushing = false; return;
+    }
+  }
+  flushing = false; setStatus('All marks saved');
+}
+async function writeMark(m) {
+  marks.set(markId(m.i, m.kind), { i: m.i, kind: m.kind, note: m.note || '', title: m.title || '' });
+  decorate(); renderWeeks(); renderMarks();
+  enqueue({ t: 'put', block_id: ids[m.i], kind: m.kind, note: m.note || '', title: m.title || '' });
+}
+async function removeMark(i, kind) {
+  marks.delete(markId(i, kind)); decorate(); renderWeeks(); renderMarks();
+  enqueue({ t: 'del', block_id: ids[i], kind });
+}
+window.addEventListener('online', () => { flush(); refreshMarks(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && book) { if (queue.length) flush(); else refreshMarks(); } });
+
+// ---------- paragraph tools ----------
+function closeTools() { document.querySelectorAll('#book .tools').forEach(n => n.remove()); if (els[sel]) els[sel].classList.remove('sel'); sel = -1; }
+function openTools(i, keep) {
+  if (!keep) closeTools();
+  document.querySelectorAll('#book .tools').forEach(n => n.remove());
+  sel = i; const p = els[i]; if (!p) return; p.classList.add('sel');
+  const box = document.createElement('div'); box.className = 'tools';
+  const row = document.createElement('div'); row.className = 'row';
+  for (const k of TOOL_KINDS) {
+    const has = marks.get(markId(i, k));
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'k-' + k;
+    b.textContent = (has ? 'Edit: ' : '') + KINDS[k];
+    b.addEventListener('click', () => form(box, i, k)); row.appendChild(b);
+  }
+  const c = document.createElement('button'); c.type = 'button'; c.textContent = 'Close'; c.addEventListener('click', closeTools); row.appendChild(c);
+  box.appendChild(row);
+  let after = p; while (after.nextElementSibling && after.nextElementSibling.classList.contains('ann')) after = after.nextElementSibling;
+  after.after(box);
+}
+function form(box, i, kind) {
+  box.querySelectorAll('form').forEach(f => f.remove());
+  const m = marks.get(markId(i, kind));
+  const f = document.createElement('form');
+  const mk = (lab, id, el) => { const l = document.createElement('label'); l.htmlFor = id; l.textContent = lab; el.id = id; f.append(l, el); return el; };
+  let title = null;
+  if (kind === 'break') { title = mk('Title for this part (optional)', 'f-title', document.createElement('input')); title.value = m ? m.title : ''; title.placeholder = 'In Which…'; }
+  const note = mk(kind === 'break' ? 'Note (optional)' : kind === 'extra' ? 'What goes here? (app, radio, phone, plate…)' : kind === 'type' ? 'What happens to the type?' : 'Note', 'f-note', document.createElement('textarea'));
+  note.value = m ? m.note : '';
+  const row = document.createElement('div'); row.className = 'row'; row.style.marginTop = '10px';
+  const save = document.createElement('button'); save.type = 'submit'; save.className = 'primary'; save.textContent = m ? 'Update' : 'Save';
+  row.appendChild(save);
+  if (m) { const del = document.createElement('button'); del.type = 'button'; del.textContent = 'Remove'; del.addEventListener('click', () => { removeMark(i, kind); toast('Removed'); }); row.appendChild(del); }
+  f.appendChild(row);
+  f.addEventListener('submit', e => { e.preventDefault(); writeMark({ i, kind, note: note.value.trim(), title: title ? title.value.trim() : '' }); toast(KINDS[kind] + ' saved'); });
+  box.appendChild(f); (title || note).focus();
+}
+$('book').addEventListener('click', e => {
+  if (e.target.closest('.tools,.week,.ann')) return;
+  const p = e.target.closest('p.t'); if (!p) return;
+  const i = +p.dataset.i; if (i === sel) { closeTools(); return; } openTools(i);
+});
+$('book').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('p.t')) { e.preventDefault(); e.target.click(); } });
+
+// ---------- suggestions ----------
+function suggest() {
+  const T = P.target, out = []; const W = weeks();
+  for (const wk of W) {
+    let start = wk.s;
+    while (prefix[wk.e] - prefix[start] > T * 1.35) {
+      let best = -1, bestScore = 1e9;
+      for (let j = start + 1; j < wk.e; j++) {
+        const got = prefix[j] - prefix[start];
+        if (got < T * .7) continue; if (got > T * 1.3) break;
+        if (blocks[j][0] !== 'p' || isRule(blocks[j])) continue;
+        const pb = blocks[j - 1], prev = !pb ? 'p' : pb[0] === 'j' || pb[0] === 'h' ? 'h' : (pb[0] === 's' || isRule(pb)) ? 's' : 'p';
+        const strong = prev === 'h' ? 0 : prev === 's' ? 1 : 3;
+        const score = strong * 600 + Math.abs(got - T);
+        if (score < bestScore) { bestScore = score; best = j; }
+      }
+      if (best < 0) { for (let j = start + 1; j < wk.e; j++) if (blocks[j][0] === 'p' && prefix[j] - prefix[start] >= T) { best = j; break; } }
+      if (best < 0) break;
+      const pb2 = blocks[best - 1], prev = !pb2 ? 'p' : pb2[0] === 'j' || pb2[0] === 'h' ? 'h' : (pb2[0] === 's' || isRule(pb2)) ? 's' : 'p';
+      out.push({ i: best, why: (prefix[best] - prefix[start]).toLocaleString() + ' words since the last break · ' + (prev === 'h' ? 'at a section heading' : prev === 's' ? 'at a scene break' : 'mid-scene, no natural break nearby') });
+      start = best;
+    }
+  }
+  sugg = out; decorate(); renderWeeks();
+  toast(out.length ? out.length + ' breaks suggested' : 'No suggestions: your parts are all within range');
+}
+async function acceptSug(s) { sugg = sugg.filter(q => q !== s); await writeMark({ i: s.i, kind: 'break', note: '', title: '' }); }
+$('suggest').addEventListener('click', suggest);
+$('acceptAll').addEventListener('click', async () => { const all = sugg.slice(); sugg = []; for (const s of all) await writeMark({ i: s.i, kind: 'break', note: '', title: '' }); toast(all.length + ' breaks added'); });
+$('clearSug').addEventListener('click', () => { sugg = []; decorate(); renderWeeks(); });
+
+// ---------- drawers ----------
+function renderWeeks() {
+  const list = $('weekList'); list.textContent = '';
+  const W = weeks(), T = P.target;
+  $('acceptAll').classList.toggle('hidden', !sugg.length); $('clearSug').classList.toggle('hidden', !sugg.length);
+  for (const wk of W) {
+    const r = document.createElement('div'); r.className = 'wk'; r.tabIndex = 0; r.setAttribute('role', 'button');
+    const n = document.createElement('span'); n.className = 'num'; n.textContent = ROMAN(wk.n) + '.';
+    const f = document.createElement('span'); f.className = 'first';
+    let fi = wk.bi || wk.s; while (fi < wk.e && blocks[fi][0] !== 'p') fi++;
+    f.textContent = wk.title || (blocks[fi] ? textOf(blocks[fi]).slice(0, 80) : '');
+    const c = document.createElement('span'); c.className = 'wc'; c.textContent = wk.w.toLocaleString() + ' w';
+    const meter = document.createElement('div'); meter.className = 'meter'; const bar = document.createElement('span');
+    bar.style.width = Math.min(100, wk.w / (T * 2) * 100) + '%'; if (wk.w > T * 1.3) bar.className = 'long'; else if (wk.w < T * .6) bar.className = 'short';
+    meter.appendChild(bar);
+    r.append(n, f, c, meter);
+    const go = () => { closeDrawers(); if (P.weekMode) { curWeek = wk.n - 1; applyWeekMode(); window.scrollTo(0, 0); } else jump(wk.s); };
+    r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    list.appendChild(r);
+  }
+  const total = prefix[prefix.length - 1] || 0;
+  const s = document.createElement('p'); s.className = 'hint'; s.style.marginTop = '12px';
+  s.textContent = W.length + (W.length === 1 ? ' part' : ' parts') + ' · ' + total.toLocaleString() + ' words · about ' + Math.ceil(total / T) + ' weeks at your target';
+  list.appendChild(s);
+  updateStatus();
+}
+function renderMarks() {
+  const list = $('markList'); list.textContent = '';
+  const all = [...marks.values()].sort((a, b) => a.i - b.i || a.kind.localeCompare(b.kind));
+  if (!all.length) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = 'No marks yet. Tap a paragraph in the book to add one.'; list.appendChild(p); return; }
+  for (const m of all) {
+    const r = document.createElement('div'); r.className = 'mk'; r.tabIndex = 0; r.setAttribute('role', 'button');
+    const k = document.createElement('div'); k.className = 'kind ' + m.kind; k.textContent = KINDS[m.kind] + ' · week ' + weekOf(m.i).n;
+    const t = document.createElement('div'); t.textContent = m.kind === 'break' ? (m.title || '(untitled part)') : (m.note || '(no note)');
+    const q = document.createElement('div'); q.className = 'q'; q.textContent = '“' + textOf(blocks[m.i]).slice(0, 90) + '…”';
+    r.append(k, t, q);
+    if (m.kind === 'hide') { t.textContent = 'Tap to restore'; q.textContent = 'Scene-break ornament in week ' + weekOf(m.i).n; }
+    const go = m.kind === 'hide' ? () => { removeMark(m.i, 'hide'); toast('Ornament restored'); } : () => { closeDrawers(); if (P.weekMode) { curWeek = weekOf(m.i).n - 1; applyWeekMode(); } jump(m.i); };
+    r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+    list.appendChild(r);
+  }
+}
+$('copyMarks').addEventListener('click', async () => {
+  const W = weeks(); const lines = [BOOKS[book].title.toUpperCase(), ''];
+  for (const wk of W) {
+    lines.push('WEEK ' + wk.n + (wk.title ? ': ' + wk.title : '') + ' (' + wk.w + ' words)');
+    let fi = wk.s; while (fi < wk.e && blocks[fi][0] !== 'p') fi++;
+    lines.push('  Begins: “' + (blocks[fi] ? textOf(blocks[fi]).slice(0, 70) : '') + '…”');
+    for (const m of [...marks.values()].filter(m => m.i >= wk.s && m.i < wk.e && m.kind !== 'break' && m.kind !== 'hide').sort((a, b) => a.i - b.i))
+      lines.push('  [' + KINDS[m.kind] + '] ' + (m.note || '') + ' — at “' + textOf(blocks[m.i]).slice(0, 50) + '…”');
+    lines.push('');
+  }
+  try { await navigator.clipboard.writeText(lines.join('\n')); toast('Copied'); } catch (e) { toast('Couldn’t copy here'); }
+});
+const drawers = { bWeeks: 'dWeeks', bMarks: 'dMarks', bType: 'dType' };
+function closeDrawers() { for (const [b, d] of Object.entries(drawers)) { $(d).classList.remove('open'); $(b).setAttribute('aria-expanded', 'false'); } $('scrim').classList.remove('on'); }
+for (const [b, d] of Object.entries(drawers)) $(b).addEventListener('click', () => { const open = !$(d).classList.contains('open'); closeDrawers(); if (open) { $(d).classList.add('open'); $(b).setAttribute('aria-expanded', 'true'); $('scrim').classList.add('on'); } });
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeDrawers));
+$('scrim').addEventListener('click', closeDrawers);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
+
+// ---------- week mode & navigation ----------
+function applyWeekMode() {
+  const nav = $('endnav'); nav.textContent = '';
+  document.querySelectorAll('#book .tail').forEach(n => n.remove());
+  const W = weeks();
+  if (!P.weekMode) { for (const el of $('book').children) el.classList.remove('hidden'); nav.classList.add('hidden'); updateStatus(); return; }
+  curWeek = Math.max(0, Math.min(curWeek, W.length - 1));
+  const wk = W[curWeek];
+  for (const el of $('book').children) {
+    let ref = el;
+    if (el.classList.contains('week')) { ref = el.nextElementSibling; while (ref && ref.classList.contains('week')) ref = ref.nextElementSibling; }
+    else if (el.classList.contains('ann') || el.classList.contains('tools')) { ref = el.previousElementSibling; while (ref && !(ref.dataset && ref.dataset.i !== undefined)) ref = ref.previousElementSibling; }
+    const idx = ref && ref.dataset && ref.dataset.i !== undefined ? +ref.dataset.i : -1;
+    el.classList.toggle('hidden', !(idx >= wk.s && idx < wk.e));
+  }
+  const tail = document.createElement('p'); tail.className = 'tail';
+  tail.textContent = curWeek + 1 < W.length ? 'End of the ' + ordinal(wk.n) + ' Part. Part the ' + ordinal(wk.n + 1) + ' will appear on Thursday next.' : 'End of the ' + ordinal(wk.n) + ' Part.';
+  $('book').appendChild(tail);
+  nav.classList.remove('hidden');
+  const prev = document.createElement('button'); prev.type = 'button'; prev.textContent = '← Week ' + wk.n; if (curWeek) prev.textContent = '\u2190 Week ' + (wk.n - 1); else prev.style.visibility = 'hidden';
+  prev.addEventListener('click', () => { curWeek--; applyWeekMode(); window.scrollTo(0, 0); });
+  const next = document.createElement('button'); next.type = 'button'; next.textContent = curWeek + 1 < W.length ? 'Week ' + (wk.n + 1) + ' →' : 'The end';
+  if (curWeek + 1 >= W.length) next.style.visibility = 'hidden';
+  next.addEventListener('click', () => { curWeek++; applyWeekMode(); window.scrollTo(0, 0); });
+  nav.append(prev, next);
+  updateStatus();
+}
+function jump(i) { const el = els[i] || anchorFor(i); if (!el) return; el.scrollIntoView({ block: 'center' }); el.classList.add('sel'); setTimeout(() => { if (sel !== i) el.classList.remove('sel'); }, 1600); }
+function updateStatus() {
+  const W = weeks(); if (!W.length) return;
+  const i = topIndex(); const wk = weekOf(i);
+  $('stWeek').innerHTML = ''; const b = document.createElement('b'); b.textContent = 'Week ' + wk.n + ' of ' + W.length;
+  $('stWeek').append(b, document.createTextNode(' · ' + wk.w.toLocaleString() + ' words'));
+  $('rhRight').textContent = 'PART ' + ROMAN(wk.n);
+}
+function topIndex() {
+  const y = 90;
+  if (!P.weekMode) { let lo = 0, hi = els.length - 1; while (lo < hi) { const mid = (lo + hi) >> 1; if (els[mid].getBoundingClientRect().bottom > y) hi = mid; else lo = mid + 1; } return lo; }
+  const wk = weeks()[curWeek] || { s: 0, e: els.length };
+  for (let k = wk.s; k < wk.e; k++) { const el = els[k]; if (el && el.getBoundingClientRect().bottom > y) return k; } return wk.s;
+}
+let scrollT = 0;
+window.addEventListener('scroll', () => { clearTimeout(scrollT); scrollT = setTimeout(() => { updateStatus(); if (book) store.set('place-' + book, { i: topIndex(), week: curWeek }); }, 250); }, { passive: true });
+function restorePlace() { const pl = store.get('place-' + book, null); if (!pl) { window.scrollTo(0, 0); updateStatus(); return; } if (P.weekMode) { curWeek = pl.week || 0; applyWeekMode(); } const el = els[pl.i]; if (el && pl.i > 0) el.scrollIntoView({ block: 'start' }); updateStatus(); }
+
+// ---------- prefs ----------
+$('face').addEventListener('change', e => { P.face = e.target.value; savePrefs(); applyPrefs(); });
+$('size').addEventListener('input', e => { P.size = +e.target.value; savePrefs(); applyPrefs(); });
+$('measure').addEventListener('input', e => { P.measure = +e.target.value; savePrefs(); applyPrefs(); });
+$('justify').addEventListener('change', e => { P.justify = e.target.checked; savePrefs(); applyPrefs(); });
+$('theme').addEventListener('change', e => { P.theme = e.target.value; savePrefs(); applyPrefs(); });
+$('target').addEventListener('input', e => { P.target = +e.target.value; $('targetOut').textContent = P.target.toLocaleString(); savePrefs(); renderWeeks(); });
+$('weekMode').addEventListener('change', e => { P.weekMode = e.target.checked; savePrefs(); if (P.weekMode) curWeek = weekOf(topIndex()).n - 1; applyWeekMode(); window.scrollTo(0, 0); });
+
+applyPrefs();
+loadBook('serial');
+}
+</script>
+</body>
+</html>

@@ -547,3 +547,71 @@ bug seen elsewhere on this site. And Cloudflare's default asset
 `/foo` with no trailing slash — exactly the URL Google Play needs —
 while redirecting both `/foo.html` and `/foo/` to it, confirmed against
 `wrangler dev` before deploying.
+
+---
+
+## The serial editor (`/editor/`)
+
+A private tool for preparing *Rule Zero* — Laurence's two Harry Bacon novels
+(*Rule Zero* and *The Spherical Void*) merged into one continuous weekly
+serial. It shows the whole text set as an old octavo novel and lets the
+author mark where each week begins, where extras go (apps, documents,
+plates), type treatments, notes, and scene-break ornaments to hide. It
+started as a Claude artifact; it moved here because artifacts opened
+directly in a browser tab kept hanging, and because this is where the
+serial will eventually be published from.
+
+**Shape.** `public/editor/index.html` is a single static page (same pattern
+as `public/lab/*`: no Astro layout, no build step). It talks to two
+on-demand routes, `src/pages/api/editor/text.ts` and
+`src/pages/api/editor/marks.ts`, the site's second and third server-side
+routes after the contact form.
+
+**Storage: D1, not the repo.** The text of the books is *not* committed:
+this repo is public and the serial is meant to come out a week at a time.
+Text and marks live in a D1 database (`serial`, binding `SERIAL_DB`),
+schema in `migrations/`. Each block of text (paragraph, heading, scene
+break, storyline jump) has a stable id that marks point at, and a REAL
+`pos` so blocks can later be inserted or edited without renumbering — the
+groundwork for publishing new episodes from here. `meta.text_version`
+changes whenever the text does; the editor caches the ~1.5 MB text in
+IndexedDB and only re-downloads it when the version moves.
+
+**Offline-tolerant.** Every change is applied on screen at once and put in
+an outbox in localStorage, then sent to the API in order. If the network
+or the sign-in drops, changes wait on the device and are sent when the tab
+is next visible or the browser comes back online. The status line under
+the toolbar says which.
+
+**Who can use it: Cloudflare Access.** `/editor/*` and `/api/editor/*` sit
+behind a Cloudflare Access application allowing only Laurence's email
+(free Zero Trust plan). As well as Access doing the blocking at the edge,
+the API verifies the `Cf-Access-Jwt-Assertion` token itself
+(`src/lib/serial/access.ts`: RS256 signature against the team's published
+certs, audience, issuer, expiry), and fails closed if the
+`ACCESS_TEAM_DOMAIN` / `ACCESS_AUD` secrets are missing — so a
+misconfigured or deleted Access app, or a request via workers.dev, can't
+read the books. Writes also need an `x-serial-editor: 1` header, which a
+cross-site page can't send without a CORS preflight this API never grants.
+In `astro dev` the Access check is skipped.
+
+**Cost.** Only `/api/editor/*` runs a Worker, and only for one user; D1's
+free allowance is far beyond what one person marking up a book uses.
+
+### One-time setup
+
+1. `npx wrangler d1 create serial`, then paste the printed `database_id`
+   into `wrangler.jsonc` (the placeholder fails the deploy, on purpose).
+2. `npx wrangler d1 migrations apply serial --remote`
+3. Load the text and existing marks from the seed file supplied separately
+   (never committed): `npx wrangler d1 execute serial --remote --file=serial-seed.sql`
+4. Zero Trust dashboard → Access → Applications → add a self-hosted app for
+   `laurencetimms.com/editor` and `laurencetimms.com/api/editor`, policy
+   "Allow — emails — Laurence's address". Copy its **Application Audience
+   (AUD) Tag**.
+5. `npx wrangler secret put ACCESS_TEAM_DOMAIN` (e.g. `yourteam.cloudflareaccess.com`)
+   and `npx wrangler secret put ACCESS_AUD` (the tag from step 4).
+6. Merge. Visit `/editor/`, sign in with the emailed code.
+
+Local work: `npx wrangler d1 migrations apply serial --local`, the same
+`d1 execute … --local` with the seed, then `astro dev`.
