@@ -18,7 +18,7 @@
     {
       "binding": "SERIAL_DB",
       "database_name": "serial",
-      "database_id": "PASTE-THE-ID-FROM-wrangler-d1-create-serial",
+      "database_id": "c08d9a53-6a68-448d-aff5-161cf8646221",
       "migrations_dir": "migrations"
     }
   ],
