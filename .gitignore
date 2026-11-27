@@ -29,3 +29,7 @@ pnpm-debug.log*
 
 # wrangler local state
 .wrangler/
+
+# serial editor seed: contains the full book text, never commit
+serial-seed.sql
+*.sql.local
