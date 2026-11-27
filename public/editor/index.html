@@ -260,7 +260,8 @@ function weeks() {
 function weekOf(i) { const w = weeks(); let r = w[0]; for (const x of w) if (x.s <= i) r = x; return r; }
 
 function clearDecor() { document.querySelectorAll('#book .week, #book .ann, #book .tools').forEach(n => n.remove()); document.querySelectorAll('#book p.typed').forEach(n => n.classList.remove('typed')); document.querySelectorAll('#book .orn.gone').forEach(n => n.classList.remove('gone')); }
-function decorate() {
+function decorate() { keepPlace(decorateNow); }
+function decorateNow() {
   if (!els.length) return;
   clearDecor();
   const W = weeks();
@@ -535,15 +536,54 @@ function updateStatus() {
   $('stWeek').append(b, document.createTextNode(' · ' + wk.w.toLocaleString() + ' words'));
   $('rhRight').textContent = 'PART ' + ROMAN(wk.n);
 }
+// An element that takes up space (hidden ornaments and other weeks are display:none).
+function shown(el) { return !!el && el.offsetParent !== null; }
 function topIndex() {
   const y = 90;
-  if (!P.weekMode) { let lo = 0, hi = els.length - 1; while (lo < hi) { const mid = (lo + hi) >> 1; if (els[mid].getBoundingClientRect().bottom > y) hi = mid; else lo = mid + 1; } return lo; }
+  if (!P.weekMode) {
+    const vis = []; for (let k = 0; k < els.length; k++) if (shown(els[k])) vis.push(k);
+    if (!vis.length) return 0;
+    let lo = 0, hi = vis.length - 1;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (els[vis[mid]].getBoundingClientRect().bottom > y) hi = mid; else lo = mid + 1; }
+    return vis[lo];
+  }
   const wk = weeks()[curWeek] || { s: 0, e: els.length };
-  for (let k = wk.s; k < wk.e; k++) { const el = els[k]; if (el && el.getBoundingClientRect().bottom > y) return k; } return wk.s;
+  for (let k = wk.s; k < wk.e; k++) { const el = els[k]; if (shown(el) && el.getBoundingClientRect().bottom > y) return k; } return wk.s;
 }
 let scrollT = 0;
-window.addEventListener('scroll', () => { clearTimeout(scrollT); scrollT = setTimeout(() => { updateStatus(); if (book) store.set('place-' + book, { i: topIndex(), week: curWeek }); }, 250); }, { passive: true });
-function restorePlace() { const pl = store.get('place-' + book, null); if (!pl) { window.scrollTo(0, 0); updateStatus(); return; } if (P.weekMode) { curWeek = pl.week || 0; applyWeekMode(); } const el = els[pl.i]; if (el && pl.i > 0) el.scrollIntoView({ block: 'start' }); updateStatus(); }
+let restoring = false, restoreTok = 0;
+// First element at or after block i that is actually on the page.
+function anchorEl(i) { for (let k = Math.max(0, i); k < els.length; k++) if (shown(els[k])) return els[k]; return null; }
+function placeNow() { const i = topIndex(), el = els[i]; return { id: ids[i], i, off: shown(el) ? Math.round(el.getBoundingClientRect().top) : 0, week: curWeek }; }
+function savePlace() { if (!book || restoring || !els.length) return; store.set('place-' + book, placeNow()); }
+// Run a change to the page (marks redrawn, dividers added) without moving the reader.
+function keepPlace(fn) {
+  if (!els.length || restoring) { fn(); return; }
+  const el = els[topIndex()], before = shown(el) ? el.getBoundingClientRect().top : 0;
+  fn();
+  if (shown(el)) { const d = el.getBoundingClientRect().top - before; if (Math.abs(d) > 1) window.scrollBy(0, d); }
+}
+window.addEventListener('scroll', () => { clearTimeout(scrollT); scrollT = setTimeout(() => { updateStatus(); savePlace(); }, 250); }, { passive: true });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') savePlace(); });
+window.addEventListener('pagehide', savePlace);
+function restorePlace() {
+  const pl = store.get('place-' + book, null);
+  if (!pl) { window.scrollTo(0, 0); updateStatus(); return; }
+  const i = pl.id && idIndex.has(pl.id) ? idIndex.get(pl.id) : Math.min(pl.i || 0, els.length - 1);
+  if (P.weekMode) { curWeek = weekOf(i).n - 1; applyWeekMode(); }
+  const tok = ++restoreTok, off = pl.off || 0;
+  restoring = true;
+  // Keep putting the reader back while fonts and layout settle, but stop as soon as they scroll or type.
+  const go = () => { if (!restoring || tok !== restoreTok) return; const e = anchorEl(i); if (e) window.scrollTo(0, e.getBoundingClientRect().top + window.scrollY - off); };
+  const inputs = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+  const done = () => { if (!restoring || tok !== restoreTok) return; restoring = false; inputs.forEach(t => window.removeEventListener(t, done)); updateStatus(); };
+  inputs.forEach(t => window.addEventListener(t, done, { passive: true }));
+  go(); requestAnimationFrame(go); setTimeout(go, 250);
+  const settle = new Promise(r => setTimeout(r, 800));
+  const fonts = document.fonts && document.fonts.ready ? document.fonts.ready.then(go) : Promise.resolve();
+  Promise.all([settle, fonts]).then(() => { go(); done(); });
+  setTimeout(done, 4000);
+}
 
 // ---------- prefs ----------
 $('face').addEventListener('change', e => { P.face = e.target.value; savePrefs(); applyPrefs(); });
